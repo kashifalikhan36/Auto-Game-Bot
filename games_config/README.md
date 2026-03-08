@@ -26,30 +26,32 @@ games_config/
 
 ```jsonc
 {
-  "game_name": "Display Name",          // shown in selection menu
-  "game_id":   "snake_case_id",         // must match the folder name
+  "game_name": "Display Name", // shown in selection menu
+  "game_id": "snake_case_id", // must match the folder name
   "description": "...",
-  "action_list": ["ACTION_A", "ACTION_B", "IDLE"],  // LLM will pick from these
+  "action_list": ["ACTION_A", "ACTION_B", "IDLE"], // LLM will pick from these
   "key_map": {
-    "ACTION_A": { "type": "keyboard", "key": "w"      },  // key string
-    "ACTION_B": { "type": "mouse",    "button": "left" }, // left/right/middle
-    "IDLE":     null                                       // no input
-  }
+    "ACTION_A": { "type": "keyboard", "key": "w" }, // key string
+    "ACTION_B": { "type": "mouse", "button": "left" }, // left/right/middle
+    "IDLE": null, // no input
+  },
 }
 ```
 
 ### Valid keyboard key strings
+
 Single letters: `"a"` – `"z"`  
 Numbers: `"0"` – `"9"`  
 Special: `"space"`, `"enter"`, `"tab"`, `"esc"`, `"shift"`, `"ctrl"`, `"alt"`  
 Arrows: `"up"`, `"down"`, `"left"`, `"right"`  
-Function keys: `"f1"` – `"f12"`  
+Function keys: `"f1"` – `"f12"`
 
 ### Valid mouse button strings
+
 `"left"`, `"right"`, `"middle"`
 
 ## Available Games
 
-| Game ID | Game Name |
-|---------|-----------|
+| Game ID                       | Game Name                            |
+| ----------------------------- | ------------------------------------ |
 | metal_gear_5_the_phantom_pain | Metal Gear Solid V: The Phantom Pain |
