@@ -191,7 +191,8 @@ def analyze_node(state: BotState) -> BotState:
 
     b64 = state.get("screenshot_b64", "")
     named_actions: dict = getattr(config, "NAMED_ACTIONS", {})
-    default_action = "SPRINT_FORWARD" if named_actions else "EXPLORE"
+    # Use the first named action as the default (game-agnostic fallback)
+    default_action = next(iter(named_actions), "EXPLORE")
 
     if not b64:
         sit = _action_to_situation(default_action)
