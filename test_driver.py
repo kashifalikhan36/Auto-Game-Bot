@@ -18,6 +18,5 @@ for i in range(3, 0, -1):
 from driver.input_controller import InputController  # noqa: E402
 
 ctrl = InputController()
-VK_A = 0x41  # Virtual key code for 'A'
-ctrl.press_key(VK_A, hold_ms=80)
+ctrl.press_key("a", hold_ms=80)
 print("Key pressed! Did 'a' appear? If yes, the input driver is working correctly.")

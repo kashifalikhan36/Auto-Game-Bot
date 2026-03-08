@@ -39,11 +39,11 @@ def act_node(state: BotState) -> BotState:
     t0 = time.perf_counter()
 
     action: str = state.get("action", "IDLE")
-    vk_code: int | None = config.VK_MAP.get(action)
+    key: str | None = config.VK_MAP.get(action)
 
-    if vk_code is not None:
+    if key is not None:
         controller = _get_controller()
-        controller.press_key(vk_code, hold_ms=config.KEY_HOLD_MS)
+        controller.press_key(key, hold_ms=config.KEY_HOLD_MS)
 
     t1 = time.perf_counter()
 

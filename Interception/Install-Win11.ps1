@@ -318,6 +318,8 @@ function Set-ServiceRegistry {
     Set-ItemProperty $key -Name "ImagePath"    -Value $ImagePath   -Type ExpandString
     Set-ItemProperty $key -Name "DisplayName"  -Value $DisplayName -Type String
     Set-ItemProperty $key -Name "Group"        -Value $Group       -Type String
+    # Clear DeleteFlag so this entry is NOT wiped on next reboot
+    Remove-ItemProperty $key -Name "DeleteFlag" -ErrorAction SilentlyContinue
 }
 
 foreach ($svc in @(

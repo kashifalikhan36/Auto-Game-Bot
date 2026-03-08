@@ -134,12 +134,16 @@ def _send_input_vk(vk_code: int, key_up: bool) -> None:
 
 
 # ---------------------------------------------------------------------------
-# VK → scan-code conversion helper (used by Interception path)
+# String key → VK code conversion (for SendInput fallback)
 # ---------------------------------------------------------------------------
-def _vk_to_scan(vk_code: int) -> int:
-    """Map a Windows virtual-key code to a hardware scan code."""
-    scan = ctypes.windll.user32.MapVirtualKeyW(vk_code, 0)  # MAPVK_VK_TO_VSC
-    return scan
+def _key_str_to_vk(key: str) -> int:
+    """Convert an interception-python key name string to a Windows VK code."""
+    try:
+        from interception._keycodes import get_key_information  # type: ignore
+        return get_key_information(key.lower()).vk_code
+    except Exception:
+        # last-resort: try treating it as a single character
+        return ctypes.windll.user32.VkKeyScanW(ord(key[0])) & 0xFF
 
 
 # ---------------------------------------------------------------------------
@@ -150,17 +154,16 @@ class InputController:
     """
     Thread-safe keyboard input controller.
     Uses the Interception kernel driver when available, otherwise SendInput.
+
+    Keys are identified by interception-python string names:
+      "a"–"z", "0"–"9", "space", "enter", "up", "down", "left", "right",
+      "shift", "ctrl", "alt", "tab", "esc", "f1"–"f12", etc.
     """
 
     def __init__(self) -> None:
         self._use_interception = _INTERCEPTION_AVAILABLE
-        self._ctx = None
-        self._device = None
 
         if self._use_interception:
-            self._ctx = interception.interception()
-            # Find the first available keyboard device
-            self._device = interception.INTERCEPTION_KEYBOARD(0)
             print("[InputController] Using Interception kernel driver (kernel-level, stealthy).")
         else:
             print("[InputController] Using SendInput fallback (user-mode).")
@@ -201,75 +204,40 @@ class InputController:
             "install_cmd":       r"./Interception/Install-Win11.ps1  (run as Administrator, then reboot)",
         }
 
-    def press_key(self, vk_code: int, hold_ms: int = 50) -> None:
+    def press_key(self, key: str, hold_ms: int = 50) -> None:
         """
-        Press and release a key identified by its Windows virtual-key code.
+        Press and release a key.
 
         Args:
-            vk_code:  Windows VK_* constant (e.g. 0x20 = VK_SPACE).
-            hold_ms:  How long (ms) to hold the key down before releasing.
+            key:     Key name string understood by interception-python
+                     e.g. "a", "space", "up", "enter", "f1".
+            hold_ms: How long (ms) to hold the key down before releasing.
         """
         if self._use_interception:
-            self._interception_press(vk_code, hold_ms)
+            interception.key_down(key.lower())
+            time.sleep(hold_ms / 1000.0)
+            interception.key_up(key.lower())
         else:
-            self._sendinput_press(vk_code, hold_ms)
+            vk = _key_str_to_vk(key)
+            _send_input_vk(vk, key_up=False)
+            time.sleep(hold_ms / 1000.0)
+            _send_input_vk(vk, key_up=True)
 
-    def press_combo(self, vk_codes: list[int], hold_ms: int = 50) -> None:
+    def press_combo(self, keys: list[str], hold_ms: int = 50) -> None:
         """
-        Press multiple keys simultaneously (e.g. Shift+Attack).
+        Press multiple keys simultaneously (e.g. ["shift", "a"]).
         All keys are pressed, held for hold_ms, then released in reverse order.
         """
-        for vk in vk_codes:
-            self._key_down(vk)
-        time.sleep(hold_ms / 1000.0)
-        for vk in reversed(vk_codes):
-            self._key_up(vk)
-
-    # ------------------------------------------------------------------
-    # Internal helpers
-    # ------------------------------------------------------------------
-
-    def _interception_press(self, vk_code: int, hold_ms: int) -> None:
-        scan = _vk_to_scan(vk_code)
-        stroke_down = interception.key_stroke(
-            scan,
-            interception.interception_key_state.INTERCEPTION_KEY_DOWN,
-            0,
-        )
-        stroke_up = interception.key_stroke(
-            scan,
-            interception.interception_key_state.INTERCEPTION_KEY_UP,
-            0,
-        )
-        self._ctx.send(self._device, stroke_down)
-        time.sleep(hold_ms / 1000.0)
-        self._ctx.send(self._device, stroke_up)
-
-    def _sendinput_press(self, vk_code: int, hold_ms: int) -> None:
-        _send_input_vk(vk_code, key_up=False)
-        time.sleep(hold_ms / 1000.0)
-        _send_input_vk(vk_code, key_up=True)
-
-    def _key_down(self, vk_code: int) -> None:
         if self._use_interception:
-            scan = _vk_to_scan(vk_code)
-            stroke = interception.key_stroke(
-                scan,
-                interception.interception_key_state.INTERCEPTION_KEY_DOWN,
-                0,
-            )
-            self._ctx.send(self._device, stroke)
+            for k in keys:
+                interception.key_down(k.lower())
+            time.sleep(hold_ms / 1000.0)
+            for k in reversed(keys):
+                interception.key_up(k.lower())
         else:
-            _send_input_vk(vk_code, key_up=False)
-
-    def _key_up(self, vk_code: int) -> None:
-        if self._use_interception:
-            scan = _vk_to_scan(vk_code)
-            stroke = interception.key_stroke(
-                scan,
-                interception.interception_key_state.INTERCEPTION_KEY_UP,
-                0,
-            )
-            self._ctx.send(self._device, stroke)
-        else:
-            _send_input_vk(vk_code, key_up=True)
+            vks = [_key_str_to_vk(k) for k in keys]
+            for vk in vks:
+                _send_input_vk(vk, key_up=False)
+            time.sleep(hold_ms / 1000.0)
+            for vk in reversed(vks):
+                _send_input_vk(vk, key_up=True)

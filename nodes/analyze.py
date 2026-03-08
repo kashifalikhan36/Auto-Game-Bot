@@ -34,7 +34,7 @@ def _get_llm() -> AzureChatOpenAI:
             api_version=config.AZURE_OPENAI_API_VERSION,
             azure_deployment=config.AZURE_DEPLOYMENT_NAME,
             max_tokens=config.MAX_TOKENS,
-            temperature=config.TEMPERATURE,
+            # temperature omitted: GPT-5 Nano only accepts the default value
         )
     return _llm
 

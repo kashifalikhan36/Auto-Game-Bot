@@ -57,17 +57,19 @@ ACTION_LIST: list[str] = [
     "IDLE",
 ]
 
-# VK_CODE lookup  (extend / replace for your game)
-VK_MAP: dict[str, int] = {
-    "UP":       0x26,  # VK_UP
-    "DOWN":     0x28,  # VK_DOWN
-    "LEFT":     0x25,  # VK_LEFT
-    "RIGHT":    0x27,  # VK_RIGHT
-    "JUMP":     0x20,  # VK_SPACE
-    "ATTACK":   0x5A,  # Z key
-    "DEFEND":   0x58,  # X key
-    "INTERACT": 0x0D,  # VK_RETURN
-    "IDLE":     None,  # no keypress
+# Key name strings used by interception-python (extend / replace for your game).
+# Valid names: "a"–"z", "0"–"9", "space", "enter", "up", "down", "left",
+# "right", "shift", "ctrl", "alt", "tab", "esc", "f1"–"f12", etc.
+VK_MAP: dict[str, str | None] = {
+    "UP":       "up",
+    "DOWN":     "down",
+    "LEFT":     "left",
+    "RIGHT":    "right",
+    "JUMP":     "space",
+    "ATTACK":   "z",
+    "DEFEND":   "x",
+    "INTERACT": "enter",
+    "IDLE":     None,   # no keypress
 }
 # fmt: on
 
