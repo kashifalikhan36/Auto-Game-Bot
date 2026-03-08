@@ -178,19 +178,28 @@ GAME_CONTEXT: str = ""
 # Per-action descriptions: {"ACTION_NAME": "what this action does"}
 ACTION_DESCRIPTIONS: dict[str, str] = {}
 
+# Situation labels the LLM can return
+SITUATION_LIST: list[str] = ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"]
+
+# Behavior tracks: situation → list of track-groups (see nodes/behaviors.py)
+BEHAVIOR_CONFIG: dict = {}
+
 def load_game_config(config_path: str) -> None:
     """
     Load a games_config/<game_id>/config.json and override ACTION_LIST + VK_MAP
     at module level so all nodes pick up the new bindings.
     """
     import json
-    global ACTION_LIST, VK_MAP, GAME_CONTEXT, ACTION_DESCRIPTIONS
+    global ACTION_LIST, VK_MAP, GAME_CONTEXT, ACTION_DESCRIPTIONS, SITUATION_LIST, BEHAVIOR_CONFIG
     with open(config_path, encoding="utf-8") as f:
         data = json.load(f)
     ACTION_LIST = data["action_list"]
     VK_MAP = data["key_map"]
     GAME_CONTEXT = data.get("game_context", "")
     ACTION_DESCRIPTIONS = data.get("action_descriptions", {})
+    if data.get("situation_list"):
+        SITUATION_LIST = data["situation_list"]
+    BEHAVIOR_CONFIG = data.get("behaviors", {})
 # fmt: on
 
 # How long (ms) to hold a key down before releasing it

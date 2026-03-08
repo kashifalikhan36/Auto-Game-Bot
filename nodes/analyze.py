@@ -1,14 +1,14 @@
 """
 Analyze node — sends the current screenshot to an LLM vision model
-and returns a single action keyword (e.g. "JUMP", "LEFT", "IDLE").
+and returns a SITUATION label (e.g. "EXPLORE", "COMBAT", "IDLE").
+
+The LLM is NOT asked to pick a specific key or mouse action.
+It classifies what it sees into one of 6 situations.
+The act_node then executes the correct simultaneous hardware inputs
+via nodes/behaviors.py.
 
 Supported providers: azure, openai, gemini, anthropic
 Active provider is chosen by config.ACTIVE_PROVIDER (auto-detected from .env).
-
-Key latency choices:
-  - detail="low"  : model processes a single 512-px tile (~85 tokens)
-  - max_tokens=10 : stop generation immediately after the action word
-  - Synchronous invoke (asyncio integration handled by LangGraph's astream)
 """
 
 from __future__ import annotations
@@ -39,8 +39,180 @@ def _create_llm() -> Any:
             api_version=config.AZURE_OPENAI_API_VERSION,
             azure_deployment=config.AZURE_DEPLOYMENT_NAME,
             max_tokens=config.MAX_TOKENS,
-            # temperature omitted: GPT-5 Nano only accepts its default value
         )
+
+    if provider == "openai":
+        from langchain_openai import ChatOpenAI
+        return ChatOpenAI(
+            api_key=config.OPENAI_API_KEY,
+            model=config.OPENAI_MODEL,
+            max_tokens=config.MAX_TOKENS,
+            temperature=config.TEMPERATURE,
+        )
+
+    if provider == "gemini":
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        return ChatGoogleGenerativeAI(
+            google_api_key=config.GEMINI_API_KEY,
+            model=config.GEMINI_MODEL,
+            max_output_tokens=config.MAX_TOKENS,
+            temperature=config.TEMPERATURE,
+        )
+
+    if provider == "anthropic":
+        from langchain_anthropic import ChatAnthropic
+        return ChatAnthropic(
+            api_key=config.ANTHROPIC_API_KEY,
+            model=config.ANTHROPIC_MODEL,
+            max_tokens=config.MAX_TOKENS,
+            temperature=config.TEMPERATURE,
+        )
+
+    raise RuntimeError(f"[analyze] Unknown provider '{provider}'")
+
+
+def _get_llm() -> Any:
+    global _llm
+    if _llm is None:
+        _llm = _create_llm()
+    return _llm
+
+
+# ---------------------------------------------------------------------------
+# Prompt templates
+# ---------------------------------------------------------------------------
+
+def _get_system_prompt() -> str:
+    """Build the situation-classification system prompt. Evaluated lazily."""
+    situations: list[str] = getattr(config, "SITUATION_LIST",
+                                    ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"])
+    game_ctx: str = getattr(config, "GAME_CONTEXT", "")
+
+    sit_descriptions = {
+        "EXPLORE":  "No enemies visible. Safe to sprint and scan the environment.",
+        "COMBAT":   "An enemy or hostile is clearly visible on screen. Must shoot NOW.",
+        "EVADE":    "Under fire / bullets nearby / enemy about to shoot. Must dodge or dive.",
+        "COVER":    "In or near cover. Enemy nearby but not in clear sight. Hold position and peek.",
+        "INTERACT": "An interaction prompt is on screen (door, item, NPC, objective marker).",
+        "IDLE":     "Cutscene, loading screen, menu, or dialogue — no input needed.",
+    }
+
+    lines = [
+        "You are a game-situation classifier.",
+        "You receive a screenshot and classify the current game situation into EXACTLY ONE label.",
+        "",
+    ]
+    if game_ctx:
+        lines += [f"GAME: {game_ctx}", ""]
+
+    lines += ["SITUATION LABELS — pick the first one that applies:", ""]
+    for sit in situations:
+        desc = sit_descriptions.get(sit, "")
+        label_line = f"  {sit}" + (f": {desc}" if desc else "")
+        lines.append(label_line)
+
+    lines += [
+        "",
+        "RULES:",
+        "  • COMBAT requires a CLEARLY visible enemy character on screen right now.",
+        "  • If you are not 100% sure an enemy is present, do NOT pick COMBAT.",
+        "  • IDLE is only valid during cutscenes, menus, or loading screens.",
+        "  • When in doubt between EXPLORE and COVER, pick EXPLORE.",
+        "",
+        "OUTPUT: Respond with EXACTLY ONE word — the situation label.",
+        "No explanation, no punctuation, nothing else.",
+    ]
+    return "\n".join(lines)
+
+
+def _build_user_message(b64_jpeg: str, recent: list[str]) -> HumanMessage:
+    """Build the per-frame vision message."""
+    lines: list[str] = []
+
+    if recent:
+        lines.append(f"Recent situations (oldest → newest): {' → '.join(recent)}")
+
+    # Hard ban if the same situation repeated too many times
+    if len(recent) >= 3 and len(set(recent[-3:])) == 1:
+        last = recent[-1]
+        if last not in ("COMBAT",):  # COMBAT is allowed to persist
+            lines.append(
+                f"WARNING: '{last}' has been chosen {len(recent)} times in a row. "
+                f"Unless the screenshot CLEARLY still matches '{last}', pick something else."
+            )
+
+    lines.append(
+        "Look at the screenshot. "
+        "Check: enemies visible? taking fire? interact prompt? loading screen? "
+        "Pick the ONE situation label that best describes this frame."
+    )
+
+    return HumanMessage(content=[
+        {"type": "text", "text": "\n".join(lines)},
+        {
+            "type": "image_url",
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{b64_jpeg}",
+                "detail": "low",
+            },
+        },
+    ])
+
+
+# ---------------------------------------------------------------------------
+# Node
+# ---------------------------------------------------------------------------
+
+def analyze_node(state: BotState) -> BotState:
+    """
+    LangGraph node: classify the screenshot into a situation label.
+
+    Returns updated state with:
+      - situation: one of SITUATION_LIST
+      - action: same as situation (for display/logging compatibility)
+      - recent_actions: rolling window of last N situations
+    """
+    t0 = time.perf_counter()
+
+    b64 = state.get("screenshot_b64", "")
+    if not b64:
+        return {**state, "situation": "EXPLORE", "action": "EXPLORE"}
+
+    recent = list(state.get("recent_actions", []))
+    llm = _get_llm()
+
+    messages = [
+        SystemMessage(content=_get_system_prompt()),
+        _build_user_message(b64, recent),
+    ]
+
+    response = llm.invoke(messages)
+
+    # Parse — strip whitespace, upper-case, validate
+    raw: str = response.content.strip().upper()
+    word = raw.split()[0] if raw else "EXPLORE"
+
+    situations: list[str] = getattr(config, "SITUATION_LIST",
+                                    ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"])
+    situation = word if word in situations else "EXPLORE"
+
+    t1 = time.perf_counter()
+
+    window = getattr(config, "RECENT_ACTIONS_WINDOW", 8)
+    new_recent = (recent + [situation])[-window:]
+
+    updates: BotState = {
+        "situation": situation,
+        "action": situation,       # keep display field in sync
+        "recent_actions": new_recent,
+    }
+    if config.DEBUG_TIMING:
+        timing = dict(state.get("timing", {}))
+        timing["analyze_ms"] = round((t1 - t0) * 1000, 2)
+        updates["timing"] = timing
+
+    return {**state, **updates}
+
 
     if provider == "openai":
         from langchain_openai import ChatOpenAI

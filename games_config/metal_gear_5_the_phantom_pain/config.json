@@ -2,146 +2,144 @@
   "game_name": "Metal Gear Solid V: The Phantom Pain",
   "game_id": "metal_gear_5_the_phantom_pain",
   "description": "Default PC keyboard and mouse bindings for MGSV:TPP.",
-  "game_context": "Metal Gear Solid V: The Phantom Pain — stealth action. You are Snake infiltrating enemy outposts. Core loop: move through the environment, scan for guards, take them out or sneak past, reach objectives. Shoot only when an enemy is clearly visible on screen. Sprint between cover. Combine movement with camera — do not stand still just aiming. Vary your actions every frame.",
+  "game_context": "Metal Gear Solid V: The Phantom Pain â€” stealth action. You are Snake infiltrating enemy outposts. Core loop: move through the environment, scan for guards, shoot enemies only when clearly visible, sprint between cover. Do not stand still.",
 
-  "action_list": [
-    "MOVE_FORWARD",
-    "SPRINT_FORWARD",
-    "SPRINT_AND_LOOK_RIGHT",
-    "SPRINT_AND_LOOK_LEFT",
-    "MOVE_AND_LOOK_RIGHT",
-    "MOVE_AND_LOOK_LEFT",
-    "STRAFE_LEFT",
-    "STRAFE_RIGHT",
-    "LOOK_LEFT",
-    "LOOK_RIGHT",
-    "TAKE_COVER",
-    "AIM_SHOOT",
-    "STRAFE_SHOOT_RIGHT",
-    "STRAFE_SHOOT_LEFT",
-    "RELOAD",
-    "QUICK_DIVE",
-    "CONTEXT_ACTION",
-    "IDLE"
-  ],
+  "situation_list": ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"],
 
+  "behaviors": {
+    "EXPLORE": [
+      [
+        { "keys": ["shift", "w"], "hold_ms": 1400 },
+        { "mouse_move": { "dx": 500, "dy": 0, "steps": 14 } }
+      ],
+      [
+        { "keys": ["shift", "w"], "hold_ms": 1400 },
+        { "mouse_move": { "dx": -500, "dy": 0, "steps": 14 } }
+      ],
+      [
+        { "keys": ["shift", "w"], "hold_ms": 1400 },
+        { "mouse_move": { "dx": 300, "dy": -80, "steps": 10 } }
+      ],
+      [
+        { "keys": ["shift", "w"], "hold_ms": 1400 },
+        { "mouse_move": { "dx": -300, "dy": -80, "steps": 10 } }
+      ],
+      [
+        { "keys": ["w"], "hold_ms": 1000 },
+        { "mouse_move": { "dx": 600, "dy": 0, "steps": 14 } }
+      ],
+      [
+        { "keys": ["w"], "hold_ms": 1000 },
+        { "mouse_move": { "dx": -600, "dy": 0, "steps": 14 } }
+      ]
+    ],
+
+    "COMBAT": [
+      [
+        {
+          "sequence": [
+            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+            { "mouse_click": "left", "hold_ms": 100 }
+          ]
+        },
+        { "keys": ["d"], "hold_ms": 400 }
+      ],
+      [
+        {
+          "sequence": [
+            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+            { "mouse_click": "left", "hold_ms": 100 }
+          ]
+        },
+        { "keys": ["a"], "hold_ms": 400 }
+      ],
+      [
+        {
+          "sequence": [
+            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+            { "mouse_click": "left", "hold_ms": 100 },
+            { "mouse_click": "left", "hold_ms": 100, "delay_after_ms": 80 },
+            { "mouse_click": "left", "hold_ms": 100 }
+          ]
+        }
+      ],
+      [
+        {
+          "sequence": [
+            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+            { "mouse_click": "left", "hold_ms": 100 }
+          ]
+        },
+        { "keys": ["shift", "d"], "hold_ms": 500 }
+      ],
+      [
+        {
+          "sequence": [
+            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+            { "mouse_click": "left", "hold_ms": 100 }
+          ]
+        },
+        { "keys": ["shift", "a"], "hold_ms": 500 }
+      ]
+    ],
+
+    "EVADE": [
+      [{ "keys": ["space"], "hold_ms": 120 }],
+      [{ "keys": ["space"], "hold_ms": 120 }],
+      [
+        { "keys": ["space"], "hold_ms": 120 },
+        { "mouse_move": { "dx": 300, "dy": 0, "steps": 8 } }
+      ],
+      [
+        { "keys": ["d"], "hold_ms": 500 },
+        { "mouse_move": { "dx": 250, "dy": 0, "steps": 8 } }
+      ],
+      [
+        { "keys": ["a"], "hold_ms": 500 },
+        { "mouse_move": { "dx": -250, "dy": 0, "steps": 8 } }
+      ],
+      [{ "keys": ["shift", "a"], "hold_ms": 600 }],
+      [{ "keys": ["shift", "d"], "hold_ms": 600 }]
+    ],
+
+    "COVER": [
+      [
+        { "keys": ["c"], "hold_ms": 120 },
+        { "mouse_move": { "dx": 500, "dy": 0, "steps": 12 } }
+      ],
+      [
+        { "keys": ["c"], "hold_ms": 120 },
+        { "mouse_move": { "dx": -500, "dy": 0, "steps": 12 } }
+      ],
+      [
+        { "keys": ["c"], "hold_ms": 120 },
+        { "mouse_move": { "dx": 0, "dy": -200, "steps": 8 } }
+      ],
+      [{ "mouse_move": { "dx": 600, "dy": 0, "steps": 14 } }],
+      [{ "mouse_move": { "dx": -600, "dy": 0, "steps": 14 } }]
+    ],
+
+    "INTERACT": [[{ "keys": ["e"], "hold_ms": 150 }]],
+
+    "IDLE": []
+  },
+
+  "action_list": ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"],
   "action_descriptions": {
-    "MOVE_FORWARD": "Walk forward toward objective or next cover — 1.5 seconds",
-    "SPRINT_FORWARD": "Sprint straight ahead at full speed — 1.5 seconds",
-    "SPRINT_AND_LOOK_RIGHT": "Sprint forward WHILE sweeping camera right — move + scan simultaneously",
-    "SPRINT_AND_LOOK_LEFT": "Sprint forward WHILE sweeping camera left — move + scan simultaneously",
-    "MOVE_AND_LOOK_RIGHT": "Walk forward WHILE panning camera right — stealthy advance with scan",
-    "MOVE_AND_LOOK_LEFT": "Walk forward WHILE panning camera left — stealthy advance with scan",
-    "STRAFE_LEFT": "Step left to reach cover or dodge",
-    "STRAFE_RIGHT": "Step right to reach cover or dodge",
-    "LOOK_LEFT": "Sweep camera left only — use when stationary to scan for guards",
-    "LOOK_RIGHT": "Sweep camera right only — use when stationary to scan for guards",
-    "TAKE_COVER": "Crouch/prone to hide from guards or reduce exposure",
-    "AIM_SHOOT": "Snap-aim and fire at the enemy visible on screen RIGHT NOW",
-    "STRAFE_SHOOT_RIGHT": "Dodge right WHILE shooting — strafe away from enemy fire and return fire",
-    "STRAFE_SHOOT_LEFT": "Dodge left WHILE shooting — strafe away from enemy fire and return fire",
-    "RELOAD": "Reload weapon — only when ammo counter is low or empty",
-    "QUICK_DIVE": "Dive/roll to evade gunfire or fast slide",
-    "CONTEXT_ACTION": "Interact — open door, grab item, interrogate or grab guard",
-    "IDLE": "Do nothing — ONLY for loading screens, cutscenes, or pause menus"
+    "EXPLORE": "No enemies visible â€” sprint and scan the environment",
+    "COMBAT": "Enemy clearly visible â€” aim and shoot, optionally while strafing",
+    "EVADE": "Taking fire or danger â€” dive, roll, or sprint sideways",
+    "COVER": "Near cover â€” crouch and scan without exposing self",
+    "INTERACT": "On-screen prompt â€” interact with object / NPC",
+    "IDLE": "Cutscene / loading screen / menu â€” no input"
   },
 
   "key_map": {
-    "MOVE_FORWARD": { "type": "keyboard", "key": "w", "hold_ms": 1500 },
-    "SPRINT_FORWARD": {
-      "type": "combo",
-      "keys": ["shift", "w"],
-      "hold_ms": 1500
-    },
-
-    "SPRINT_AND_LOOK_RIGHT": {
-      "type": "parallel",
-      "actions": [
-        { "type": "combo", "keys": ["shift", "w"], "hold_ms": 1000 },
-        { "type": "mouse_move", "dx": 500, "dy": 0, "steps": 12 }
-      ]
-    },
-    "SPRINT_AND_LOOK_LEFT": {
-      "type": "parallel",
-      "actions": [
-        { "type": "combo", "keys": ["shift", "w"], "hold_ms": 1000 },
-        { "type": "mouse_move", "dx": -500, "dy": 0, "steps": 12 }
-      ]
-    },
-    "MOVE_AND_LOOK_RIGHT": {
-      "type": "parallel",
-      "actions": [
-        { "type": "keyboard", "key": "w", "hold_ms": 900 },
-        { "type": "mouse_move", "dx": 400, "dy": 0, "steps": 10 }
-      ]
-    },
-    "MOVE_AND_LOOK_LEFT": {
-      "type": "parallel",
-      "actions": [
-        { "type": "keyboard", "key": "w", "hold_ms": 900 },
-        { "type": "mouse_move", "dx": -400, "dy": 0, "steps": 10 }
-      ]
-    },
-
-    "STRAFE_LEFT": { "type": "keyboard", "key": "a", "hold_ms": 400 },
-    "STRAFE_RIGHT": { "type": "keyboard", "key": "d", "hold_ms": 400 },
-    "LOOK_LEFT": { "type": "mouse_move", "dx": -600, "dy": 0, "steps": 12 },
-    "LOOK_RIGHT": { "type": "mouse_move", "dx": 600, "dy": 0, "steps": 12 },
-    "TAKE_COVER": { "type": "keyboard", "key": "c", "hold_ms": 120 },
-    "CONTEXT_ACTION": { "type": "keyboard", "key": "e", "hold_ms": 120 },
-
-    "AIM_SHOOT": {
-      "type": "sequence",
-      "steps": [
-        {
-          "type": "mouse",
-          "button": "right",
-          "hold_ms": 180,
-          "delay_after_ms": 60
-        },
-        { "type": "mouse", "button": "left", "hold_ms": 100 }
-      ]
-    },
-
-    "STRAFE_SHOOT_RIGHT": {
-      "type": "parallel",
-      "actions": [
-        { "type": "keyboard", "key": "d", "hold_ms": 600 },
-        {
-          "type": "sequence",
-          "steps": [
-            {
-              "type": "mouse",
-              "button": "right",
-              "hold_ms": 180,
-              "delay_after_ms": 60
-            },
-            { "type": "mouse", "button": "left", "hold_ms": 100 }
-          ]
-        }
-      ]
-    },
-    "STRAFE_SHOOT_LEFT": {
-      "type": "parallel",
-      "actions": [
-        { "type": "keyboard", "key": "a", "hold_ms": 600 },
-        {
-          "type": "sequence",
-          "steps": [
-            {
-              "type": "mouse",
-              "button": "right",
-              "hold_ms": 180,
-              "delay_after_ms": 60
-            },
-            { "type": "mouse", "button": "left", "hold_ms": 100 }
-          ]
-        }
-      ]
-    },
-
-    "RELOAD": { "type": "keyboard", "key": "r", "hold_ms": 120 },
-    "QUICK_DIVE": { "type": "keyboard", "key": "space", "hold_ms": 120 },
+    "EXPLORE": null,
+    "COMBAT": null,
+    "EVADE": null,
+    "COVER": null,
+    "INTERACT": null,
     "IDLE": null
   }
 }
