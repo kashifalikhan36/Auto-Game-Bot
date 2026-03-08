@@ -1,0 +1,22 @@
+# Screenshot capture (DXGI-based, fastest on Windows)
+dxcam
+
+# LangChain + LangGraph
+langchain>=0.3.0
+langchain-openai>=0.3.0
+langgraph>=0.2.0
+
+# Azure OpenAI (via langchain-openai, but also direct client)
+openai>=1.0.0
+
+# Image processing
+opencv-python-headless>=4.9.0
+
+# Interception driver Python bindings
+# Requires the Interception kernel driver to be installed first:
+# https://github.com/oblitum/Interception/releases
+# Run install-interception.exe as Administrator, then reboot.
+interception-python
+
+# Environment variables
+python-dotenv>=1.0.0
