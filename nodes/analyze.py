@@ -1,13 +1,12 @@
 """
 Analyze node -- sends the current screenshot to an LLM vision model and has
-the AI pick a SPECIFIC KEY ACTION (e.g. AIM_SHOOT, SPRINT_LOOK_RIGHT).
+the AI pick a SPECIFIC KEY ACTION to execute RIGHT NOW.
 
-The LLM is shown the full named_actions menu from the game config and selects
-exactly one action name per frame.  act_node then executes those tracks
-(keyboard + mouse) directly via nodes/behaviors.py.
+The LLM sees the full list of named_actions from the game config and selects
+exactly one per frame.  act_node forwards the choice to the behavior engine
+which executes the matching key/mouse tracks simultaneously.
 
 Supported providers: azure, openai, gemini, anthropic
-Active provider is chosen by config.ACTIVE_PROVIDER (auto-detected from .env).
 """
 
 from __future__ import annotations
@@ -81,14 +80,16 @@ def _get_llm() -> Any:
 # ---------------------------------------------------------------------------
 
 def _action_to_situation(action: str) -> str:
-    """Derive a broad situation label from a named action for display/logging."""
-    if any(x in action for x in ("AIM", "SHOOT", "BURST", "STRAFE")):
+    """Map a named action back to a broad situation label for display/logging."""
+    a = action.upper()
+    if any(x in a for x in ("AIM", "SHOOT", "BURST", "RELOAD")):
         return "COMBAT"
-    if any(x in action for x in ("DIVE", "EVADE", "SPRINT_BACK")):
+    if any(x in a for x in ("QUICK_DIVE", "EVADE", "SPRINT_BACKWARD")):
         return "EVADE"
-    if any(x in action for x in ("PEEK", "CROUCH")):
+    if any(x in a for x in ("LOOK_RIGHT", "LOOK_LEFT", "LOOK_UP", "LOOK_DOWN",
+                              "CROUCH", "PRONE", "PEEK")):
         return "COVER"
-    if action == "INTERACT_OBJECT":
+    if action == "INTERACT":
         return "INTERACT"
     if action == "DO_NOTHING":
         return "IDLE"
@@ -100,43 +101,101 @@ def _action_to_situation(action: str) -> str:
 # ---------------------------------------------------------------------------
 
 def _get_system_prompt() -> str:
-    """Build the system prompt that asks the LLM to pick a specific key action."""
+    """Build the system prompt listing all named actions and decision rules."""
     named_actions: dict = getattr(config, "NAMED_ACTIONS", {})
     descriptions: dict = getattr(config, "NAMED_ACTION_DESCRIPTIONS", {})
     game_ctx: str = getattr(config, "GAME_CONTEXT", "")
 
     lines = [
-        "You are an AI agent directly controlling a video game character.",
-        "You see a screenshot and decide which key action to perform RIGHT NOW.",
+        "You are an AI agent controlling a video game character in REAL TIME.",
+        "You receive a screenshot every few seconds and must pick ONE action to perform.",
+        "Your choice is immediately executed as real keyboard and mouse input.",
         "",
     ]
-    if game_ctx:
-        lines += [f"GAME: {game_ctx}", ""]
 
-    lines += ["AVAILABLE KEY ACTIONS (choose exactly one):", ""]
-    for name in named_actions:
-        desc = descriptions.get(name, "")
-        lines.append(f"  {name}: {desc}" if desc else f"  {name}")
+    if game_ctx:
+        lines += ["== GAME INFO ==", game_ctx, ""]
+
+    # Build the full action menu
+    lines += ["== AVAILABLE ACTIONS (pick EXACTLY ONE) ==", ""]
+    for name, desc in descriptions.items():
+        if name in named_actions:
+            lines.append(f"  {name}")
+            lines.append(f"    {desc}")
+    lines.append("")
 
     lines += [
+        "== DECISION RULES — apply top to bottom, pick the FIRST rule that fits ==",
         "",
-        "DECISION RULES (apply top-to-bottom, pick the FIRST rule that matches):",
-        "  1. Enemy clearly visible on screen RIGHT NOW",
-        "     -> AIM_SHOOT / AIM_BURST / AIM_SHOOT_STRAFE_RIGHT / AIM_SHOOT_STRAFE_LEFT",
-        "  2. Bullets incoming, taking fire, or enemy about to shoot",
-        "     -> DIVE_DODGE / EVADE_SPRINT_RIGHT / EVADE_SPRINT_LEFT / SPRINT_BACK",
-        "  3. Interact prompt visible on screen (door, item, NPC)",
-        "     -> INTERACT_OBJECT",
-        "  4. Enemy nearby but not clearly visible -- peek from cover",
-        "     -> PEEK_RIGHT / PEEK_LEFT / PEEK_UP / CROUCH_PEEK_RIGHT / CROUCH_PEEK_LEFT",
-        "  5. No immediate threat -- explore and move forward",
-        "     -> SPRINT_FORWARD / SPRINT_LOOK_RIGHT / SPRINT_LOOK_LEFT"
-        " / SPRINT_LOOK_UP_RIGHT / SPRINT_LOOK_UP_LEFT",
-        "  6. Cutscene, menu, or loading screen -- do nothing",
-        "     -> DO_NOTHING",
+        "RULE 1 — RELOAD (highest urgency if ammo is 0):",
+        "  Ammo counter on HUD shows 0 or magazine is empty",
+        "  -> RELOAD_WEAPON",
         "",
-        "OUTPUT: Respond with EXACTLY ONE word -- the action name from the list above.",
-        "No explanation, no punctuation, no other text whatsoever.",
+        "RULE 2 — SHOOT ENEMY (enemy character clearly on screen right now):",
+        "  Enemy standing still or moving slowly, clearly in front",
+        "  -> AIM_BURST",
+        "  Enemy moving, far away, or in cover",
+        "  -> AIM_SHOOT",
+        "  Enemy on your right side while shooting",
+        "  -> AIM_SHOOT_STRAFE_LEFT  (sidestep left to stay out of their aim)",
+        "  Enemy on your left side while shooting",
+        "  -> AIM_SHOOT_STRAFE_RIGHT (sidestep right to stay out of their aim)",
+        "",
+        "RULE 3 — EVADE (bullets near you / red alert / Snake is taking damage):",
+        "  Bullets or explosions very close to Snake",
+        "  -> QUICK_DIVE",
+        "  Enemy is chasing from behind or you need to break contact",
+        "  -> EVADE_RIGHT   OR   EVADE_LEFT   OR   SPRINT_BACKWARD",
+        "",
+        "RULE 4 — CROUCH / HIDE (enemy alert cone nearby but enemy not shooting yet):",
+        "  Yellow alert indicator visible / enemy searching / low health",
+        "  -> CROUCH_TOGGLE  (press C to go prone/crouch — recovers health, lowers profile)",
+        "  Need to peek at the situation from cover",
+        "  -> LOOK_RIGHT   OR   LOOK_LEFT   OR   LOOK_UP",
+        "",
+        "RULE 5 — INTERACT (on-screen prompt visible):",
+        "  A button prompt with E icon appears near an object, door, or NPC",
+        "  -> INTERACT",
+        "",
+        "RULE 6 — OBSTACLE / WALL BLOCKING PATH:",
+        "  The path directly ahead is blocked by a wall, fence, or cliff edge:",
+        "  a) FIRST try a big camera sweep to find the open route:",
+        "     Open space on right -> LOOK_RIGHT_BIG  then  RUN_LOOK_RIGHT",
+        "     Open space on left  -> LOOK_LEFT_BIG   then  RUN_LOOK_LEFT",
+        "  b) If still blocked, sidestep around it:",
+        "     -> STRAFE_LEFT  OR  STRAFE_RIGHT",
+        "  c) If in a tight corridor, back up first:",
+        "     -> RUN_BACKWARD",
+        "",
+        "RULE 7 — SCOUT unknown area (no enemies visible yet, limited view):",
+        "  You can't see what's ahead or the path curves:",
+        "  -> USE_BINOCULARS  (hold F to tag enemies before moving in)",
+        "  OR pan the camera to look:",
+        "  -> LOOK_RIGHT   OR   LOOK_LEFT   OR   LOOK_UP",
+        "",
+        "RULE 8 — EXPLORE (default — path is clear, no immediate threats):",
+        "  Clear path straight ahead, no enemies, no obstacles visible",
+        "  -> SPRINT_FORWARD",
+        "  Path curves or you want to scan while running:",
+        "  -> SPRINT_LOOK_RIGHT   OR   SPRINT_LOOK_LEFT   OR   SPRINT_LOOK_UP",
+        "  Narrow passage or need careful movement:",
+        "  -> RUN_FORWARD   OR   RUN_LOOK_RIGHT   OR   RUN_LOOK_LEFT",
+        "",
+        "RULE 9 — DO NOTHING (lowest priority):",
+        "  A cutscene is playing / loading screen / dialogue / in-game menu",
+        "  -> DO_NOTHING",
+        "",
+        "== CRITICAL RULES ==",
+        "* NEVER pick DO_NOTHING if Snake can move freely.",
+        "* NEVER pick INTERACT unless the E prompt is literally on screen right now.",
+        "* NEVER pick AIM_SHOOT or AIM_BURST unless an enemy character body is clearly visible.",
+        "* NEVER stand still when there is an open path -- always move.",
+        "* If the same action has been chosen 3 times in a row and the situation has NOT changed,",
+        "  pick a different action from the same category.",
+        "",
+        "== OUTPUT FORMAT ==",
+        "Respond with EXACTLY ONE word -- the action name from the list above.",
+        "No punctuation, no explanation, nothing else.",
     ]
     return "\n".join(lines)
 
@@ -146,21 +205,27 @@ def _build_user_message(b64_jpeg: str, recent: list[str]) -> HumanMessage:
     lines: list[str] = []
 
     if recent:
-        lines.append(f"Recent actions (oldest -> newest): {' -> '.join(recent)}")
+        lines.append(f"Recent actions (oldest -> newest): {chr(32).join(f'{a}' for a in recent)}")
 
-    # Warn if the same non-combat action repeated 3+ times
+    # Warn if stuck in a loop
     if len(recent) >= 3 and len(set(recent[-3:])) == 1:
         last = recent[-1]
         if not any(x in last for x in ("AIM", "SHOOT", "BURST")):
             lines.append(
                 f"WARNING: '{last}' chosen {len(recent)} times in a row. "
-                "Pick a DIFFERENT action unless the screenshot clearly still demands it."
+                "The situation must have changed -- pick a DIFFERENT action this frame."
             )
 
     lines.append(
-        "Study the screenshot carefully: are enemies visible? Taking fire? "
-        "Interact prompt on screen? Loading screen or cutscene? "
-        "Apply the decision rules and output ONE action name."
+        "Look at the screenshot carefully. Check for:\n"
+        "  - Enemies (military uniforms, weapons) visible on screen? -> SHOOT rules\n"
+        "  - Red ! alert / bullets nearby / Snake taking damage? -> EVADE rules\n"
+        "  - E interact prompt visible? -> INTERACT\n"
+        "  - Ammo counter at 0? -> RELOAD_WEAPON\n"
+        "  - Wall or obstacle blocking the path ahead? -> OBSTACLE rules\n"
+        "  - Open path ahead? -> EXPLORE rules\n"
+        "  - Cutscene / loading / menu? -> DO_NOTHING\n"
+        "Output ONE action name."
     )
 
     return HumanMessage(content=[
@@ -183,11 +248,11 @@ def analyze_node(state: BotState) -> BotState:
     """
     LangGraph node: the LLM sees the screenshot and picks a specific key action.
 
-    Returns updated state with:
-      - chosen_action: named action the LLM selected (e.g. "AIM_SHOOT", "SPRINT_LOOK_RIGHT")
-      - situation: broad category derived from chosen_action (for display)
-      - action: same as chosen_action (display/logging compat)
-      - recent_actions: rolling window of last N chosen actions
+    Returns updated state:
+      - chosen_action  named action the LLM selected (e.g. "AIM_SHOOT")
+      - situation      broad category derived from chosen_action (for display)
+      - action         same as chosen_action (display/logging compat)
+      - recent_actions rolling window of last N chosen actions
     """
     t0 = time.perf_counter()
 
@@ -197,7 +262,10 @@ def analyze_node(state: BotState) -> BotState:
 
     if not b64:
         sit = _action_to_situation(default_action)
-        return {**state, "chosen_action": default_action, "situation": sit, "action": default_action}
+        return {**state,
+                "chosen_action": default_action,
+                "situation": sit,
+                "action": default_action}
 
     recent = list(state.get("recent_actions", []))
     llm = _get_llm()
@@ -213,11 +281,10 @@ def analyze_node(state: BotState) -> BotState:
     raw: str = response.content.strip().upper()
     word = raw.split()[0] if raw else default_action
 
-    # Validate: must be a known named action
+    # Validate against known named actions
     if named_actions:
         chosen_action = word if word in named_actions else default_action
     else:
-        # Fallback: validate against situation list
         situations: list[str] = getattr(config, "SITUATION_LIST",
                                         ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"])
         chosen_action = word if word in situations else default_action

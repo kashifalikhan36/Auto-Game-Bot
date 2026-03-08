@@ -1,220 +1,516 @@
 {
   "game_name": "Metal Gear Solid V: The Phantom Pain",
   "game_id": "metal_gear_5_the_phantom_pain",
-  "description": "Default PC keyboard and mouse bindings for MGSV:TPP.",
-  "game_context": "Metal Gear Solid V: The Phantom Pain â€” stealth action. You are Snake infiltrating enemy outposts. Core loop: move through the environment, scan for guards, shoot enemies only when clearly visible, sprint between cover. Do not stand still.",
-
-  "situation_list": ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"],
-
+  "description": "Full PC keyboard+mouse bindings for MGSV:TPP (PC default layout).",
+  "game_context": "Metal Gear Solid V: The Phantom Pain (MGS5/MGSV). You are Big Boss (Snake) infiltrating enemy outposts on foot. Enemies wear military uniforms and carry weapons. When they spot you a red ! appears. Run with W, sprint by holding Shift while running (Shift+W), move backward S, strafe A/D. Press C to toggle crouch/prone (crouch to hide and recover health). Press Space for a quick dive/dodge. Aim with Right Mouse Button, shoot with Left Mouse Button. Reload with R. Interact with objects/NPCs using E. Camera controls where Snake looks; pan it left/right to see around obstacles. Goal: eliminate visible enemies, avoid patrols, reach objectives. Never stand still in the open.",
+  "situation_list": [
+    "EXPLORE",
+    "COMBAT",
+    "EVADE",
+    "COVER",
+    "INTERACT",
+    "IDLE"
+  ],
   "behaviors": {
     "EXPLORE": [
-      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
-      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
-      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
-      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
       [
-        { "keys": ["shift", "w"], "hold_ms": 1300 },
-        { "mouse_move": { "dx": 60, "dy": 0, "steps": 20 } }
+        {
+          "keys": [
+            "shift",
+            "w"
+          ],
+          "hold_ms": 1500
+        }
       ],
       [
-        { "keys": ["shift", "w"], "hold_ms": 1300 },
-        { "mouse_move": { "dx": -60, "dy": 0, "steps": 20 } }
+        {
+          "keys": [
+            "shift",
+            "w"
+          ],
+          "hold_ms": 1300
+        },
+        {
+          "mouse_move": {
+            "dx": 60,
+            "dy": 0,
+            "steps": 20
+          }
+        }
       ],
       [
-        { "keys": ["shift", "w"], "hold_ms": 1200 },
-        { "mouse_move": { "dx": 70, "dy": -20, "steps": 20 } }
-      ],
-      [
-        { "keys": ["shift", "w"], "hold_ms": 1200 },
-        { "mouse_move": { "dx": -70, "dy": -20, "steps": 20 } }
+        {
+          "keys": [
+            "shift",
+            "w"
+          ],
+          "hold_ms": 1300
+        },
+        {
+          "mouse_move": {
+            "dx": -60,
+            "dy": 0,
+            "steps": 20
+          }
+        }
       ]
     ],
-
     "COMBAT": [
       [
         {
           "sequence": [
-            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-            { "mouse_click": "left", "hold_ms": 100 }
+            {
+              "mouse_click": "right",
+              "hold_ms": 150,
+              "delay_after_ms": 60
+            },
+            {
+              "mouse_click": "left",
+              "hold_ms": 100
+            }
           ]
         }
-      ],
-      [
-        {
-          "sequence": [
-            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-            { "mouse_click": "left", "hold_ms": 100 },
-            { "mouse_click": "left", "hold_ms": 100, "delay_after_ms": 80 },
-            { "mouse_click": "left", "hold_ms": 100 }
-          ]
-        }
-      ],
-      [
-        {
-          "sequence": [
-            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-            { "mouse_click": "left", "hold_ms": 100 }
-          ]
-        },
-        { "keys": ["d"], "hold_ms": 400 }
-      ],
-      [
-        {
-          "sequence": [
-            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-            { "mouse_click": "left", "hold_ms": 100 }
-          ]
-        },
-        { "keys": ["a"], "hold_ms": 400 }
       ]
     ],
-
     "EVADE": [
-      [{ "keys": ["space"], "hold_ms": 120 }],
-      [{ "keys": ["space"], "hold_ms": 120 }],
-      [{ "keys": ["space"], "hold_ms": 120 }],
       [
-        { "keys": ["shift", "w"], "hold_ms": 700 },
-        { "mouse_move": { "dx": 80, "dy": 0, "steps": 20 } }
-      ],
-      [
-        { "keys": ["shift", "w"], "hold_ms": 700 },
-        { "mouse_move": { "dx": -80, "dy": 0, "steps": 20 } }
-      ],
-      [{ "keys": ["shift", "s"], "hold_ms": 500 }]
-    ],
-
-    "COVER": [
-      [{ "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }],
-      [{ "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }],
-      [{ "mouse_move": { "dx": 0, "dy": -50, "steps": 15 } }],
-      [
-        { "keys": ["c"], "hold_ms": 150 },
-        { "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }
-      ],
-      [
-        { "keys": ["c"], "hold_ms": 150 },
-        { "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }
+        {
+          "keys": [
+            "space"
+          ],
+          "hold_ms": 120
+        }
       ]
     ],
-
-    "INTERACT": [[{ "keys": ["e"], "hold_ms": 200 }]],
-
+    "COVER": [
+      [
+        {
+          "keys": [
+            "c"
+          ],
+          "hold_ms": 150
+        },
+        {
+          "mouse_move": {
+            "dx": 80,
+            "dy": 0,
+            "steps": 20
+          }
+        }
+      ]
+    ],
+    "INTERACT": [
+      [
+        {
+          "keys": [
+            "e"
+          ],
+          "hold_ms": 200
+        }
+      ]
+    ],
     "IDLE": []
   },
-
   "named_actions": {
-    "SPRINT_FORWARD": [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
+    "SPRINT_FORWARD": [
+      {
+        "keys": [
+          "shift",
+          "w"
+        ],
+        "hold_ms": 1500
+      }
+    ],
+    "RUN_FORWARD": [
+      {
+        "keys": [
+          "w"
+        ],
+        "hold_ms": 900
+      }
+    ],
+    "RUN_BACKWARD": [
+      {
+        "keys": [
+          "s"
+        ],
+        "hold_ms": 700
+      }
+    ],
+    "STRAFE_LEFT": [
+      {
+        "keys": [
+          "a"
+        ],
+        "hold_ms": 600
+      }
+    ],
+    "STRAFE_RIGHT": [
+      {
+        "keys": [
+          "d"
+        ],
+        "hold_ms": 600
+      }
+    ],
     "SPRINT_LOOK_RIGHT": [
-      { "keys": ["shift", "w"], "hold_ms": 1300 },
-      { "mouse_move": { "dx": 60, "dy": 0, "steps": 20 } }
+      {
+        "keys": [
+          "shift",
+          "w"
+        ],
+        "hold_ms": 1300
+      },
+      {
+        "mouse_move": {
+          "dx": 90,
+          "dy": 0,
+          "steps": 20
+        }
+      }
     ],
     "SPRINT_LOOK_LEFT": [
-      { "keys": ["shift", "w"], "hold_ms": 1300 },
-      { "mouse_move": { "dx": -60, "dy": 0, "steps": 20 } }
+      {
+        "keys": [
+          "shift",
+          "w"
+        ],
+        "hold_ms": 1300
+      },
+      {
+        "mouse_move": {
+          "dx": -90,
+          "dy": 0,
+          "steps": 20
+        }
+      }
     ],
-    "SPRINT_LOOK_UP_RIGHT": [
-      { "keys": ["shift", "w"], "hold_ms": 1200 },
-      { "mouse_move": { "dx": 70, "dy": -20, "steps": 20 } }
+    "SPRINT_LOOK_UP": [
+      {
+        "keys": [
+          "shift",
+          "w"
+        ],
+        "hold_ms": 1200
+      },
+      {
+        "mouse_move": {
+          "dx": 0,
+          "dy": -60,
+          "steps": 18
+        }
+      }
     ],
-    "SPRINT_LOOK_UP_LEFT": [
-      { "keys": ["shift", "w"], "hold_ms": 1200 },
-      { "mouse_move": { "dx": -70, "dy": -20, "steps": 20 } }
+    "RUN_LOOK_RIGHT": [
+      {
+        "keys": [
+          "w"
+        ],
+        "hold_ms": 900
+      },
+      {
+        "mouse_move": {
+          "dx": 80,
+          "dy": 0,
+          "steps": 18
+        }
+      }
+    ],
+    "RUN_LOOK_LEFT": [
+      {
+        "keys": [
+          "w"
+        ],
+        "hold_ms": 900
+      },
+      {
+        "mouse_move": {
+          "dx": -80,
+          "dy": 0,
+          "steps": 18
+        }
+      }
+    ],
+    "LOOK_RIGHT_BIG": [
+      {
+        "mouse_move": {
+          "dx": 160,
+          "dy": 0,
+          "steps": 22
+        }
+      }
+    ],
+    "LOOK_LEFT_BIG": [
+      {
+        "mouse_move": {
+          "dx": -160,
+          "dy": 0,
+          "steps": 22
+        }
+      }
+    ],
+    "LOOK_RIGHT": [
+      {
+        "mouse_move": {
+          "dx": 90,
+          "dy": 0,
+          "steps": 18
+        }
+      }
+    ],
+    "LOOK_LEFT": [
+      {
+        "mouse_move": {
+          "dx": -90,
+          "dy": 0,
+          "steps": 18
+        }
+      }
+    ],
+    "LOOK_UP": [
+      {
+        "mouse_move": {
+          "dx": 0,
+          "dy": -70,
+          "steps": 15
+        }
+      }
+    ],
+    "LOOK_DOWN": [
+      {
+        "mouse_move": {
+          "dx": 0,
+          "dy": 55,
+          "steps": 15
+        }
+      }
+    ],
+    "CROUCH_TOGGLE": [
+      {
+        "keys": [
+          "c"
+        ],
+        "hold_ms": 100
+      }
+    ],
+    "CROUCH_RUN_FORWARD": [
+      {
+        "keys": [
+          "c"
+        ],
+        "hold_ms": 100
+      },
+      {
+        "keys": [
+          "w"
+        ],
+        "hold_ms": 700
+      }
+    ],
+    "QUICK_DIVE": [
+      {
+        "keys": [
+          "space"
+        ],
+        "hold_ms": 120
+      }
+    ],
+    "EVADE_RIGHT": [
+      {
+        "keys": [
+          "shift",
+          "w"
+        ],
+        "hold_ms": 700
+      },
+      {
+        "mouse_move": {
+          "dx": 130,
+          "dy": 0,
+          "steps": 20
+        }
+      }
+    ],
+    "EVADE_LEFT": [
+      {
+        "keys": [
+          "shift",
+          "w"
+        ],
+        "hold_ms": 700
+      },
+      {
+        "mouse_move": {
+          "dx": -130,
+          "dy": 0,
+          "steps": 20
+        }
+      }
+    ],
+    "SPRINT_BACKWARD": [
+      {
+        "keys": [
+          "shift",
+          "s"
+        ],
+        "hold_ms": 600
+      }
     ],
     "AIM_SHOOT": [
       {
         "sequence": [
-          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-          { "mouse_click": "left", "hold_ms": 100 }
+          {
+            "mouse_click": "right",
+            "hold_ms": 150,
+            "delay_after_ms": 60
+          },
+          {
+            "mouse_click": "left",
+            "hold_ms": 100
+          }
         ]
       }
     ],
     "AIM_BURST": [
       {
         "sequence": [
-          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-          { "mouse_click": "left", "hold_ms": 100 },
-          { "mouse_click": "left", "hold_ms": 100, "delay_after_ms": 80 },
-          { "mouse_click": "left", "hold_ms": 100 }
+          {
+            "mouse_click": "right",
+            "hold_ms": 150,
+            "delay_after_ms": 60
+          },
+          {
+            "mouse_click": "left",
+            "hold_ms": 100
+          },
+          {
+            "mouse_click": "left",
+            "hold_ms": 100,
+            "delay_after_ms": 70
+          },
+          {
+            "mouse_click": "left",
+            "hold_ms": 100
+          }
         ]
       }
     ],
     "AIM_SHOOT_STRAFE_RIGHT": [
       {
         "sequence": [
-          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-          { "mouse_click": "left", "hold_ms": 100 }
+          {
+            "mouse_click": "right",
+            "hold_ms": 150,
+            "delay_after_ms": 60
+          },
+          {
+            "mouse_click": "left",
+            "hold_ms": 100
+          }
         ]
       },
-      { "keys": ["d"], "hold_ms": 400 }
+      {
+        "keys": [
+          "d"
+        ],
+        "hold_ms": 450
+      }
     ],
     "AIM_SHOOT_STRAFE_LEFT": [
       {
         "sequence": [
-          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-          { "mouse_click": "left", "hold_ms": 100 }
+          {
+            "mouse_click": "right",
+            "hold_ms": 150,
+            "delay_after_ms": 60
+          },
+          {
+            "mouse_click": "left",
+            "hold_ms": 100
+          }
         ]
       },
-      { "keys": ["a"], "hold_ms": 400 }
+      {
+        "keys": [
+          "a"
+        ],
+        "hold_ms": 450
+      }
     ],
-    "DIVE_DODGE": [{ "keys": ["space"], "hold_ms": 120 }],
-    "EVADE_SPRINT_RIGHT": [
-      { "keys": ["shift", "w"], "hold_ms": 700 },
-      { "mouse_move": { "dx": 80, "dy": 0, "steps": 20 } }
+    "RELOAD_WEAPON": [
+      {
+        "keys": [
+          "r"
+        ],
+        "hold_ms": 100
+      }
     ],
-    "EVADE_SPRINT_LEFT": [
-      { "keys": ["shift", "w"], "hold_ms": 700 },
-      { "mouse_move": { "dx": -80, "dy": 0, "steps": 20 } }
+    "INTERACT": [
+      {
+        "keys": [
+          "e"
+        ],
+        "hold_ms": 200
+      }
     ],
-    "SPRINT_BACK": [{ "keys": ["shift", "s"], "hold_ms": 500 }],
-    "PEEK_RIGHT": [{ "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }],
-    "PEEK_LEFT": [{ "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }],
-    "PEEK_UP": [{ "mouse_move": { "dx": 0, "dy": -50, "steps": 15 } }],
-    "CROUCH_PEEK_RIGHT": [
-      { "keys": ["c"], "hold_ms": 150 },
-      { "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }
+    "USE_BINOCULARS": [
+      {
+        "keys": [
+          "f"
+        ],
+        "hold_ms": 1200
+      }
     ],
-    "CROUCH_PEEK_LEFT": [
-      { "keys": ["c"], "hold_ms": 150 },
-      { "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }
-    ],
-    "INTERACT_OBJECT": [{ "keys": ["e"], "hold_ms": 200 }],
     "DO_NOTHING": []
   },
-
   "named_action_descriptions": {
-    "SPRINT_FORWARD": "Sprint straight forward — path ahead is clear, no threats",
-    "SPRINT_LOOK_RIGHT": "Sprint forward while panning camera right — explore and curve right",
-    "SPRINT_LOOK_LEFT": "Sprint forward while panning camera left — explore and curve left",
-    "SPRINT_LOOK_UP_RIGHT": "Sprint forward while panning camera up-right — check high ground",
-    "SPRINT_LOOK_UP_LEFT": "Sprint forward while panning camera up-left — check high ground",
-    "AIM_SHOOT": "Right-click aim then left-click shoot once — enemy clearly visible",
-    "AIM_BURST": "Aim and fire 3 shots — stationary or close enemy",
-    "AIM_SHOOT_STRAFE_RIGHT": "Aim+shoot while side-stepping right — fire while dodging right",
-    "AIM_SHOOT_STRAFE_LEFT": "Aim+shoot while side-stepping left — fire while dodging left",
-    "DIVE_DODGE": "Spacebar quick dive — emergency dodge when bullets are incoming",
-    "EVADE_SPRINT_RIGHT": "Sprint + pan right to break contact — escape enemy to the right",
-    "EVADE_SPRINT_LEFT": "Sprint + pan left to break contact — escape enemy to the left",
-    "SPRINT_BACK": "Sprint backward — create distance from an enemy",
-    "PEEK_RIGHT": "Pan camera right — scan for threats while stationary or in cover",
-    "PEEK_LEFT": "Pan camera left — scan for threats while stationary or in cover",
-    "PEEK_UP": "Tilt camera up — check enemies on high ground or windows",
-    "CROUCH_PEEK_RIGHT": "Crouch then pan right — low-profile peek from behind cover",
-    "CROUCH_PEEK_LEFT": "Crouch then pan left — low-profile peek from behind cover",
-    "INTERACT_OBJECT": "Press E to interact — ONLY when interact prompt is visible on screen",
-    "DO_NOTHING": "No input at all — ONLY during cutscenes, loading screens, or menus"
+    "SPRINT_FORWARD": "Shift+W — sprint straight ahead. Use when path is clear and no enemies visible.",
+    "RUN_FORWARD": "W — run forward normally. Use for careful movement in semi-open areas.",
+    "RUN_BACKWARD": "S — run backward. Use to retreat slightly while keeping eyes forward.",
+    "STRAFE_LEFT": "A — sidestep left. Use to step around a wall or obstacle on the right.",
+    "STRAFE_RIGHT": "D — sidestep right. Use to step around a wall or obstacle on the left.",
+    "SPRINT_LOOK_RIGHT": "Shift+W + camera right — sprint and pan camera right. Use to curve right or scan right while running.",
+    "SPRINT_LOOK_LEFT": "Shift+W + camera left — sprint and pan camera left. Use to curve left or scan left while running.",
+    "SPRINT_LOOK_UP": "Shift+W + camera up — sprint and tilt up. Use to check high ground or windows while running.",
+    "RUN_LOOK_RIGHT": "W + camera right — run and pan right. Use for slower, controlled movement around a right-side obstacle.",
+    "RUN_LOOK_LEFT": "W + camera left — run and pan left. Use for slower, controlled movement around a left-side obstacle.",
+    "LOOK_RIGHT_BIG": "Big camera sweep RIGHT (160px). Use when a wall is blocking the path — sweep to find the open route on the right.",
+    "LOOK_LEFT_BIG": "Big camera sweep LEFT (160px). Use when a wall is blocking the path — sweep to find the open route on the left.",
+    "LOOK_RIGHT": "Camera pan right (90px). Use to peek right from cover, scan right for enemies, or adjust view.",
+    "LOOK_LEFT": "Camera pan left (90px). Use to peek left from cover, scan left for enemies, or adjust view.",
+    "LOOK_UP": "Tilt camera up. Use to check rooftops, windows, or elevated enemy positions.",
+    "LOOK_DOWN": "Tilt camera down. Use to check the ground ahead or look for prone enemies.",
+    "CROUCH_TOGGLE": "C — toggle crouch/prone. Use to hide behind cover, lower profile, or slowly recover health.",
+    "CROUCH_RUN_FORWARD": "C then W — go crouch then move forward. Use to move stealthily through open areas.",
+    "QUICK_DIVE": "Space — instant dive/dodge roll. Use ONLY when bullets are hitting near you or an enemy is about to fire.",
+    "EVADE_RIGHT": "Sprint + hard camera right — break away to the right. Use to escape gunfire by sprinting right.",
+    "EVADE_LEFT": "Sprint + hard camera left — break away to the left. Use to escape gunfire by sprinting left.",
+    "SPRINT_BACKWARD": "Shift+S — sprint backward fast. Use to create distance from a close enemy.",
+    "AIM_SHOOT": "Right-click (aim) then left-click (fire) — single shot. Use when enemy is clearly visible in front.",
+    "AIM_BURST": "Aim then fire 3 shots. Use against stationary or close-range targets for maximum damage.",
+    "AIM_SHOOT_STRAFE_RIGHT": "Aim+fire while strafing D (right). Use to fire at an enemy while side-stepping right to dodge their shots.",
+    "AIM_SHOOT_STRAFE_LEFT": "Aim+fire while strafing A (left). Use to fire at an enemy while side-stepping left to dodge their shots.",
+    "RELOAD_WEAPON": "R — reload magazine. Use ONLY when ammo counter shows 0 or is critically low.",
+    "INTERACT": "E — context action. Use ONLY when an on-screen prompt (E icon) is visible near an object, door, or NPC.",
+    "USE_BINOCULARS": "F (hold) — equip binoculars to scout ahead. Use in safe areas to tag enemies before approaching.",
+    "DO_NOTHING": "No input. Use ONLY during cutscenes, loading screens, menus, or dialogues."
   },
-
-  "action_list": ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"],
+  "action_list": [
+    "EXPLORE",
+    "COMBAT",
+    "EVADE",
+    "COVER",
+    "INTERACT",
+    "IDLE"
+  ],
   "action_descriptions": {
-    "EXPLORE": "No enemies visible â€” sprint and scan the environment",
-    "COMBAT": "Enemy clearly visible â€” aim and shoot, optionally while strafing",
-    "EVADE": "Taking fire or danger â€” dive, roll, or sprint sideways",
-    "COVER": "Near cover â€” crouch and scan without exposing self",
-    "INTERACT": "On-screen prompt â€” interact with object / NPC",
-    "IDLE": "Cutscene / loading screen / menu â€” no input"
+    "EXPLORE": "No enemies visible — move and scan",
+    "COMBAT": "Enemy visible — aim and shoot",
+    "EVADE": "Taking fire — dodge or sprint away",
+    "COVER": "Enemy nearby — crouch and peek",
+    "INTERACT": "Prompt on screen — press E",
+    "IDLE": "Cutscene/menu — no input"
   },
-
   "key_map": {
     "EXPLORE": null,
     "COMBAT": null,
