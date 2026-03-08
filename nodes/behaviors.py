@@ -51,14 +51,9 @@ from driver.input_controller import InputController
 
 _WORKER_TYPES: list[list[str]] = [
     ["keys"],
-    ["mouse_move"],
-    ["mouse_click", "sequence"],
+    ["mouse_move", "mouse_click", "sequence"],
 ]
-_NUM_WORKERS = 3
-
-# How long to pause after a camera pan so it doesn't spam every 64 ms.
-# Kept long so camera pans are occasional gestures, not constant spinning.
-_MOUSE_MOVE_COOLDOWN_S = 4.0
+_NUM_WORKERS = 2
 
 
 # ---------------------------------------------------------------------------
@@ -108,30 +103,30 @@ def _exec_track(ctrl: InputController, track: dict) -> None:
 
 class BehaviorEngine:
     """
-    Three persistent daemon threads looping CONTINUOUSLY.
+    Two persistent daemon threads looping CONTINUOUSLY.
 
-    Each worker owns one input resource — so workers never conflict:
-      Worker-0 → keyboard ("keys") tracks only
-      Worker-1 → mouse-move tracks only
-      Worker-2 → click/sequence tracks only
+    Each worker owns one input resource -- so workers never conflict:
+      Worker-0 -> keyboard ("keys") tracks only
+      Worker-1 -> mouse / click / sequence tracks
 
     Each worker's inner loop:
-      1. Read current situation.
-      2. Collect all tracks of its own type from that situation's groups.
-      3. Pick one randomly, execute it (synchronous), repeat.
+      1. Read the current chosen_action label set by act_node.
+      2. Look up that label's track list in named_actions.
+      3. Filter to only tracks of this worker's type.
+      4. Execute the track (synchronous), then immediately loop.
 
-    Never pauses — even while the AI processes the next screenshot,
+    Never pauses -- even while the AI processes the next screenshot,
     the game receives continuous keyboard and mouse input.
 
     Usage (from act_node):
-        engine = get_engine(ctrl)       # singleton, starts 3 workers on first call
-        engine.update(situation, cfg)   # non-blocking, returns in microseconds
+        engine = get_engine(ctrl)                   # singleton, starts workers on first call
+        engine.update(chosen_action, named_actions) # non-blocking, returns in microseconds
     """
 
     def __init__(self, ctrl: InputController) -> None:
         self._ctrl = ctrl
-        self._situation: str = "IDLE"
-        self._behavior_cfg: dict = {}
+        self._chosen_action: str = "DO_NOTHING"
+        self._named_actions: dict[str, list[dict]] = {}
         self._lock = threading.Lock()
         self._stop = threading.Event()
 
@@ -144,11 +139,11 @@ class BehaviorEngine:
             )
             t.start()
 
-    def update(self, situation: str, behavior_cfg: dict) -> None:
-        """Non-blocking: set new situation. Workers pick it up on next loop."""
+    def update(self, chosen_action: str, named_actions: dict[str, list[dict]]) -> None:
+        """Non-blocking: set new chosen action. Workers pick it up on next loop."""
         with self._lock:
-            self._situation = situation
-            self._behavior_cfg = behavior_cfg
+            self._chosen_action = chosen_action
+            self._named_actions = named_actions
 
     def stop(self) -> None:
         self._stop.set()
@@ -157,24 +152,20 @@ class BehaviorEngine:
 
     def _get_state(self) -> tuple[str, dict]:
         with self._lock:
-            return self._situation, self._behavior_cfg
+            return self._chosen_action, self._named_actions
 
     def _worker_loop(self, worker_id: int) -> None:
-        """Tight loop: pick track → execute → repeat."""
+        """Tight loop: look up chosen action -> execute its tracks -> repeat."""
         my_keys = _WORKER_TYPES[worker_id]
         # Stagger start so workers don't all fire at the exact same instant
         time.sleep(worker_id * 0.18)
 
         while not self._stop.is_set():
-            sit, cfg = self._get_state()
-            groups: list[list[dict]] = cfg.get(sit, [])
+            chosen, named_actions = self._get_state()
+            group: list[dict] = named_actions.get(chosen, [])
 
-            # All tracks of this worker's type across every group
-            tracks = [
-                t for g in groups
-                for t in g
-                if any(k in t for k in my_keys)
-            ]
+            # Only tracks that belong to this worker's resource type
+            tracks = [t for t in group if any(k in t for k in my_keys)]
 
             if not tracks:
                 time.sleep(0.05)
@@ -183,11 +174,6 @@ class BehaviorEngine:
             track = random.choice(tracks)
             try:
                 _exec_track(self._ctrl, track)
-                # Camera pans are short (~64 ms); without a cooldown the worker
-                # would spam mouse moves every frame. Sleep so pans are
-                # occasional (≈ once per key-hold cycle) instead of continuous.
-                if "mouse_move" in track:
-                    time.sleep(_MOUSE_MOVE_COOLDOWN_S)
             except Exception:
                 time.sleep(0.05)
 

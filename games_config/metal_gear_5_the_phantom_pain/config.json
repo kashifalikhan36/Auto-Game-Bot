@@ -103,6 +103,108 @@
     "IDLE": []
   },
 
+  "named_actions": {
+    "SPRINT_FORWARD": [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
+    "SPRINT_LOOK_RIGHT": [
+      { "keys": ["shift", "w"], "hold_ms": 1300 },
+      { "mouse_move": { "dx": 60, "dy": 0, "steps": 20 } }
+    ],
+    "SPRINT_LOOK_LEFT": [
+      { "keys": ["shift", "w"], "hold_ms": 1300 },
+      { "mouse_move": { "dx": -60, "dy": 0, "steps": 20 } }
+    ],
+    "SPRINT_LOOK_UP_RIGHT": [
+      { "keys": ["shift", "w"], "hold_ms": 1200 },
+      { "mouse_move": { "dx": 70, "dy": -20, "steps": 20 } }
+    ],
+    "SPRINT_LOOK_UP_LEFT": [
+      { "keys": ["shift", "w"], "hold_ms": 1200 },
+      { "mouse_move": { "dx": -70, "dy": -20, "steps": 20 } }
+    ],
+    "AIM_SHOOT": [
+      {
+        "sequence": [
+          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+          { "mouse_click": "left", "hold_ms": 100 }
+        ]
+      }
+    ],
+    "AIM_BURST": [
+      {
+        "sequence": [
+          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+          { "mouse_click": "left", "hold_ms": 100 },
+          { "mouse_click": "left", "hold_ms": 100, "delay_after_ms": 80 },
+          { "mouse_click": "left", "hold_ms": 100 }
+        ]
+      }
+    ],
+    "AIM_SHOOT_STRAFE_RIGHT": [
+      {
+        "sequence": [
+          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+          { "mouse_click": "left", "hold_ms": 100 }
+        ]
+      },
+      { "keys": ["d"], "hold_ms": 400 }
+    ],
+    "AIM_SHOOT_STRAFE_LEFT": [
+      {
+        "sequence": [
+          { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
+          { "mouse_click": "left", "hold_ms": 100 }
+        ]
+      },
+      { "keys": ["a"], "hold_ms": 400 }
+    ],
+    "DIVE_DODGE": [{ "keys": ["space"], "hold_ms": 120 }],
+    "EVADE_SPRINT_RIGHT": [
+      { "keys": ["shift", "w"], "hold_ms": 700 },
+      { "mouse_move": { "dx": 80, "dy": 0, "steps": 20 } }
+    ],
+    "EVADE_SPRINT_LEFT": [
+      { "keys": ["shift", "w"], "hold_ms": 700 },
+      { "mouse_move": { "dx": -80, "dy": 0, "steps": 20 } }
+    ],
+    "SPRINT_BACK": [{ "keys": ["shift", "s"], "hold_ms": 500 }],
+    "PEEK_RIGHT": [{ "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }],
+    "PEEK_LEFT": [{ "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }],
+    "PEEK_UP": [{ "mouse_move": { "dx": 0, "dy": -50, "steps": 15 } }],
+    "CROUCH_PEEK_RIGHT": [
+      { "keys": ["c"], "hold_ms": 150 },
+      { "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }
+    ],
+    "CROUCH_PEEK_LEFT": [
+      { "keys": ["c"], "hold_ms": 150 },
+      { "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }
+    ],
+    "INTERACT_OBJECT": [{ "keys": ["e"], "hold_ms": 200 }],
+    "DO_NOTHING": []
+  },
+
+  "named_action_descriptions": {
+    "SPRINT_FORWARD": "Sprint straight forward — path ahead is clear, no threats",
+    "SPRINT_LOOK_RIGHT": "Sprint forward while panning camera right — explore and curve right",
+    "SPRINT_LOOK_LEFT": "Sprint forward while panning camera left — explore and curve left",
+    "SPRINT_LOOK_UP_RIGHT": "Sprint forward while panning camera up-right — check high ground",
+    "SPRINT_LOOK_UP_LEFT": "Sprint forward while panning camera up-left — check high ground",
+    "AIM_SHOOT": "Right-click aim then left-click shoot once — enemy clearly visible",
+    "AIM_BURST": "Aim and fire 3 shots — stationary or close enemy",
+    "AIM_SHOOT_STRAFE_RIGHT": "Aim+shoot while side-stepping right — fire while dodging right",
+    "AIM_SHOOT_STRAFE_LEFT": "Aim+shoot while side-stepping left — fire while dodging left",
+    "DIVE_DODGE": "Spacebar quick dive — emergency dodge when bullets are incoming",
+    "EVADE_SPRINT_RIGHT": "Sprint + pan right to break contact — escape enemy to the right",
+    "EVADE_SPRINT_LEFT": "Sprint + pan left to break contact — escape enemy to the left",
+    "SPRINT_BACK": "Sprint backward — create distance from an enemy",
+    "PEEK_RIGHT": "Pan camera right — scan for threats while stationary or in cover",
+    "PEEK_LEFT": "Pan camera left — scan for threats while stationary or in cover",
+    "PEEK_UP": "Tilt camera up — check enemies on high ground or windows",
+    "CROUCH_PEEK_RIGHT": "Crouch then pan right — low-profile peek from behind cover",
+    "CROUCH_PEEK_LEFT": "Crouch then pan left — low-profile peek from behind cover",
+    "INTERACT_OBJECT": "Press E to interact — ONLY when interact prompt is visible on screen",
+    "DO_NOTHING": "No input at all — ONLY during cutscenes, loading screens, or menus"
+  },
+
   "action_list": ["EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"],
   "action_descriptions": {
     "EXPLORE": "No enemies visible â€” sprint and scan the environment",

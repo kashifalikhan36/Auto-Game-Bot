@@ -14,6 +14,10 @@ class BotState(TypedDict, total=False):
     # e.g. "EXPLORE", "COMBAT", "EVADE", "COVER", "INTERACT", "IDLE"
     situation: str
 
+    # Specific key action the LLM chose this frame (e.g. "AIM_SHOOT", "SPRINT_LOOK_RIGHT")
+    # Maps directly into named_actions in the game config — this is what actually runs.
+    chosen_action: str
+
     # Legacy single-action field (kept for timing/display only)
     action: str
 
@@ -32,7 +36,8 @@ def initial_state() -> BotState:
     return BotState(
         screenshot_b64="",
         situation="EXPLORE",
-        action="EXPLORE",
+        chosen_action="SPRINT_FORWARD",
+        action="SPRINT_FORWARD",
         frame_count=0,
         recent_actions=[],
         timing={},
