@@ -51,10 +51,9 @@ from driver.input_controller import InputController
 
 _WORKER_TYPES: list[list[str]] = [
     ["keys"],
-    ["mouse_move"],
-    ["mouse_click", "sequence"],
+    ["mouse_move", "mouse_click", "sequence"],
 ]
-_NUM_WORKERS = 3
+_NUM_WORKERS = 2
 
 
 # ---------------------------------------------------------------------------
