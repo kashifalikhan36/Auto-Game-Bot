@@ -190,13 +190,23 @@ NAMED_ACTIONS: dict[str, list[dict]] = {}
 # Human-readable descriptions for each named action (fed into the LLM prompt)
 NAMED_ACTION_DESCRIPTIONS: dict[str, str] = {}
 
+# Decision rules shown to the LLM (loaded from game config, per-game)
+# Each string is one line of the rules section.
+DECISION_RULES: list[str] = []
+
+# Critical constraints shown to the LLM (loaded from game config, per-game)
+CONSTRAINTS: list[str] = []
+
+# Checklist questions shown in the user turn to guide the LLM (per-game)
+SITUATION_CHECKLIST: list[str] = []
+
 def load_game_config(config_path: str) -> None:
     """
     Load a games_config/<game_id>/config.json and override ACTION_LIST + VK_MAP
     at module level so all nodes pick up the new bindings.
     """
     import json
-    global ACTION_LIST, VK_MAP, GAME_CONTEXT, ACTION_DESCRIPTIONS, SITUATION_LIST, BEHAVIOR_CONFIG, NAMED_ACTIONS, NAMED_ACTION_DESCRIPTIONS
+    global ACTION_LIST, VK_MAP, GAME_CONTEXT, ACTION_DESCRIPTIONS, SITUATION_LIST, BEHAVIOR_CONFIG, NAMED_ACTIONS, NAMED_ACTION_DESCRIPTIONS, DECISION_RULES, CONSTRAINTS, SITUATION_CHECKLIST
     with open(config_path, encoding="utf-8") as f:
         data = json.load(f)
     ACTION_LIST = data["action_list"]
@@ -208,6 +218,9 @@ def load_game_config(config_path: str) -> None:
     BEHAVIOR_CONFIG = data.get("behaviors", {})
     NAMED_ACTIONS = data.get("named_actions", {})
     NAMED_ACTION_DESCRIPTIONS = data.get("named_action_descriptions", {})
+    DECISION_RULES = data.get("decision_rules", [])
+    CONSTRAINTS = data.get("constraints", [])
+    SITUATION_CHECKLIST = data.get("situation_checklist", [])
 # fmt: on
 
 # How long (ms) to hold a key down before releasing it

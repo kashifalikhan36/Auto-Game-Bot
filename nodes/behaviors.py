@@ -73,8 +73,11 @@ def _run_mouse_click(ctrl: InputController, button: str, hold_ms: int) -> None:
 
 
 def _run_sequence(ctrl: InputController, steps: list[dict]) -> None:
+    """Execute a sequential list of steps: keys, mouse_click, or mouse_move."""
     for step in steps:
-        if "mouse_click" in step:
+        if "keys" in step:
+            _run_keys(ctrl, step["keys"], step.get("hold_ms", 80))
+        elif "mouse_click" in step:
             _run_mouse_click(ctrl, step["mouse_click"], step.get("hold_ms", 80))
         elif "mouse_move" in step:
             mv = step["mouse_move"]
