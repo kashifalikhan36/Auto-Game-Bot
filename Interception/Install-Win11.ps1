@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 <#
 .SYNOPSIS
     Installs the Interception keyboard/mouse filter driver on Windows 11.
@@ -62,7 +62,7 @@ $MOUSE_CLASS_GUID = "{4D36E96F-E325-11CE-BFC1-08002BF6382B}"
 function Write-Header {
     Write-Host ""
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-    Write-Host "  Interception Driver Installer — Windows 11 Edition"           -ForegroundColor Cyan
+    Write-Host "  Interception Driver Installer - Windows 11 Edition"           -ForegroundColor Cyan
     Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
     Write-Host ""
 }
@@ -80,11 +80,11 @@ function Write-Warn([string]$msg) {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 0 — Prerequisites
+#  STEP 0 - Prerequisites
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Header
 
-Write-Step "Checking prerequisites…"
+Write-Step "Checking prerequisites..."
 
 # 64-bit OS
 if (-not [Environment]::Is64BitOperatingSystem) {
@@ -105,30 +105,40 @@ $secureBoot = $false
 try {
     $secureBoot = Confirm-SecureBootUEFI -ErrorAction Stop
 } catch {
-    # Confirm-SecureBootUEFI throws on non-UEFI systems — treat as Secure Boot OFF
+    # Confirm-SecureBootUEFI throws on non-UEFI systems - treat as Secure Boot OFF
     $secureBoot = $false
 }
 
 if ($secureBoot -and -not $SkipSecureBootCheck) {
-    Write-Warn "Secure Boot is ENABLED in your BIOS/UEFI."
-    Write-Warn "Test-signed drivers will NOT load while Secure Boot is ON."
-    Write-Warn ""
-    Write-Warn "You MUST disable Secure Boot in your BIOS settings before rebooting."
-    Write-Warn "To bypass this check: run with -SkipSecureBootCheck"
-    Write-Warn ""
-    $answer = Read-Host "  Continue anyway? (yes/no)"
-    if ($answer.ToLower() -notin @('yes','y')) {
-        Write-Host "  Aborted." -ForegroundColor Red
-        exit 1
-    }
+    Write-Host ""
+    Write-Host "  ╔══════════════════════════════════════════════════════════╗" -ForegroundColor Red
+    Write-Host "  ║   SECURE BOOT IS ON - Cannot install test-signed driver  ║" -ForegroundColor Red
+    Write-Host "  ╚══════════════════════════════════════════════════════════╝" -ForegroundColor Red
+    Write-Host ""
+    Write-Warn "Windows enforces a firmware-level policy:"
+    Write-Warn "  bcdedit /set testsigning on  is BLOCKED while Secure Boot is enabled."
+    Write-Warn "  This cannot be bypassed in software."
+    Write-Host ""
+    Write-Host "  You must disable Secure Boot in your BIOS/UEFI first:" -ForegroundColor Cyan
+    Write-Host "    1. Restart your PC and enter BIOS (usually Del, F2, or F10 at boot)" -ForegroundColor Cyan
+    Write-Host "    2. Find 'Secure Boot' under Security or Boot settings" -ForegroundColor Cyan
+    Write-Host "    3. Set Secure Boot = Disabled" -ForegroundColor Cyan
+    Write-Host "    4. Save and exit BIOS" -ForegroundColor Cyan
+    Write-Host "    5. Boot into Windows normally" -ForegroundColor Cyan
+    Write-Host "    6. Re-run this script as Administrator" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "  NOTE: Disabling Secure Boot is safe for gaming PCs and can be" -ForegroundColor Yellow
+    Write-Host "  re-enabled later (after uninstalling this driver if needed)." -ForegroundColor Yellow
+    Write-Host ""
+    exit 1
 } elseif (-not $secureBoot) {
-    Write-OK "Secure Boot is OFF — test-signed drivers will be accepted."
+    Write-OK "Secure Boot is OFF - test-signed drivers will be accepted."
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 1 — Create / reuse a self-signed test code-signing certificate
+#  STEP 1 - Create / reuse a self-signed test code-signing certificate
 # ─────────────────────────────────────────────────────────────────────────────
-Write-Step "Creating self-signed test certificate…"
+Write-Step "Creating self-signed test certificate..."
 
 # Remove any stale certs with the same subject from all stores
 foreach ($store in @("Root","TrustedPublisher","My")) {
@@ -164,9 +174,9 @@ foreach ($storeName in @('Root','TrustedPublisher')) {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 2 — Sign the .sys files with SHA-256 Authenticode
+#  STEP 2 - Sign the .sys files with SHA-256 Authenticode
 # ─────────────────────────────────────────────────────────────────────────────
-Write-Step "Re-signing keyboard.sys and mouse.sys with test certificate…"
+Write-Step "Re-signing keyboard.sys and mouse.sys with test certificate..."
 
 # Work on copies in a temp dir so the originals stay intact
 $tmpDir = Join-Path $env:TEMP "interception_install"
@@ -186,8 +196,8 @@ foreach ($sysFile in $tmpKbd, $tmpMouse) {
         -TimestampServer "http://timestamp.digicert.com"
 
     if ($sigResult.Status -ne "Valid") {
-        # Timestamp server may be unreachable — retry without timestamp
-        Write-Warn "Timestamp server unavailable — signing without timestamp."
+        # Timestamp server may be unreachable - retry without timestamp
+        Write-Warn "Timestamp server unavailable - signing without timestamp."
         $sigResult = Set-AuthenticodeSignature `
             -FilePath      $sysFile `
             -Certificate   $cert `
@@ -195,23 +205,35 @@ foreach ($sysFile in $tmpKbd, $tmpMouse) {
     }
 
     if ($sigResult.Status -notin @("Valid","UnknownError")) {
-        throw "Signing failed for $sysFile — Status: $($sigResult.Status)"
+        throw "Signing failed for $sysFile - Status: $($sigResult.Status)"
     }
     Write-OK "Signed: $(Split-Path $sysFile -Leaf)"
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 3 — Enable Test Signing mode
+#  STEP 3 - Enable Test Signing mode
 # ─────────────────────────────────────────────────────────────────────────────
-Write-Step "Enabling Windows Test Signing mode…"
-& bcdedit /set testsigning on | Out-Null
-if ($LASTEXITCODE -ne 0) { throw "bcdedit failed — are you running as Administrator?" }
+Write-Step "Enabling Windows Test Signing mode..."
+$bcdOutput = & bcdedit /set testsigning on 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Warn "bcdedit output: $bcdOutput"
+    Write-Warn ""
+    Write-Warn "If the error mentions BitLocker, run this first (as Admin):"
+    Write-Warn "   manage-bde -protectors -disable C: -rebootcount 1"
+    Write-Warn "Then re-run this script."
+    Write-Warn ""
+    Write-Warn "If the error mentions Secure Boot policy, you must:"
+    Write-Warn "   1. Disable Secure Boot in BIOS"
+    Write-Warn "   2. Reboot once into Windows"
+    Write-Warn "   3. Re-run this script"
+    throw "bcdedit /set testsigning on failed (exit $LASTEXITCODE). See warnings above."
+}
 Write-OK "Test signing enabled. (A 'Test Mode' watermark will appear after reboot.)"
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 4 — Copy signed drivers to System32\Drivers
+#  STEP 4 - Copy signed drivers to System32\Drivers
 # ─────────────────────────────────────────────────────────────────────────────
-Write-Step "Installing drivers to $SYSTEM_DRV …"
+Write-Step "Installing drivers to $SYSTEM_DRV ..."
 
 Copy-Item $tmpKbd   (Join-Path $SYSTEM_DRV "keyboard.sys") -Force
 Copy-Item $tmpMouse (Join-Path $SYSTEM_DRV "mouse.sys")    -Force
@@ -220,9 +242,9 @@ Write-OK "Driver files copied to $SYSTEM_DRV"
 Remove-Item $tmpDir -Recurse -Force
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 5 — Register kernel services via sc.exe
+#  STEP 5 - Register kernel services via sc.exe
 # ─────────────────────────────────────────────────────────────────────────────
-Write-Step "Registering kernel services…"
+Write-Step "Registering kernel services..."
 
 foreach ($svc in @(
     @{ Name="keyboard"; Bin="\SystemRoot\System32\drivers\keyboard.sys"; Desc="Interception Keyboard Filter"; Group="Keyboard Port" },
@@ -253,9 +275,9 @@ foreach ($svc in @(
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 6 — Add UpperFilters registry entries
+#  STEP 6 - Add UpperFilters registry entries
 # ─────────────────────────────────────────────────────────────────────────────
-Write-Step "Configuring UpperFilters registry entries…"
+Write-Step "Configuring UpperFilters registry entries..."
 
 function Add-UpperFilter {
     param([string]$ClassGuid, [string]$FilterName)
@@ -270,7 +292,7 @@ function Add-UpperFilter {
     if ($null -eq $current) { $current = @() }
 
     if ($FilterName -in $current) {
-        Write-OK "UpperFilters[$ClassGuid] already contains '$FilterName' — skipping."
+        Write-OK "UpperFilters[$ClassGuid] already contains '$FilterName' - skipping."
         return
     }
 

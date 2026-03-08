@@ -1,4 +1,4 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 <#
 .SYNOPSIS
     Uninstalls the Interception keyboard/mouse filter driver on Windows 11.
@@ -31,12 +31,12 @@ function Write-Warn([string]$m) { Write-Host "  ⚠ $m" -ForegroundColor Magenta
 
 Write-Host ""
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
-Write-Host "  Interception Driver Uninstaller — Windows 11 Edition"          -ForegroundColor Cyan
+Write-Host "  Interception Driver Uninstaller - Windows 11 Edition"          -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Cyan
 Write-Host ""
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 1 — Remove UpperFilters entries
+#  STEP 1 - Remove UpperFilters entries
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Removing UpperFilters registry entries…"
 
@@ -52,7 +52,7 @@ function Remove-UpperFilter {
     $newVal = $current | Where-Object { $_ -ne $FilterName }
 
     if ($newVal.Count -eq $current.Count) {
-        Write-OK "'$FilterName' not found in UpperFilters [$ClassGuid] — nothing to do."
+        Write-OK "'$FilterName' not found in UpperFilters [$ClassGuid] - nothing to do."
         return
     }
 
@@ -64,7 +64,7 @@ Remove-UpperFilter -ClassGuid $KBD_CLASS_GUID   -FilterName "keyboard"
 Remove-UpperFilter -ClassGuid $MOUSE_CLASS_GUID -FilterName "mouse"
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 2 — Stop and delete services
+#  STEP 2 - Stop and delete services
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Stopping and removing kernel services…"
 
@@ -76,19 +76,19 @@ foreach ($svcName in @("keyboard","mouse")) {
         & sc.exe delete $svcName | Out-Null
         Write-OK "Service removed: $svcName"
     } else {
-        Write-OK "Service '$svcName' not found — already removed."
+        Write-OK "Service '$svcName' not found - already removed."
     }
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 3 — Delete driver files
+#  STEP 3 - Delete driver files
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Removing driver files…"
 
 foreach ($fname in @("keyboard.sys","mouse.sys")) {
     $fp = Join-Path $SYSTEM_DRV $fname
     if (Test-Path $fp) {
-        # Files locked at runtime — mark for deletion on next boot if needed
+        # Files locked at runtime - mark for deletion on next boot if needed
         try {
             Remove-Item $fp -Force
             Write-OK "Deleted: $fp"
@@ -104,7 +104,7 @@ public class FileHelper {
 }
 "@
             [FileHelper]::MoveFileEx($fp, $null, [FileHelper]::MOVEFILE_DELAY_UNTIL_REBOOT) | Out-Null
-            Write-Warn "File in use — scheduled for deletion on next reboot: $fp"
+            Write-Warn "File in use - scheduled for deletion on next reboot: $fp"
         }
     } else {
         Write-OK "Already absent: $fp"
@@ -112,7 +112,7 @@ public class FileHelper {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 4 — Remove test certificate
+#  STEP 4 - Remove test certificate
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Removing test certificate from trust stores…"
 
@@ -127,7 +127,7 @@ foreach ($storeName in @("Root","TrustedPublisher","My")) {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 5 — Disable Test Signing
+#  STEP 5 - Disable Test Signing
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Disabling Test Signing mode…"
 & bcdedit /set testsigning off | Out-Null
