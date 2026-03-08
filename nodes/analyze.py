@@ -1,54 +1,98 @@
 """
-Analyze node — sends the current screenshot to Azure OpenAI vision
+Analyze node — sends the current screenshot to an LLM vision model
 and returns a single action keyword (e.g. "JUMP", "LEFT", "IDLE").
+
+Supported providers: azure, openai, gemini, anthropic
+Active provider is chosen by config.ACTIVE_PROVIDER (auto-detected from .env).
 
 Key latency choices:
   - detail="low"  : model processes a single 512-px tile (~85 tokens)
   - max_tokens=10 : stop generation immediately after the action word
-  - temperature=0 : deterministic, avoids sampling overhead
   - Synchronous invoke (asyncio integration handled by LangGraph's astream)
 """
 
 from __future__ import annotations
 
 import time
+from typing import Any
 
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import AzureChatOpenAI
 
 import config
 from state import BotState
 
 # ---------------------------------------------------------------------------
-# LLM client — created once at import time.
+# LLM client — created once on first use.
 # ---------------------------------------------------------------------------
-_llm: AzureChatOpenAI | None = None
+_llm: Any = None
 
 
-def _get_llm() -> AzureChatOpenAI:
-    global _llm
-    if _llm is None:
-        _llm = AzureChatOpenAI(
+def _create_llm() -> Any:
+    """Instantiate the LangChain chat model for the active provider."""
+    provider = config.ACTIVE_PROVIDER
+
+    if provider == "azure":
+        from langchain_openai import AzureChatOpenAI
+        return AzureChatOpenAI(
             azure_endpoint=config.AZURE_OPENAI_ENDPOINT,
             api_key=config.AZURE_OPENAI_API_KEY,
             api_version=config.AZURE_OPENAI_API_VERSION,
             azure_deployment=config.AZURE_DEPLOYMENT_NAME,
             max_tokens=config.MAX_TOKENS,
-            # temperature omitted: GPT-5 Nano only accepts the default value
+            # temperature omitted: GPT-5 Nano only accepts its default value
         )
+
+    if provider == "openai":
+        from langchain_openai import ChatOpenAI
+        return ChatOpenAI(
+            api_key=config.OPENAI_API_KEY,
+            model=config.OPENAI_MODEL,
+            max_tokens=config.MAX_TOKENS,
+            temperature=config.TEMPERATURE,
+        )
+
+    if provider == "gemini":
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        return ChatGoogleGenerativeAI(
+            google_api_key=config.GEMINI_API_KEY,
+            model=config.GEMINI_MODEL,
+            max_output_tokens=config.MAX_TOKENS,
+            temperature=config.TEMPERATURE,
+        )
+
+    if provider == "anthropic":
+        from langchain_anthropic import ChatAnthropic
+        return ChatAnthropic(
+            api_key=config.ANTHROPIC_API_KEY,
+            model=config.ANTHROPIC_MODEL,
+            max_tokens=config.MAX_TOKENS,
+            temperature=config.TEMPERATURE,
+        )
+
+    raise RuntimeError(f"[analyze] Unknown provider '{provider}'")
+
+
+def _get_llm() -> Any:
+    global _llm
+    if _llm is None:
+        _llm = _create_llm()
     return _llm
 
 
 # ---------------------------------------------------------------------------
 # Prompt templates
 # ---------------------------------------------------------------------------
-SYSTEM_PROMPT = (
-    "You are a game-playing AI. "
-    "You will receive a screenshot of a game. "
-    "Your job is to decide the single best action to take RIGHT NOW. "
-    "Respond with EXACTLY one word from this list — no punctuation, no explanation:\n"
-    + ", ".join(config.ACTION_LIST)
-)
+
+def _get_system_prompt() -> str:
+    """Build the system prompt with the current ACTION_LIST (evaluated lazily
+    so game configs loaded after import are reflected correctly)."""
+    return (
+        "You are a game-playing AI. "
+        "You will receive a screenshot of a game. "
+        "Your job is to decide the single best action to take RIGHT NOW. "
+        "Respond with EXACTLY one word from this list — no punctuation, no explanation:\n"
+        + ", ".join(config.ACTION_LIST)
+    )
 
 
 def _build_user_message(b64_jpeg: str, recent: list[str]) -> HumanMessage:
@@ -101,7 +145,7 @@ def analyze_node(state: BotState) -> BotState:
     llm = _get_llm()
 
     messages = [
-        SystemMessage(content=SYSTEM_PROMPT),
+        SystemMessage(content=_get_system_prompt()),
         _build_user_message(b64, recent),
     ]
 

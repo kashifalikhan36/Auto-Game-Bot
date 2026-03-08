@@ -2,6 +2,15 @@
 Central configuration for the AI Game Bot.
 All values are loaded from environment variables (see .env.example).
 Game-specific tuning (capture region, key map) lives here too.
+
+Supported LLM providers (at least ONE set of credentials is required):
+  azure     — Azure OpenAI  (AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_API_KEY)
+  openai    — OpenAI        (OPENAI_API_KEY)
+  gemini    — Google Gemini (GEMINI_API_KEY)
+  anthropic — Anthropic     (ANTHROPIC_API_KEY)
+
+Set LLM_PROVIDER=<name> to force a provider, or leave it unset for
+auto-detection (first provider whose credentials are present wins).
 """
 
 import os
@@ -10,12 +19,88 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # ---------------------------------------------------------------------------
-# Azure OpenAI
+# Azure OpenAI  (optional — one provider must be configured)
 # ---------------------------------------------------------------------------
-AZURE_OPENAI_ENDPOINT: str = os.environ["AZURE_OPENAI_ENDPOINT"]
-AZURE_OPENAI_API_KEY: str = os.environ["AZURE_OPENAI_API_KEY"]
+AZURE_OPENAI_ENDPOINT: str = os.getenv("AZURE_OPENAI_ENDPOINT", "")
+AZURE_OPENAI_API_KEY: str = os.getenv("AZURE_OPENAI_API_KEY", "")
 AZURE_OPENAI_API_VERSION: str = os.getenv("AZURE_OPENAI_API_VERSION", "2025-01-01-preview")
 AZURE_DEPLOYMENT_NAME: str = os.getenv("AZURE_DEPLOYMENT_NAME", "gpt-5-nano")
+
+# ---------------------------------------------------------------------------
+# OpenAI  (optional)
+# ---------------------------------------------------------------------------
+OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o")
+
+# ---------------------------------------------------------------------------
+# Google Gemini  (optional)
+# ---------------------------------------------------------------------------
+GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+
+# ---------------------------------------------------------------------------
+# Anthropic Claude  (optional)
+# ---------------------------------------------------------------------------
+ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
+ANTHROPIC_MODEL: str = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+
+# ---------------------------------------------------------------------------
+# Provider resolution — exactly one provider is selected at startup
+# ---------------------------------------------------------------------------
+
+def _resolve_provider() -> str:
+    """Return the active LLM provider name, validating credentials exist."""
+    explicit = os.getenv("LLM_PROVIDER", "").lower().strip()
+    if explicit:
+        valid = ("azure", "openai", "gemini", "anthropic")
+        if explicit not in valid:
+            raise RuntimeError(
+                f"[config] Unknown LLM_PROVIDER '{explicit}'. "
+                f"Must be one of: {', '.join(valid)}"
+            )
+        # Validate that the chosen provider has the required credentials
+        missing: dict[str, list[str]] = {
+            "azure":     [] if (AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY) else ["AZURE_OPENAI_ENDPOINT", "AZURE_OPENAI_API_KEY"],
+            "openai":    [] if OPENAI_API_KEY    else ["OPENAI_API_KEY"],
+            "gemini":    [] if GEMINI_API_KEY    else ["GEMINI_API_KEY"],
+            "anthropic": [] if ANTHROPIC_API_KEY else ["ANTHROPIC_API_KEY"],
+        }
+        if missing[explicit]:
+            raise RuntimeError(
+                f"[config] LLM_PROVIDER={explicit} but missing credentials: "
+                + ", ".join(missing[explicit])
+            )
+        return explicit
+
+    # Auto-detect: first provider with full credentials wins
+    if AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY:
+        return "azure"
+    if OPENAI_API_KEY:
+        return "openai"
+    if GEMINI_API_KEY:
+        return "gemini"
+    if ANTHROPIC_API_KEY:
+        return "anthropic"
+
+    raise RuntimeError(
+        "\n[config] No LLM credentials found. Set at least ONE provider in your .env:\n"
+        "  Azure OpenAI : AZURE_OPENAI_ENDPOINT + AZURE_OPENAI_API_KEY\n"
+        "  OpenAI       : OPENAI_API_KEY\n"
+        "  Gemini       : GEMINI_API_KEY\n"
+        "  Anthropic    : ANTHROPIC_API_KEY\n"
+        "Optionally pin a provider with: LLM_PROVIDER=azure|openai|gemini|anthropic"
+    )
+
+
+ACTIVE_PROVIDER: str = _resolve_provider()
+
+# Human-readable model name for the chosen provider
+ACTIVE_MODEL_NAME: str = {
+    "azure":     AZURE_DEPLOYMENT_NAME,
+    "openai":    OPENAI_MODEL,
+    "gemini":    GEMINI_MODEL,
+    "anthropic": ANTHROPIC_MODEL,
+}[ACTIVE_PROVIDER]
 
 # ---------------------------------------------------------------------------
 # Screenshot capture
@@ -41,7 +126,7 @@ JPEG_QUALITY: int = int(os.getenv("JPEG_QUALITY", 80))
 # Maximum tokens the LLM can generate.  Single-word outputs → keep this tiny.
 MAX_TOKENS: int = int(os.getenv("MAX_TOKENS", 10))
 
-# LLM temperature (0 = deterministic, fast)
+# LLM temperature (0 = deterministic).  Azure GPT-5 Nano ignores this (default only).
 TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", 0.0))
 
 # ---------------------------------------------------------------------------

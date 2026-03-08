@@ -126,7 +126,8 @@ def main() -> None:
 
     print("\n" + "=" * 60)
     print("  Auto Game Bot")
-    print(f"  Model  : {config.AZURE_DEPLOYMENT_NAME}")
+    print(f"  Provider: {config.ACTIVE_PROVIDER.upper()}")
+    print(f"  Model  : {config.ACTIVE_MODEL_NAME}")
     print(f"  Region : {config.CAPTURE_REGION}")
     print(f"  Resize : {config.CAPTURE_RESIZE}px  JPEG Q={config.JPEG_QUALITY}")
     print(f"  Frames : {'∞' if config.MAX_FRAMES == 0 else config.MAX_FRAMES}")
