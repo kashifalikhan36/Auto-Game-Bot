@@ -51,9 +51,14 @@ from driver.input_controller import InputController
 
 _WORKER_TYPES: list[list[str]] = [
     ["keys"],
-    ["mouse_move", "mouse_click", "sequence"],
+    ["mouse_move"],
+    ["mouse_click", "sequence"],
 ]
-_NUM_WORKERS = 2
+_NUM_WORKERS = 3
+
+# How long to pause after a camera pan so it doesn't spam every 64 ms.
+# Kept long so camera pans are occasional gestures, not constant spinning.
+_MOUSE_MOVE_COOLDOWN_S = 4.0
 
 
 # ---------------------------------------------------------------------------
@@ -178,6 +183,11 @@ class BehaviorEngine:
             track = random.choice(tracks)
             try:
                 _exec_track(self._ctrl, track)
+                # Camera pans are short (~64 ms); without a cooldown the worker
+                # would spam mouse moves every frame. Sleep so pans are
+                # occasional (≈ once per key-hold cycle) instead of continuous.
+                if "mouse_move" in track:
+                    time.sleep(_MOUSE_MOVE_COOLDOWN_S)
             except Exception:
                 time.sleep(0.05)
 

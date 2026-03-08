@@ -11,21 +11,22 @@
       [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
       [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
       [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
+      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
       [
         { "keys": ["shift", "w"], "hold_ms": 1300 },
-        { "mouse_move": { "dx": 120, "dy": 0, "steps": 8 } }
+        { "mouse_move": { "dx": 60, "dy": 0, "steps": 20 } }
       ],
       [
         { "keys": ["shift", "w"], "hold_ms": 1300 },
-        { "mouse_move": { "dx": -120, "dy": 0, "steps": 8 } }
+        { "mouse_move": { "dx": -60, "dy": 0, "steps": 20 } }
       ],
       [
         { "keys": ["shift", "w"], "hold_ms": 1200 },
-        { "mouse_move": { "dx": 150, "dy": -40, "steps": 8 } }
+        { "mouse_move": { "dx": 70, "dy": -20, "steps": 20 } }
       ],
       [
         { "keys": ["shift", "w"], "hold_ms": 1200 },
-        { "mouse_move": { "dx": -150, "dy": -40, "steps": 8 } }
+        { "mouse_move": { "dx": -70, "dy": -20, "steps": 20 } }
       ]
     ],
 
@@ -74,26 +75,26 @@
       [{ "keys": ["space"], "hold_ms": 120 }],
       [
         { "keys": ["shift", "w"], "hold_ms": 700 },
-        { "mouse_move": { "dx": 180, "dy": 0, "steps": 8 } }
+        { "mouse_move": { "dx": 80, "dy": 0, "steps": 20 } }
       ],
       [
         { "keys": ["shift", "w"], "hold_ms": 700 },
-        { "mouse_move": { "dx": -180, "dy": 0, "steps": 8 } }
+        { "mouse_move": { "dx": -80, "dy": 0, "steps": 20 } }
       ],
       [{ "keys": ["shift", "s"], "hold_ms": 500 }]
     ],
 
     "COVER": [
-      [{ "mouse_move": { "dx": 150, "dy": 0, "steps": 8 } }],
-      [{ "mouse_move": { "dx": -150, "dy": 0, "steps": 8 } }],
-      [{ "mouse_move": { "dx": 0, "dy": -100, "steps": 6 } }],
+      [{ "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }],
+      [{ "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }],
+      [{ "mouse_move": { "dx": 0, "dy": -50, "steps": 15 } }],
       [
         { "keys": ["c"], "hold_ms": 150 },
-        { "mouse_move": { "dx": 150, "dy": 0, "steps": 8 } }
+        { "mouse_move": { "dx": 70, "dy": 0, "steps": 20 } }
       ],
       [
         { "keys": ["c"], "hold_ms": 150 },
-        { "mouse_move": { "dx": -150, "dy": 0, "steps": 8 } }
+        { "mouse_move": { "dx": -70, "dy": 0, "steps": 20 } }
       ]
     ],
 
