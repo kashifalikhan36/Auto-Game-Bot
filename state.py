@@ -24,8 +24,11 @@ class BotState(TypedDict, total=False):
     # Rolling counter of processed frames
     frame_count: int
 
-    # Last N situations, used as context in the LLM prompt
+    # Last N actions chosen by the LLM (oldest first)
     recent_actions: list[str]
+
+    # Last N situation labels matching recent_actions (for stuck detection)
+    recent_situations: list[str]
 
     # Per-frame timing info for debugging (populated when DEBUG_TIMING=true)
     timing: dict[str, float]
@@ -40,5 +43,6 @@ def initial_state() -> BotState:
         action="SPRINT_FORWARD",
         frame_count=0,
         recent_actions=[],
+        recent_situations=[],
         timing={},
     )

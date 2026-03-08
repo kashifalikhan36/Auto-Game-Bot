@@ -2,7 +2,7 @@
   "game_name": "Forza Horizon 5",
   "game_id": "forza_horizon_5",
   "description": "Full PC keyboard bindings for Forza Horizon 5 (WASD default layout). All named actions and decision rules for autonomous AI driving.",
-  "game_context": "Forza Horizon 5 (FH5) -- open-world racing game set in Mexico. You are driving a car using keyboard controls (WASD layout). \n\nKEY BINDINGS:\n  W = Accelerate (full throttle when held)\n  S = Brake / Reverse\n  A = Steer Left\n  D = Steer Right\n  E = Shift Up (manual gearbox)\n  Q = Shift Down (manual gearbox)\n  Space = Handbrake (instant rear-wheel lock -- use for drift initiation)\n  Shift = Clutch\n  R = Rewind (undo the last few seconds -- use after crash or spin)\n  Tab = Change Camera View\n  H = Horn\n  M = Map\n  C = Anna AI assistant\n  Enter = Activate / Accept\n  Arrow keys = Look Left / Right / Back / Forward\n\nGAME MODES:\n  Road Racing  -- follow the racing line (magenta arrow/line on road)\n  Street Scene -- race on closed public roads\n  Cross Country -- rough terrain, dirt, rocks, rivers\n  Dirt Racing  -- gravel/dirt track events\n  Drag Race    -- short straight, shift at perfect RPM\n  Trial        -- convoy team event against AI drivatars\n  Playground / EventLab -- custom events\n  Freeroam     -- drive anywhere on the map\n\nPR STUNTS (special skill zones on the map):\n  Speed Trap   -- blue lightning bolt icon -- hit max speed at the camera\n  Speed Zone   -- sustain high average speed through a section\n  Danger Sign  -- skull icon -- hit a jump ramp at full speed for maximum distance\n  Drift Zone   -- orange S-curve arrows -- chain drift score through the zone\n  Trailblazer  -- follow a timed off-road trail\n\nDRIVING PHYSICS:\n  Keyboard inputs are digital (full on/off) -- hold duration controls how much turn/brake.\n  Too much steering = understeer/oversteer -- tap steer keys for gentle curves.\n  Handbrake (Space) at speed locks rear wheels instantly -- great for tight U-turns and drift entry.\n  Rewind (R) goes back 5-10 seconds -- safest recovery after crash, wall hit, or spin.\n  Manual shifting: shift up (E) at high RPM red-line, shift down (Q) before braking into corner.\n  Slipstream: follow closely behind opponent for speed boost, then pull out to overtake.\n\nRACING LINE:\n  The pink/magenta arrow or coloured line on road shows optimal path.\n  Green section = safe to go fast. Orange = lift throttle. Red = brake hard.\n  Wide entry > apex > wide exit for corners (classic racing line).\n\nWINNING STRATEGY:\n  Stay on tarmac unless doing cross-country. \n  Never brake when wheels are turned (understeer risk). \n  Use Rewind liberally after any collision. \n  In drift zones, initiate early with handbrake, maintain angle with throttle+countersteer.",
+  "game_context": "Forza Horizon 5 (FH5) -- open-world racing game set in Mexico. You are an AI racing driver controlling a car with keyboard inputs (WASD layout).\n\nKEY BINDINGS:\n  W = Accelerate (hold for throttle)\n  S = Brake / Reverse (tap to brake, hold to reverse)\n  A = Steer Left\n  D = Steer Right\n  E = Shift Up (manual gearbox)\n  Q = Shift Down (manual gearbox)\n  Space = Handbrake (locks rear wheels -- for drift entry or tight U-turns)\n  Tab = Change Camera View\n  H = Horn\n  Enter = Activate / Accept\n\nIMPORTANT -- KEYBOARD PHYSICS:\n  Keyboard inputs are digital (fully on or fully off). Hold duration controls effect:\n  - Short tap A/D (100-200ms) = micro-correction, barely any yaw\n  - Medium hold A/D (300-500ms) = gentle curve tracking\n  - Long hold A/D (700ms+) = significant turn, only for tight corners\n  Too much steering input = understeer (front pushes wide) or oversteer (rear slides out).\n  Always use the minimum steering input needed. Smooth > aggressive.\n\nGAME MODES:\n  Road Racing / Street Scene -- follow the racing line on tarmac\n  Cross Country / Dirt Racing -- rough terrain, no road to stay on\n  Drag Race -- short straight sprint, shift at red-line RPM\n  Freeroam -- open world, watch for civilian traffic\n\nPR STUNTS (skill zones):\n  Speed Trap   -- blue lightning bolt -- hit max speed at camera\n  Danger Sign  -- skull icon -- jump ramp, never brake before it\n  Drift Zone   -- orange S-curves -- score drift points through the zone\n  Drag Race    -- christmas-tree light sequence\n\nRACING LINE:\n  Magenta / coloured line on road shows optimal path.\n  GREEN section = safe to go fast, keep throttle on\n  ORANGE section = lift throttle slightly, corner is coming\n  RED section = brake now, corner is tight\n  Classic line: wide entry → tight apex → wide exit\n\nREAL DRIVER MINDSET:\n  A real racing driver thinks 3-5 seconds AHEAD of the car, not at the current frame.\n  The default state is FULL_THROTTLE on clear roads. Only deviate with a specific visual reason.\n  Corners follow a 5-step process: SPOT → BRAKE POINT → TURN-IN → APEX → ACCELERATE OUT.\n  Smooth inputs always beat aggressive jerky ones. One decisive action per frame.\n  Reverse is a last resort used under 1% of the time -- only when completely stopped and blocked.",
   "situation_list": [
     "RACING",
     "DRIFT",
@@ -96,7 +96,7 @@
           "w",
           "a"
         ],
-        "hold_ms": 800
+        "hold_ms": 220
       }
     ],
     "ACCEL_LEFT_MEDIUM": [
@@ -105,7 +105,7 @@
           "w",
           "a"
         ],
-        "hold_ms": 550
+        "hold_ms": 450
       }
     ],
     "ACCEL_LEFT_TIGHT": [
@@ -131,7 +131,7 @@
           "w",
           "d"
         ],
-        "hold_ms": 800
+        "hold_ms": 220
       }
     ],
     "ACCEL_RIGHT_MEDIUM": [
@@ -140,7 +140,7 @@
           "w",
           "d"
         ],
-        "hold_ms": 550
+        "hold_ms": 450
       }
     ],
     "ACCEL_RIGHT_TIGHT": [
@@ -605,46 +605,107 @@
         "hold_ms": 600
       }
     ],
-    "REWIND": [
-      {
-        "keys": [
-          "r"
-        ],
-        "hold_ms": 120
-      }
-    ],
-    "REWIND_HOLD": [
-      {
-        "keys": [
-          "r"
-        ],
-        "hold_ms": 600
-      }
-    ],
     "UNSTICK_REVERSE": [
       {
-        "keys": [
-          "s"
-        ],
-        "hold_ms": 1000
+        "sequence": [
+          {
+            "keys": [
+              "s"
+            ],
+            "hold_ms": 450,
+            "delay_after_ms": 80
+          },
+          {
+            "keys": [
+              "w"
+            ],
+            "hold_ms": 500,
+            "delay_after_ms": 60
+          },
+          {
+            "keys": [
+              "s"
+            ],
+            "hold_ms": 300,
+            "delay_after_ms": 60
+          },
+          {
+            "keys": [
+              "w"
+            ],
+            "hold_ms": 400
+          }
+        ]
       }
     ],
     "UNSTICK_REVERSE_LEFT": [
       {
-        "keys": [
-          "s",
-          "a"
-        ],
-        "hold_ms": 700
+        "sequence": [
+          {
+            "keys": [
+              "s"
+            ],
+            "hold_ms": 350,
+            "delay_after_ms": 80
+          },
+          {
+            "keys": [
+              "w",
+              "a"
+            ],
+            "hold_ms": 650,
+            "delay_after_ms": 60
+          },
+          {
+            "keys": [
+              "s"
+            ],
+            "hold_ms": 250,
+            "delay_after_ms": 60
+          },
+          {
+            "keys": [
+              "w",
+              "a"
+            ],
+            "hold_ms": 500
+          }
+        ]
       }
     ],
     "UNSTICK_REVERSE_RIGHT": [
       {
-        "keys": [
-          "s",
-          "d"
-        ],
-        "hold_ms": 700
+        "sequence": [
+          {
+            "keys": [
+              "s"
+            ],
+            "hold_ms": 350,
+            "delay_after_ms": 80
+          },
+          {
+            "keys": [
+              "w",
+              "d"
+            ],
+            "hold_ms": 650,
+            "delay_after_ms": 60
+          },
+          {
+            "keys": [
+              "s"
+            ],
+            "hold_ms": 250,
+            "delay_after_ms": 60
+          },
+          {
+            "keys": [
+              "w",
+              "d"
+            ],
+            "hold_ms": 500
+          }
+        ]
       }
     ],
     "LOOK_LEFT": [
@@ -711,13 +772,13 @@
               "a"
             ],
             "hold_ms": 300,
-            "delay_after_ms": 60
+            "delay_after_ms": 50
           },
           {
             "keys": [
               "w"
             ],
-            "hold_ms": 700
+            "hold_ms": 350
           }
         ]
       }
@@ -730,13 +791,13 @@
               "d"
             ],
             "hold_ms": 300,
-            "delay_after_ms": 60
+            "delay_after_ms": 50
           },
           {
             "keys": [
               "w"
             ],
-            "hold_ms": 700
+            "hold_ms": 350
           }
         ]
       }
@@ -756,14 +817,14 @@
               "w",
               "a"
             ],
-            "hold_ms": 700,
+            "hold_ms": 600,
             "delay_after_ms": 80
           },
           {
             "keys": [
               "w"
             ],
-            "hold_ms": 900
+            "hold_ms": 350
           }
         ]
       }
@@ -783,14 +844,14 @@
               "w",
               "d"
             ],
-            "hold_ms": 700,
+            "hold_ms": 600,
             "delay_after_ms": 80
           },
           {
             "keys": [
               "w"
             ],
-            "hold_ms": 900
+            "hold_ms": 350
           }
         ]
       }
@@ -809,7 +870,7 @@
             "keys": [
               "a"
             ],
-            "hold_ms": 500,
+            "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
@@ -817,14 +878,14 @@
               "w",
               "a"
             ],
-            "hold_ms": 600,
+            "hold_ms": 550,
             "delay_after_ms": 60
           },
           {
             "keys": [
               "w"
             ],
-            "hold_ms": 1200
+            "hold_ms": 350
           }
         ]
       }
@@ -843,7 +904,7 @@
             "keys": [
               "d"
             ],
-            "hold_ms": 500,
+            "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
@@ -851,16 +912,32 @@
               "w",
               "d"
             ],
-            "hold_ms": 600,
+            "hold_ms": 550,
             "delay_after_ms": 60
           },
           {
             "keys": [
               "w"
             ],
-            "hold_ms": 1200
+            "hold_ms": 350
           }
         ]
+      }
+    ],
+    "NUDGE_LEFT": [
+      {
+        "keys": [
+          "a"
+        ],
+        "hold_ms": 140
+      }
+    ],
+    "NUDGE_RIGHT": [
+      {
+        "keys": [
+          "d"
+        ],
+        "hold_ms": 140
       }
     ],
     "DO_NOTHING": []
@@ -913,11 +990,9 @@
     "OFFROAD_LEFT": "W+A 0.6s -- throttle and steer left off-road. Use to navigate around rocks or trees to the right.",
     "OFFROAD_RIGHT": "W+D 0.6s -- throttle and steer right off-road. Use to navigate around rocks or trees to the left.",
     "OFFROAD_CAREFUL": "W 0.6s -- short throttle bursts off-road. Use on very rough terrain, rivers, or steep slopes.",
-    "REWIND": "R 120ms -- tap Rewind. Use immediately after a crash, wall hit, spin, or going off course.",
-    "REWIND_HOLD": "R 600ms -- hold Rewind to go further back in time. Use after a multi-car pile-up or off a cliff.",
-    "UNSTICK_REVERSE": "S 1s -- reverse out of stuck position. Use when car is wedged in terrain or against a wall.",
-    "UNSTICK_REVERSE_LEFT": "S+A 0.7s -- reverse and turn left to free car. Use when stuck with open space on the left.",
-    "UNSTICK_REVERSE_RIGHT": "S+D 0.7s -- reverse and turn right to free car. Use when stuck with open space on the right.",
+    "UNSTICK_REVERSE": "Unstick sequence: reverse straight (S 450ms) then attempt forward (W 500ms), repeated twice to rock free. Use when blocked and no clear left/right escape. After this, assess direction and pick UNSTICK_REVERSE_LEFT or RIGHT.",
+    "UNSTICK_REVERSE_LEFT": "Unstick sequence: reverse briefly (S 350ms) then drive forward-left (W+A 650ms) to rock free from wall/tree on the left. Repeats back→forward twice. Use when stuck against a tree or wall with escape space to the LEFT.",
+    "UNSTICK_REVERSE_RIGHT": "Unstick sequence: reverse briefly (S 350ms) then drive forward-right (W+D 650ms) to rock free from wall/tree on the right. Repeats back→forward twice. Use when stuck against a tree or wall with escape space to the RIGHT.",
     "LOOK_LEFT": "Left arrow 0.3s -- look left. Use to check for opponents coming from the left or see a left junction.",
     "LOOK_RIGHT": "Right arrow 0.3s -- look right. Use to check for opponents on the right or see a right junction.",
     "LOOK_BACK": "Down arrow 0.4s -- look back. Use to check the gap to the car behind while racing.",
@@ -925,229 +1000,311 @@
     "SWITCH_CAMERA": "Tab -- change camera view. Use if current view is obstructed or you need a different perspective.",
     "ACTIVATE": "Enter -- accept/confirm. Use ONLY when an on-screen button press prompt (Enter/Accept) is visible.",
     "HORN": "H -- sound horn. No tactical use but can be used as a celebration or warning.",
+    "NUDGE_LEFT": "Micro-correction on a straight: tap A for 140ms to gently re-centre the car on the road without losing speed. Use ONLY when the car is drifting slightly right of the road centre on a straight — never on a corner.",
+    "NUDGE_RIGHT": "Micro-correction on a straight: tap D for 140ms to gently re-centre the car on the road without losing speed. Use ONLY when the car is drifting slightly left of the road centre on a straight — never on a corner.",
     "DO_NOTHING": "No input. Use ONLY during loading screens, cutscenes, reward screens, or any time the car cannot be controlled.",
-    "ROAD_NUDGE_LEFT": "A 300ms then W 700ms -- micro-steer left while re-accelerating. Use when the car has just barely drifted off the right edge of the road and the road is immediately to the left.",
-    "ROAD_NUDGE_RIGHT": "D 300ms then W 700ms -- micro-steer right while re-accelerating. Use when the car has just barely drifted off the left edge of the road and the road is immediately to the right.",
-    "ROAD_RETURN_LEFT": "S 500ms → W+A 700ms → W 900ms -- brake, steer left back onto road, re-accelerate. Use when car has gone noticeably off road on the right side and needs to return to tarmac.",
-    "ROAD_RETURN_RIGHT": "S 500ms → W+D 700ms → W 900ms -- brake, steer right back onto road, re-accelerate. Use when car has gone noticeably off road on the left side and needs to return to tarmac.",
-    "ROAD_RECOVER_LEFT": "Hard brake → steer left → drive back onto road → accelerate. Use when car is deep in grass/dirt on the right side or has hit a barrier and needs a full road-return sequence.",
-    "ROAD_RECOVER_RIGHT": "Hard brake → steer right → drive back onto road → accelerate. Use when car is deep in grass/dirt on the left side or has hit a barrier on the left and needs a full road-return sequence."
+    "ROAD_NUDGE_LEFT": "Barely off right edge: steer left (A 300ms) then light throttle pulse (W 350ms). Returns 1-2 tyres back to tarmac. Keep speed low after -- use THROTTLE_LIGHT on next frame.",
+    "ROAD_NUDGE_RIGHT": "Barely off left edge: steer right (D 300ms) then light throttle pulse (W 350ms). Returns 1-2 tyres back to tarmac. Keep speed low after -- use THROTTLE_LIGHT on next frame.",
+    "ROAD_RETURN_LEFT": "S 500ms (brake) → W+A 600ms (steer left back to road) → W 350ms (gentle throttle). Returns car to tarmac. After this action, use THROTTLE_LIGHT and assess road direction before speeding up.",
+    "ROAD_RETURN_RIGHT": "S 500ms (brake) → W+D 600ms (steer right back to road) → W 350ms (gentle throttle). Returns car to tarmac. After this action, use THROTTLE_LIGHT and assess road direction before speeding up.",
+    "ROAD_RECOVER_LEFT": "Deep off-road recovery left: hard brake (S 700ms) → steer left alone (A 450ms) → drive back onto road (W+A 550ms) → gentle pulse (W 350ms). After this, stay at THROTTLE_LIGHT until road is straight and clear.",
+    "ROAD_RECOVER_RIGHT": "Deep off-road recovery right: hard brake (S 700ms) → steer right alone (D 450ms) → drive back onto road (W+D 550ms) → gentle pulse (W 350ms). After this, stay at THROTTLE_LIGHT until road is straight and clear."
   },
   "decision_rules": [
-    "RULE 1 -- MENU / LOADING / CUTSCENE [highest override]:",
-    "  Loading bar visible, black screen transition, cutscene playing,",
-    "  reward/XP screen, menu open, or race results showing",
+    "=== REAL DRIVER DECISION FRAMEWORK ===",
+    "Think like a professional racing driver. Work through these rules TOP TO BOTTOM.",
+    "Stop at the FIRST rule that matches what you see. One action per frame.",
+    "",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 1 -- MENU / LOADING / CUTSCENE  [ALWAYS check first]:",
+    "  If ANY of: loading bar, black transition screen, cutscene, XP/reward screen,",
+    "  menu open, race results, paused, or white-text overlay fills the screen",
     "  => DO_NOTHING",
     "",
-    "RULE 2 -- CRASH / SPIN / WRONG DIRECTION [second override]:",
-    "  Car has collided hard (airbag animation, crash sound cue visible in replay),",
-    "  car is facing more than ~90 degrees from the intended direction,",
-    "  car has stopped or is stationary in the middle of a race,",
-    "  or the car has fallen off the road / off a cliff",
-    "  => REWIND  (always prefer Rewind over trying to drive out of a bad position)",
-    "  If Rewind was picked but car appears stuck against same obstacle next frame:",
-    "  => REWIND_HOLD  (hold R longer to go further back)",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 2 -- SPIN / FACING WRONG DIRECTION  [check before anything else]:",
+    "  ONLY applies when the car has visibly pivoted so the nose points 90+ degrees",
+    "  away from the intended road direction AND car speed is very low or zero.",
+    "  (If still moving forward -- even off road -- skip to RULE 4 instead.)",
     "",
-    "RULE 3 -- STUCK IN TERRAIN / AGAINST WALL:",
-    "  Car is moving very slowly or not at all despite W being pressed,",
-    "  wheels are in the air, car is beached on rocks, or same wall fills the view repeatedly",
-    "  => REWIND  (preferred -- fastest recovery)",
-    "  If Rewind is unavailable or cooldown active (rewind icon greyed out):",
-    "    Clear space behind on the LEFT:",
-    "    => UNSTICK_REVERSE_LEFT",
-    "    Clear space behind on the RIGHT:",
-    "    => UNSTICK_REVERSE_RIGHT",
-    "    No clear space -- reverse straight:",
-    "    => UNSTICK_REVERSE",
+    "  Car nose swung LEFT (counterclockwise spin), road is to the RIGHT of the nose:",
+    "  => SPIN_RECOVER_LEFT   (W + D together -- throttle + right countersteer)",
+    "  Car nose swung RIGHT (clockwise spin), road is to the LEFT of the nose:",
+    "  => SPIN_RECOVER_RIGHT  (W + A together -- throttle + left countersteer)",
     "",
-    "RULE 3b -- OFF ROAD / DRIFTED OFF TRACK [highest road-priority rule]:",
-    "  The car is NOT on asphalt -- grass, dirt, gravel, or sand is clearly visible",
-    "  UNDER or AROUND the car, AND this is NOT a cross-country / dirt race event.",
-    "  The goal is always: SLOW DOWN → REALIGN → RETURN TO ROAD → SPEED UP.",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 3 -- COMPLETELY STOPPED AGAINST A WALL / TREE / BARRIER  [reverse only here]:",
+    "  ONLY applies when: car is NOT moving (speed = 0), W gives no forward motion,",
+    "  and a wall, tree, or barrier is visibly blocking the front of the car.",
+    "  This rule is rare -- under 2% of frames. Do not trigger unless truly stopped.",
     "",
-    "  STEP 1 -- HOW FAR OFF ROAD?",
-    "    Barely off (road edge visible immediately beside the car, just one or two wheels on grass):",
-    "    Road is to the LEFT (car drifted right):",
-    "    => ROAD_NUDGE_LEFT   (gentle steer left to ease back onto tarmac while keeping momentum)",
-    "    Road is to the RIGHT (car drifted left):",
-    "    => ROAD_NUDGE_RIGHT  (gentle steer right to ease back onto tarmac while keeping momentum)",
+    "  TECHNIQUE -- rock the car to break free:",
+    "    1. Reverse a LITTLE (S ~350ms) to create space",
+    "    2. Then immediately throttle + steer away from the obstacle (W+A or W+D)",
+    "    3. Repeat this back-forward-back-forward rocking until the car breaks free",
+    "    4. Once moving freely, switch to THROTTLE_LIGHT and steer back toward road",
     "",
-    "  STEP 2 -- Significantly off road (more than half car width off tarmac):",
-    "    Road is clearly to the LEFT of the car:",
-    "    => ROAD_RETURN_LEFT  (brake → steer left back to road → re-accelerate)",
-    "    Road is clearly to the RIGHT of the car:",
-    "    => ROAD_RETURN_RIGHT (brake → steer right back to road → re-accelerate)",
+    "  Space to escape LEFT -- pick LEFT rock action (S back → W+A forward-left):",
+    "  => UNSTICK_REVERSE_LEFT",
+    "  Space to escape RIGHT -- pick RIGHT rock action (S back → W+D forward-right):",
+    "  => UNSTICK_REVERSE_RIGHT",
+    "  No clear direction -- reverse straight then try forward:",
+    "  => UNSTICK_REVERSE",
     "",
-    "  STEP 3 -- Deeply off road / hit roadside barrier (car is far from tarmac or has bounced):",
-    "    Road surface is to the LEFT after the barrier:",
-    "    => ROAD_RECOVER_LEFT  (hard brake → turn left → build speed back on road)",
-    "    Road surface is to the RIGHT after the barrier:",
-    "    => ROAD_RECOVER_RIGHT (hard brake → turn right → build speed back on road)",
+    "  AFTER BREAKING FREE:",
+    "    Car starts moving? Immediately switch to THROTTLE_LIGHT.",
+    "    Steer gently back toward the road. Do NOT go FULL_THROTTLE until on tarmac.",
     "",
-    "  AFTER RETURNING TO ROAD:",
-    "    Once tarmac is under all four wheels again, immediately switch to a normal",
-    "    driving action: THROTTLE_LIGHT -> THROTTLE_MEDIUM -> FULL_THROTTLE",
-    "    Do NOT keep using road-return actions once back on asphalt.",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 4 -- OFF ROAD IN A ROAD/STREET RACE  [grass/dirt under tyres]:",
+    "  Applies when: grass, dirt, gravel or sand is clearly visible UNDER the car,",
+    "  AND a paved tarmac road is still visible nearby (to the side or ahead).",
+    "  KEY DIFFERENCE FROM RULE 13: in RULE 4 the road is still VISIBLE beside or ahead of you.",
+    "  Goal: SLOW DOWN → REALIGN → RETURN TO TARMAC → BUILD SPEED AGAIN.",
     "",
-    "  HOW TO DETECT 'off road':",
-    "    - Green grass / brown dirt / gravel texture visible under the car",
-    "    - Road edge (white line or tarmac edge) is to one side, not under the car",
-    "    - The racing line / magenta arrow leads back to the left or right, not straight ahead",
-    "    - No tarmac visible directly ahead for more than a car length",
+    "  How far off the road?",
     "",
-    "RULE 4 -- PR STUNT: SPEED TRAP (blue lightning bolt icon visible on or near the road):",
-    "  Speed trap camera is directly ahead on a straight section",
-    "  Road is straight and free of obstacles between you and the camera",
-    "  => SPEED_TRAP_BLAST  (maximum sustained throttle to cross at peak speed)",
-    "  Speed trap ahead but road curves to the LEFT into it:",
-    "  => ACCEL_LEFT_GENTLE  (don't sacrifice speed, just gently track the road)",
-    "  Speed trap ahead but road curves to the RIGHT into it:",
+    "  BARELY OFF (road edge beside the car, 1-2 wheels on grass, car still moving):",
+    "    Road is to the LEFT -- steer gently left back onto tarmac:",
+    "    => ROAD_NUDGE_LEFT",
+    "    Road is to the RIGHT -- steer gently right back onto tarmac:",
+    "    => ROAD_NUDGE_RIGHT",
+    "",
+    "  SIGNIFICANTLY OFF (more than half the car is off tarmac, car still moving):",
+    "    Road clearly to the LEFT of the car:",
+    "    => ROAD_RETURN_LEFT   (brake briefly → steer left → re-accelerate)",
+    "    Road clearly to the RIGHT of the car:",
+    "    => ROAD_RETURN_RIGHT  (brake briefly → steer right → re-accelerate)",
+    "",
+    "  DEEPLY OFF / BOUNCED OFF BARRIER (car is far from tarmac or has stopped):",
+    "    Road is to the LEFT after recovering:",
+    "    => ROAD_RECOVER_LEFT  (hard brake → turn left → build speed on road)",
+    "    Road is to the RIGHT after recovering:",
+    "    => ROAD_RECOVER_RIGHT (hard brake → turn right → build speed on road)",
+    "",
+    "  AFTER RETURNING TO TARMAC:",
+    "    All four wheels back on asphalt? Follow this MANDATORY speed build sequence:",
+    "",
+    "    STEP A -- Tyres just touched tarmac: use THROTTLE_LIGHT for 2-3 frames",
+    "              Keep steering straight. Let the car settle and align with road.",
+    "    STEP B -- Car is straight on road, road ahead is clear for a few seconds:",
+    "              Move up to THROTTLE_MEDIUM for 1-2 frames.",
+    "    STEP C -- Road is clearly straight and open with no obstacles or corners:",
+    "              Now use FULL_THROTTLE.",
+    "",
+    "    NEVER jump from a recovery action straight to FULL_THROTTLE.",
+    "    NEVER speed up while the road is still curving or has obstacles ahead.",
+    "    Do NOT keep using road-return actions once all tyres are on asphalt.",
+    "",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 5 -- PR STUNT: SPEED TRAP  (blue lightning bolt icon visible ahead):",
+    "  Speed trap camera on a straight ahead, road is clear and straight:",
+    "  => SPEED_TRAP_BLAST   (hold full throttle all the way through)",
+    "  Speed trap but road curves LEFT into it:",
+    "  => ACCEL_LEFT_GENTLE  (track the curve at speed, don't sacrifice momentum)",
+    "  Speed trap but road curves RIGHT into it:",
     "  => ACCEL_RIGHT_GENTLE",
     "",
-    "RULE 5 -- PR STUNT: DANGER SIGN / JUMP RAMP (skull icon or obvious ramp ahead):",
-    "  Ramp is directly ahead",
-    "  => JUMP_APPROACH  (maximum throttle -- never brake before a jump)",
-    "  Ramp is ahead but you are slightly left of it:",
-    "  => ACCEL_RIGHT_GENTLE  (gently steer to line up, maintain speed)",
-    "  Ramp is ahead but you are slightly right of it:",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 6 -- PR STUNT: DANGER SIGN / JUMP RAMP  (skull icon or ramp ahead):",
+    "  Ramp directly ahead -- line up straight and approach flat out:",
+    "  => JUMP_APPROACH",
+    "  Ramp ahead, car is slightly LEFT of centre line:",
+    "  => ACCEL_RIGHT_GENTLE  (steer to align, keep throttle on)",
+    "  Ramp ahead, car is slightly RIGHT of centre line:",
     "  => ACCEL_LEFT_GENTLE",
     "",
-    "RULE 6 -- PR STUNT: DRIFT ZONE (orange S-curve arrows / drift score counter visible):",
-    "  Entering or inside a drift zone, zone curves primarily to the LEFT:",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 7 -- PR STUNT: DRIFT ZONE  (orange S-curve arrows or drift score visible):",
+    "  Entering drift zone, zone bends to the LEFT:",
     "  => DRIFT_ZONE_LEFT",
-    "  Entering or inside a drift zone, zone curves primarily to the RIGHT:",
+    "  Entering drift zone, zone bends to the RIGHT:",
     "  => DRIFT_ZONE_RIGHT",
-    "  Already drifting (sideways angle, smoke visible) -- car sliding LEFT (nose pointing left):",
-    "  => DRIFT_MAINTAIN_LEFT  (countersteer right + throttle)",
-    "  Already drifting -- car sliding RIGHT (nose pointing right):",
-    "  => DRIFT_MAINTAIN_RIGHT  (countersteer left + throttle)",
+    "  Mid-drift, car sliding LEFT (nose pointing left, tail out right):",
+    "  => DRIFT_MAINTAIN_LEFT   (countersteer right + throttle to hold angle)",
+    "  Mid-drift, car sliding RIGHT (nose pointing right, tail out left):",
+    "  => DRIFT_MAINTAIN_RIGHT  (countersteer left + throttle to hold angle)",
     "",
-    "RULE 7 -- DRAG RACE (drag strip, christmas tree / launch line visible):",
-    "  Race has not started yet (countdown lights):",
-    "  => DO_NOTHING  (wait for green light)",
-    "  Green light shows / race just started:",
-    "  => DRAG_LAUNCH",
-    "  On the drag strip, no corners:",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 8 -- DRAG RACE  (drag strip / christmas tree launch sequence visible):",
+    "  Countdown lights still showing (not green yet):",
+    "  => DO_NOTHING   (wait for green light, don't burn clutch)",
+    "  Green light just appeared / race just launched:",
+    "  => DRAG_LAUNCH  (clutch-kick launch for best 0-60)",
+    "  On the strip, straight ahead, no corners, race in progress:",
     "  => DRAG_FULL_THROTTLE",
-    "  RPM gauge redlining (needle far right) -- manual gearbox:",
+    "  RPM gauge at red-line (needle far right), manual gearbox:",
     "  => SHIFT_UP_ACCELERATE",
     "",
-    "RULE 8 -- IMMINENT COLLISION (car/barrier/wall VERY close, about to hit):",
-    "  Object directly ahead with no time to steer -- impossible to avoid:",
-    "  => EMERGENCY_BRAKE  (S+Space)",
-    "  Object ahead, open space clearly on the LEFT:",
-    "  => SWERVE_LEFT_FULL",
-    "  Object ahead, open space clearly on the RIGHT:",
-    "  => SWERVE_RIGHT_FULL",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 9 -- IMMINENT COLLISION (wall / barrier / car less than 1 second away):",
+    "  Object DIRECTLY ahead, no time or space to steer -- unavoidable:",
+    "  => EMERGENCY_BRAKE   (S + Space -- maximum stopping force)",
+    "  Object ahead, clear escape space visible to the LEFT:",
+    "  => SWERVE_LEFT_FULL  (emergency steer left)",
+    "  Object ahead, clear escape space visible to the RIGHT:",
+    "  => SWERVE_RIGHT_FULL (emergency steer right)",
     "",
-    "RULE 9 -- OPPONENT CAR DIRECTLY AHEAD (racing -- car blocking your path):",
-    "  Opponent car is right in front, open space on the LEFT side:",
-    "  => OVERTAKE_LEFT",
-    "  Opponent car is right in front, open space on the RIGHT side:",
-    "  => OVERTAKE_RIGHT",
-    "  Opponent car is directly ahead, no space to pass yet -- sit in slipstream:",
-    "  => FULL_THROTTLE  (stay close to build slipstream boost, wait for a gap)",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 10 -- OPPONENT CAR BLOCKING RACING LINE:",
+    "  Opponent car directly ahead, space clearly open on the LEFT:",
+    "  => OVERTAKE_LEFT   (W + A -- accelerate and move left past them)",
+    "  Opponent car directly ahead, space clearly open on the RIGHT:",
+    "  => OVERTAKE_RIGHT  (W + D -- accelerate and move right past them)",
+    "  Opponent ahead but no gap yet -- stay in their slipstream for the speed boost:",
+    "  => FULL_THROTTLE   (sit close, wait for a gap to appear)",
     "",
-    "RULE 10 -- CORNER AHEAD (road curves -- apply the correct corner technique):",
-    "  ASSESS CORNER SEVERITY:",
-    "    - Wide sweeping curve (road curves just slightly, plenty of road visible ahead): GENTLE",
-    "    - Standard corner (road clearly turns, roughly 45-90 degrees): MEDIUM",
-    "    - Tight corner or hairpin (road turns 90+ degrees, very little exit visible): TIGHT",
-    "    - Very tight hairpin or U-turn: BRAKE-THEN-STEER",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 11 -- CORNER / CURVE AHEAD  (road edge itself bends, not just racing line):",
     "",
-    "  GENTLE LEFT curve ahead:",
-    "  => ACCEL_LEFT_GENTLE",
-    "  MEDIUM LEFT corner ahead, enough speed to use braking line:",
-    "  => ACCEL_LEFT_MEDIUM",
-    "  TIGHT LEFT corner -- reduce speed first:",
-    "  => CORNER_BRAKE_EXIT_LEFT",
-    "  HAIRPIN LEFT (very tight, must slow significantly):",
-    "  => BRAKE_STEER_LEFT  then  ACCEL_LEFT_TIGHT  on the exit",
+    "  STEP 1 -- READ THE RACING LINE COLOUR (most reliable corner signal):",
+    "    RED strip ahead   = brake zone -- brake NOW before turning",
+    "    ORANGE strip      = lift zone  -- reduce throttle, corner soon",
+    "    GREEN strip       = acceleration zone -- stay on throttle through this section",
     "",
-    "  GENTLE RIGHT curve ahead:",
-    "  => ACCEL_RIGHT_GENTLE",
-    "  MEDIUM RIGHT corner:",
+    "  STEP 2 -- ASSESS CORNER TYPE based on how tight the road bends:",
+    "    SWEEPING CURVE   : road barely curves, lots of tarmac visible ahead (GENTLE)",
+    "    STANDARD CORNER  : road turns ~45-90 degrees, clear exit (MEDIUM)",
+    "    TIGHT CORNER     : road turns >90 degrees, exit barely visible (TIGHT)",
+    "    HAIRPIN / U-TURN : road turns back on itself, sharp exit (HAIRPIN)",
+    "",
+    "  STEP 3 -- PICK THE RIGHT ACTION:",
+    "",
+    "  SWEEPING LEFT (GREEN line, road barely curves left):",
+    "  => ACCEL_LEFT_GENTLE   (hold W+A 220ms -- short steer tap, maintain speed)",
+    "",
+    "  STANDARD LEFT (ORANGE/RED line, clear left bend):",
+    "  => ACCEL_LEFT_MEDIUM   (brake slightly then W+A through the corner)",
+    "",
+    "  TIGHT LEFT already in corner (ORANGE line reaching right entry):",
+    "  => CORNER_BRAKE_EXIT_LEFT  (brake on entry, steer left, throttle on exit)",
+    "",
+    "  HAIRPIN LEFT (RED line, very little exit visible):",
+    "  => BRAKE_STEER_LEFT    (hard brake, tight left steer, then ACCEL_LEFT_TIGHT on exit)",
+    "",
+    "  SWEEPING RIGHT (GREEN line, barely curves right):",
+    "  => ACCEL_RIGHT_GENTLE  (hold W+D 220ms -- short steer tap, maintain speed)",
+    "",
+    "  STANDARD RIGHT (ORANGE/RED line, clear right bend):",
     "  => ACCEL_RIGHT_MEDIUM",
-    "  TIGHT RIGHT corner:",
+    "",
+    "  TIGHT RIGHT already in corner:",
     "  => CORNER_BRAKE_EXIT_RIGHT",
+    "",
     "  HAIRPIN RIGHT:",
-    "  => BRAKE_STEER_RIGHT  then  ACCEL_RIGHT_TIGHT",
+    "  => BRAKE_STEER_RIGHT   (then ACCEL_RIGHT_TIGHT on exit)",
     "",
-    "  The racing line colour helps assess: GREEN=gas, ORANGE=lift, RED=brake.",
-    "  Wide entry, clip apex, wide exit -- stay on tarmac.",
+    "  CORNER TECHNIQUE -- real driver rules:",
+    "  - BRAKE BEFORE the corner entry, NOT while steering through it",
+    "  - Turn in AFTER braking, not at the same time (except trail braking on smooth corners)",
+    "  - Hit the APEX (inside edge of the corner) then open throttle progressively to the exit",
+    "  - On exit: THROTTLE_LIGHT → THROTTLE_MEDIUM → FULL_THROTTLE as road straightens",
     "",
-    "RULE 11 -- SPIN DETECTED (car has rotated sideways, not a controlled drift):",
-    "  Car nose has swung LEFT (car spinning counterclockwise), you feel oversteer left:",
-    "  => SPIN_RECOVER_LEFT  (W+D -- countersteer right + throttle)",
-    "  Car nose has swung RIGHT (car spinning clockwise), oversteer right:",
-    "  => SPIN_RECOVER_RIGHT  (W+A -- countersteer left + throttle)",
-    "",
-    "RULE 12 -- GEAR CHANGE (manual gearbox only -- if telemetry / gear indicator visible):",
-    "  RPM gauge at red-line, gear indicator shows can upshift:",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 12 -- GEAR CHANGE  (only if manual gearbox telemetry is visible on screen):",
+    "  RPM gauge needle in the RED zone (far right), gear can be raised:",
     "  => SHIFT_UP",
-    "  Engine lugging at low RPM (coming out of a corner):",
+    "  Engine lugging (RPM very low after braking into a corner):",
     "  => SHIFT_DOWN",
+    "  Exiting corner, need smooth power delivery while upshifting:",
+    "  => SHIFT_UP_ACCELERATE",
     "",
-    "RULE 13 -- OFF-ROAD / CROSS COUNTRY (dirt, grass, gravel, river, rocks):",
-    "  No asphalt under the car, cross-country checkpoint ahead, terrain is rough",
-    "  No major obstacles immediately ahead:",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 13 -- CROSS COUNTRY / DIRT RACE EVENT ONLY:",
+    "  *** CRITICAL: Only use this rule when ALL of these are true: ***",
+    "    - The game HUD / event name explicitly says 'Cross Country', 'Dirt Racing',",
+    "      'Trailblazer', or similar off-road event type",
+    "    - There is NO paved tarmac road visible anywhere ahead of the car",
+    "    - The checkpoints/racing line is guiding you THROUGH off-road terrain",
+    "      (not alongside a road or back to a road)",
+    "",
+    "  If there is ANY tarmac or paved road visible ahead: use RULE 15 (FULL_THROTTLE)",
+    "  If grass is just alongside a road: use RULE 4 (off-road return), NOT this rule.",
+    "",
+    "  Confirmed cross-country, path clear ahead, terrain is passable:",
     "  => OFFROAD_THROTTLE",
-    "  Obstacle (rock, tree, fence) on the RIGHT -- go left:",
+    "  Rock / tree / fence on the RIGHT, clear space left:",
     "  => OFFROAD_LEFT",
-    "  Obstacle on the LEFT -- go right:",
+    "  Rock / tree / fence on the LEFT, clear space right:",
     "  => OFFROAD_RIGHT",
-    "  Very rough terrain, steep slope, river crossing -- go easy:",
+    "  Very rough terrain (rocks, steep bank, river, deep ruts):",
     "  => OFFROAD_CAREFUL",
     "",
-    "RULE 14 -- TRAFFIC AHEAD IN FREEROAM (civilian car or truck in your lane):",
-    "  Civilian car ahead, space on the LEFT to pass:",
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 14 -- CIVILIAN TRAFFIC AHEAD  (freeroam only -- civilian car/truck in lane):",
+    "  Civilian vehicle in your lane, clear space to the LEFT:",
     "  => SWERVE_LEFT",
-    "  Civilian car ahead, space on the RIGHT to pass:",
+    "  Civilian vehicle in your lane, clear space to the RIGHT:",
     "  => SWERVE_RIGHT",
     "",
-    "RULE 15 -- STRAIGHT ROAD (default -- clear asphalt ahead, no corners):",
-    "  Long straight road, no obstacles, no corners visible yet:",
-    "  => FULL_THROTTLE",
-    "  Approaching the end of a straight where a corner will appear:",
-    "  => THROTTLE_MEDIUM  (prepare to brake / steer)",
-    "  Exiting a corner onto a short straight before the next bend:",
-    "  => THROTTLE_LIGHT  (build speed carefully)"
+    "────────────────────────────────────────────────────────────────────────────────",
+    "RULE 15 -- STRAIGHT ROAD / DEFAULT  [*** MOST COMMON ANSWER -- ~80% of frames ***]:",
+    "  None of Rules 1-14 matched. Road is clear straight tarmac ahead.",
+    "",
+    "  Clear straight road, no obstacles, no corners imminent:",
+    "  => FULL_THROTTLE   *** DEFAULT -- when in doubt, pick this ***",
+    "",
+    "  Car is drifting slightly to the RIGHT of road centre on a straight (right tyres",
+    "  approaching right edge line) -- gentle micro-correction:",
+    "  => NUDGE_LEFT      (140ms tap A -- tiny yaw correction, W stays effective)",
+    "",
+    "  Car is drifting slightly to the LEFT of road centre on a straight (left tyres",
+    "  approaching left edge line) -- gentle micro-correction:",
+    "  => NUDGE_RIGHT     (140ms tap D -- tiny yaw correction, W stays effective)",
+    "",
+    "  Straight road but a corner is visible at the far end (not yet close enough for",
+    "  RULE 11) -- prepare early by easing off:",
+    "  => THROTTLE_MEDIUM (lift slightly, stay alert, assess corner on next frame)",
+    "",
+    "  Just exited a corner, short straight connects to next bend:",
+    "  => THROTTLE_LIGHT  (build speed back up smoothly from corner exit)"
   ],
   "constraints": [
-    "* ROAD PRIORITY: staying on tarmac is ALWAYS the #1 goal in road/street racing events. Never sacrifice road position for speed.",
-    "* When off road: ALWAYS slow down first (tap S), THEN steer back to tarmac, THEN re-accelerate. Never floor it while on grass.",
-    "* After any road-return action, check the next screenshot -- if back on asphalt, switch to THROTTLE_LIGHT then build up.",
-    "* The racing line (magenta/pink strip on road) shows where to drive. If it is off to one side, you have drifted off course -- correct immediately.",
-    "* ALWAYS use Rewind (R) after a crash, spin, or going off course -- it is the fastest recovery.",
-    "* NEVER brake while wheels are fully turned (understeer risk) -- straighten briefly before braking.",
-    "* NEVER pick DO_NOTHING if the car is moving or a race is active.",
-    "* NEVER pick ACTIVATE unless an on-screen Enter/Accept prompt is literally visible.",
-    "* NEVER pick JUMP_APPROACH unless a physical jump ramp is right in front of you.",
-    "* NEVER pick SPEED_TRAP_BLAST on a curved road -- straighten up first or you will crash.",
-    "* NEVER use DRIFT_COMBO on a straight road at very high speed -- dangerous spin risk.",
-    "* NEVER use EMERGENCY_BRAKE unless a collision is truly unavoidable in the next second.",
-    "* If the same action was chosen 3+ times in a row and the car position has not changed, switch to REWIND.",
-    "* In a corner, always prefer a CORNER sequence (brake-then-exit) over pure braking alone.",
-    "* On asphalt with a clean racing line: smooth inputs > aggressive inputs. Quality lap times beat aggressive spins."
+    "* NEVER use REWIND or REWIND_HOLD. Rewind is disabled. Recover manually with spin-correct or road-return actions.",
+    "* DEFAULT ACTION IS FULL_THROTTLE. If no rule clearly matches, pick FULL_THROTTLE. The car must always move FORWARD.",
+    "* NEVER use any reverse action (UNSTICK_REVERSE, REVERSE, REVERSE_LEFT, REVERSE_RIGHT, etc.) unless the car speedometer shows speed = 0 AND a wall physically blocks the front. This happens under 2% of frames.",
+    "* If the car is moving at any speed -- even 5 km/h -- do NOT reverse. Keep W held and correct direction with A or D.",
+    "* NEVER pick OFFROAD_THROTTLE, OFFROAD_LEFT, OFFROAD_RIGHT, or OFFROAD_CAREFUL during a ROAD RACE or STREET SCENE event. Those actions are ONLY for cross-country and dirt race events where the game explicitly sends you through rough terrain with no tarmac road. If you see tarmac ahead OR the event HUD says Road Race / Street Scene: pick FULL_THROTTLE (on road) or ROAD_RETURN_* (if off the road edge).",
+    "* On a STRAIGHT road: FULL_THROTTLE is correct for ~90% of frames. Use NUDGE_LEFT or NUDGE_RIGHT (140ms tap) for micro-corrections when drifting toward a road edge. Do NOT use ACCEL_*_GENTLE on straights -- that is for actual road curves only.",
+    "* NEVER steer just because the racing line (magenta strip) shifts slightly. The racing line shows the ideal apex, not a target to chase on a straight. Only steer when the ROAD EDGE itself visibly curves.",
+    "* NEVER alternate left-steer then right-steer on consecutive frames on a straight -- this causes oscillation and wastes lap time. After any steer correction, return to FULL_THROTTLE next frame unless the road continues to curve.",
+    "* ALWAYS brake BEFORE turning into a corner -- not during. Brake in a straight line first, then steer. This prevents understeer.",
+    "* NEVER brake with wheels fully turned (this causes understeer -- car pushes wide). Straighten very briefly before hard braking.",
+    "* On corner EXIT: build throttle progressively -- THROTTLE_LIGHT first, then THROTTLE_MEDIUM, then FULL_THROTTLE as the road straightens. Never snap to full throttle from a tight corner -- it causes wheelspin/oversteer.",
+    "* Use the RACING LINE COLOUR as your corner signal: GREEN = gas on, ORANGE = lift throttle, RED = brake now.",
+    "* If off road (grass/dirt) in a road race: slow down first, steer back to tarmac, then re-accelerate. Never floor it on grass -- it makes the situation worse.",
+    "* After ANY recovery action (UNSTICK_*, ROAD_RETURN_*, ROAD_RECOVER_*, ROAD_NUDGE_*): use THROTTLE_LIGHT for the next 2-3 frames. Do NOT jump to FULL_THROTTLE immediately after a recovery.",
+    "* On road after recovery: stay at THROTTLE_LIGHT until the road ahead is visibly straight and clear of obstacles/corners. Only then step up to THROTTLE_MEDIUM, then FULL_THROTTLE.",
+    "* After being stuck (RULE 3): once moving, keep speed LOW and steer gently back toward the road. Resist the urge to accelerate -- get back on tarmac FIRST, then speed up.",
+    "* After any road-return or off-road recovery action: once all four tyres are back on asphalt, switch to THROTTLE_LIGHT then build up. Do NOT continue using road-return actions on tarmac.",
+    "* NEVER use EMERGENCY_BRAKE unless a collision is truly unavoidable within the next second. It is faster to swerve than to brake in most scenarios.",
+    "* NEVER use DRIFT_COMBO or HANDBRAKE on a straight at high speed -- instant spin risk.",
+    "* NEVER pick JUMP_APPROACH unless a physical jump ramp is directly in front of the car.",
+    "* NEVER pick SPEED_TRAP_BLAST on a curved road -- straighten first or risk crashing at full speed.",
+    "* NEVER pick ACTIVATE unless an on-screen Enter/Accept button prompt is literally visible.",
+    "* NEVER pick DO_NOTHING while a race is active and the car is in motion.",
+    "* If the same action has been chosen 3 or more frames in a row with no visible forward progress, switch to a DIFFERENT FORWARD ACTION (e.g. THROTTLE_LIGHT or NUDGE_* to find a new line). Never loop the same recovery action.",
+    "* Smooth driving beats aggressive driving. One clean decisive action per frame. Avoid jerky corrections.",
+    "* In a corner, always prefer a brake-then-steer sequence (CORNER_BRAKE_EXIT_*) over pure braking alone for tighter corners."
   ],
   "situation_checklist": [
-    "Examine the screenshot carefully and answer these questions in order:",
-    "  1.  Is a loading screen, menu, cutscene, or results screen visible?          -> RULE 1  (DO_NOTHING)",
-    "  2.  Has the car crashed, spun out, or is it facing the wrong direction?       -> RULE 2  (REWIND)",
-    "  3.  Is the car stuck against a wall or in terrain (stuck/not moving)?         -> RULE 3  (REWIND/UNSTICK)",
-    "  3b. Is the car on GRASS / DIRT / SAND in a road/street race (NOT cross-country)? -> RULE 3b (ROAD_RETURN_*/ROAD_NUDGE_*)",
-    "  4.  Is a SPEED TRAP lightning bolt icon visible on a straight road ahead?     -> RULE 4  (SPEED_TRAP_BLAST)",
-    "  5.  Is a DANGER SIGN jump ramp directly in front of the car?                  -> RULE 5  (JUMP_APPROACH)",
-    "  6.  Are orange DRIFT ZONE arrows or a drift score counter visible?             -> RULE 6  (DRIFT_ZONE_*)",
-    "  7.  Is this a DRAG RACE strip (no corners, christmas tree)?                   -> RULE 7  (DRAG_*)",
-    "  8.  Is a collision with a wall/barrier/car less than 1 second away?           -> RULE 8  (EMERGENCY_BRAKE/SWERVE)",
-    "  9.  Is an opponent car directly blocking your racing line?                    -> RULE 9  (OVERTAKE_*)",
-    "  10. Is there a corner or curve ahead on the road?                             -> RULE 10 (corner actions)",
-    "  11. Is the car visibly spinning out of control (not a drift)?                 -> RULE 11 (SPIN_RECOVER_*)",
-    "  12. Is the car on dirt/grass/gravel (off-road terrain)?                       -> RULE 13 (OFFROAD_*)",
-    "  13. Is there a civilian car or slow vehicle ahead in freeroam?                -> RULE 14 (SWERVE_*)",
-    "  14. Is the road ahead clear, straight asphalt with no obstacles?              -> RULE 15 (FULL_THROTTLE)",
-    "Output EXACTLY ONE action name from the list above."
+    "Study the screenshot carefully. Answer these questions in strict order. Stop at the FIRST yes.",
+    "  1.  Is there a loading screen, menu, cutscene, or results overlay?                  -> RULE 1  (DO_NOTHING)",
+    "  2.  Has the car spun so the nose is 90+ degrees from the road AND speed is near zero?   -> RULE 2  (SPIN_RECOVER_*)",
+    "  3.  Is speed = 0 AND a wall is physically blocking the front preventing any forward movement? -> RULE 3  (UNSTICK_REVERSE_*)",
+    "  4.  Is grass/dirt/sand visible UNDER the car in a road race (not cross-country)?    -> RULE 4  (ROAD_NUDGE/RETURN/RECOVER_*)",
+    "  5.  Is a SPEED TRAP blue lightning bolt visible on a straight ahead?                -> RULE 5  (SPEED_TRAP_BLAST)",
+    "  6.  Is a DANGER SIGN jump ramp directly in front of the car?                        -> RULE 6  (JUMP_APPROACH)",
+    "  7.  Are orange DRIFT ZONE arrows or a drift score counter on screen?                -> RULE 7  (DRIFT_ZONE_*/DRIFT_MAINTAIN_*)",
+    "  8.  Is this a drag strip with a christmas-tree launch light?                        -> RULE 8  (DRAG_*)",
+    "  9.  Is a wall/barrier/car less than 1 second away from hitting the car?             -> RULE 9  (EMERGENCY_BRAKE / SWERVE_*_FULL)",
+    "  10. Is an opponent car directly blocking the racing line right in front?             -> RULE 10 (OVERTAKE_*)",
+    "  11. Does the road edge itself visibly curve or bend ahead?                          -> RULE 11 (corner actions based on severity + racing line colour)",
+    "  12. Is manual gearbox telemetry visible showing a gear change is needed?            -> RULE 12 (SHIFT_UP / SHIFT_DOWN)",
+    "  13. Is this a cross-country or dirt event with no tarmac road?                      -> RULE 13 (OFFROAD_*)",
+    "  14. Is there a civilian car or slow truck directly ahead in freeroam?               -> RULE 14 (SWERVE_LEFT / SWERVE_RIGHT)",
+    "  15. None of the above matched -- clear road or corner managed:                      -> RULE 15 (FULL_THROTTLE is almost always correct here)",
+    "Output EXACTLY ONE action name from the named action list. No explanation, just the action name."
   ],
   "action_list": [
     "ACCELERATE",

@@ -81,18 +81,40 @@ def _get_llm() -> Any:
 # ---------------------------------------------------------------------------
 
 def _action_to_situation(action: str) -> str:
+    """Map a named action to a broad situation label.
+    Handles both FH5 and MGS5 action namespaces.
+    """
     a = action.upper()
+
+    # ── FH5 situations ──────────────────────────────────────────────────────
+    if a == "DO_NOTHING":
+        return "MENU"
+    # Recovery/off-road checked FIRST (before generic THROTTLE / NUDGE matches)
+    if any(x in a for x in ("OFFROAD", "ROAD_NUDGE", "ROAD_RETURN", "ROAD_RECOVER",
+                             "UNSTICK", "REVERSE")):
+        return "RECOVER"
+    if any(x in a for x in ("DRIFT", "HANDBRAKE", "SPIN_RECOVER", "DRIFT_ZONE")):
+        return "DRIFT"
+    if any(x in a for x in ("FULL_THROTTLE", "THROTTLE", "DRAG", "SPEED_TRAP",
+                             "SHIFT_UP", "SHIFT_DOWN")):
+        return "RACING"
+    if any(x in a for x in ("ACCEL_LEFT", "ACCEL_RIGHT", "CORNER", "BRAKE",
+                             "OVERTAKE", "SWERVE", "NUDGE", "JUMP")):
+        return "RACING"
+    if a == "SPEED_TRAP_BLAST":
+        return "STUNT"
+
+    # ── MGS5 situations ─────────────────────────────────────────────────────
     if any(x in a for x in ("AIM", "SHOOT", "BURST", "RELOAD")):
         return "COMBAT"
     if any(x in a for x in ("QUICK_DIVE", "EVADE", "SPRINT_BACKWARD")):
         return "EVADE"
-    if any(x in a for x in ("LOOK_RIGHT", "LOOK_LEFT", "LOOK_UP", "LOOK_DOWN",
-                              "CROUCH", "PRONE", "PEEK", "COVER")):
+    if any(x in a for x in ("CROUCH", "PRONE", "PEEK", "COVER",
+                             "LOOK_RIGHT", "LOOK_LEFT")):
         return "COVER"
-    if action == "INTERACT":
+    if a == "INTERACT":
         return "INTERACT"
-    if action == "DO_NOTHING":
-        return "IDLE"
+
     return "EXPLORE"
 
 
@@ -141,18 +163,85 @@ def _get_system_prompt() -> str:
     return "\n".join(lines)
 
 
-def _build_user_message(b64_jpeg: str, recent: list[str]) -> HumanMessage:
+def _build_user_message(b64_jpeg: str, recent: list[str],
+                        recent_situations: list[str] | None = None) -> HumanMessage:
     lines: list[str] = []
 
     if recent:
         lines.append("Recent actions (oldest->newest): " + " -> ".join(recent))
+    if recent_situations:
+        lines.append("Recent situations: " + " -> ".join(recent_situations))
 
-    if len(recent) >= 3 and len(set(recent[-3:])) == 1:
+    if len(recent) >= 3:
         last = recent[-1]
-        if not any(x in last for x in ("AIM", "SHOOT", "BURST")):
+        last_n = recent[-3:]
+
+        # ── STUCK DETECTION (highest priority warning) ───────────────────────
+        # Only "struggling" actions count -- OFFROAD_* and ROAD_NUDGE_* repeated
+        # while not on a clear road.  Pure FULL_THROTTLE/ACCEL are normal racing;
+        # they should NOT trigger the stuck alert.
+        _struggling_set = {
+            "OFFROAD_THROTTLE", "OFFROAD_LEFT", "OFFROAD_RIGHT", "OFFROAD_CAREFUL",
+            "ROAD_NUDGE_LEFT", "ROAD_NUDGE_RIGHT",
+            "ROAD_RETURN_LEFT", "ROAD_RETURN_RIGHT",
+        }
+        _reverse_set = {
+            "UNSTICK_REVERSE", "UNSTICK_REVERSE_LEFT", "UNSTICK_REVERSE_RIGHT",
+            "REVERSE", "REVERSE_LEFT", "REVERSE_RIGHT",
+        }
+        recent4 = recent[-4:]
+        struggling = [a for a in recent4 if a in _struggling_set]
+        rev_attempts = [a for a in recent4 if a in _reverse_set]
+        # Also check if situation stayed RECOVER the whole time (truly stuck)
+        stuck_via_situation = (
+            recent_situations is not None
+            and len(recent_situations) >= 3
+            and all(s == "RECOVER" for s in recent_situations[-3:])
+        )
+        if len(struggling) >= 3 and not rev_attempts:
             lines.append(
-                f"WARNING: '{last}' chosen {len(recent)} times in a row. "
-                "The situation has likely changed -- pick a DIFFERENT action."
+                "*** STUCK ALERT ***: You have picked recovery/offroad actions "
+                f"({', '.join(struggling)}) multiple times with no progress. "
+                "The car is PHYSICALLY BLOCKED by a wall or tree -- throttle will NOT help. "
+                "You MUST reverse to break free:\n"
+                "  - Space to the LEFT behind the car  -> UNSTICK_REVERSE_LEFT\n"
+                "  - Space to the RIGHT behind the car -> UNSTICK_REVERSE_RIGHT\n"
+                "  - No clear direction               -> UNSTICK_REVERSE\n"
+                "Do NOT pick any throttle, offroad, or nudge action until after reversing."
+            )
+        elif stuck_via_situation and not rev_attempts:
+            lines.append(
+                "*** STUCK ALERT ***: Situation has been RECOVER for 3+ frames. "
+                "The car is not making forward progress. Reverse to escape:\n"
+                "  UNSTICK_REVERSE_LEFT / UNSTICK_REVERSE_RIGHT / UNSTICK_REVERSE"
+            )
+
+        # ── Same action 3+ times in a row ────────────────────────────────────
+        elif len(set(last_n)) == 1 and last not in _reverse_set:
+            repeat_count = sum(1 for x in recent if x == last)
+            lines.append(
+                f"WARNING: '{last}' repeated {repeat_count} times in a row -- "
+                "strategy is NOT working. Pick a DIFFERENT action. "
+                "On a clear road: FULL_THROTTLE. Stuck against obstacle: UNSTICK_REVERSE_*."
+            )
+
+        # ── OFFROAD actions dominating a road race ────────────────────────────
+        offroad_recent = [x for x in recent[-5:] if "OFFROAD" in x]
+        if len(offroad_recent) >= 3:
+            lines.append(
+                "WARNING: OFFROAD_* chosen many times in a row. "
+                "OFFROAD actions are ONLY for cross-country/dirt events. "
+                "If tarmac road is visible ahead: pick FULL_THROTTLE. "
+                "If off road beside a paved road: pick ROAD_RETURN_* or ROAD_NUDGE_*."
+            )
+
+        # ── NUDGE oscillation ─────────────────────────────────────────────────
+        nudge_recent = [x for x in recent[-4:] if "NUDGE" in x]
+        if len(nudge_recent) >= 3:
+            lines.append(
+                "WARNING: NUDGE actions alternating left/right -- this is oscillation. "
+                "STOP nudging. Pick FULL_THROTTLE and drive straight. "
+                "Only nudge again if a road EDGE is immediately beside the car."
             )
 
     checklist: list[str] = getattr(config, "SITUATION_CHECKLIST", [])
@@ -202,11 +291,12 @@ def analyze_node(state: BotState) -> BotState:
                 "action": default_action}
 
     recent = list(state.get("recent_actions", []))
+    recent_situations = list(state.get("recent_situations", []))
     llm    = _get_llm()
 
     messages = [
         SystemMessage(content=_get_system_prompt()),
-        _build_user_message(b64, recent),
+        _build_user_message(b64, recent, recent_situations),
     ]
     response = llm.invoke(messages)
 
@@ -227,12 +317,14 @@ def analyze_node(state: BotState) -> BotState:
 
     window = getattr(config, "RECENT_ACTIONS_WINDOW", 8)
     new_recent = (recent + [chosen_action])[-window:]
+    new_recent_situations = (recent_situations + [situation])[-window:]
 
     updates: BotState = {
-        "chosen_action": chosen_action,
-        "situation":     situation,
-        "action":        chosen_action,
-        "recent_actions": new_recent,
+        "chosen_action":      chosen_action,
+        "situation":          situation,
+        "action":             chosen_action,
+        "recent_actions":     new_recent,
+        "recent_situations":  new_recent_situations,
     }
     if config.DEBUG_TIMING:
         timing = dict(state.get("timing", {}))
