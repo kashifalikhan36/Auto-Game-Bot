@@ -9,6 +9,8 @@ dist/
 build/
 *.egg
 
+tests
+
 # Virtual environments
 .venv/
 venv/
