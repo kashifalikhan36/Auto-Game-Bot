@@ -172,21 +172,28 @@ VK_MAP: dict[str, dict | None] = {
 # Game config loader
 # ---------------------------------------------------------------------------
 
+# Human-readable game context description (loaded from game config)
+GAME_CONTEXT: str = ""
+
 def load_game_config(config_path: str) -> None:
     """
     Load a games_config/<game_id>/config.json and override ACTION_LIST + VK_MAP
     at module level so all nodes pick up the new bindings.
     """
     import json
-    global ACTION_LIST, VK_MAP
+    global ACTION_LIST, VK_MAP, GAME_CONTEXT
     with open(config_path, encoding="utf-8") as f:
         data = json.load(f)
     ACTION_LIST = data["action_list"]
     VK_MAP = data["key_map"]
+    GAME_CONTEXT = data.get("game_context", "")
 # fmt: on
 
 # How long (ms) to hold a key down before releasing it
 KEY_HOLD_MS: int = int(os.getenv("KEY_HOLD_MS", 50))
+
+# How many past actions to feed back to the LLM as context (anti-repeat)
+RECENT_ACTIONS_WINDOW: int = int(os.getenv("RECENT_ACTIONS_WINDOW", 8))
 
 # ---------------------------------------------------------------------------
 # Bot loop

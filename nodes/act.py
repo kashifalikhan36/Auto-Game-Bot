@@ -25,6 +25,44 @@ def _get_controller() -> InputController:
 
 
 # ---------------------------------------------------------------------------
+# Binding dispatcher
+# ---------------------------------------------------------------------------
+
+def _execute_binding(controller: InputController, binding: dict) -> None:
+    """Dispatch a key_map binding to the correct input method.
+
+    Supported types:
+      keyboard   — { "type": "keyboard", "key": str, "hold_ms"?: int }
+      mouse      — { "type": "mouse", "button": str, "hold_ms"?: int }
+      combo      — { "type": "combo", "keys": list[str], "hold_ms"?: int }
+      mouse_move — { "type": "mouse_move", "dx": int, "dy": int, "steps"?: int }
+      sequence   — { "type": "sequence", "steps": list[binding] }
+    Each step in a sequence may include "delay_after_ms" for a post-step pause.
+    """
+    input_type = binding.get("type", "keyboard")
+    hold_ms = binding.get("hold_ms", config.KEY_HOLD_MS)
+
+    if input_type == "keyboard":
+        controller.press_key(binding["key"], hold_ms=hold_ms)
+    elif input_type == "mouse":
+        controller.click_mouse(binding["button"], hold_ms=hold_ms)
+    elif input_type == "combo":
+        controller.press_combo(binding["keys"], hold_ms=hold_ms)
+    elif input_type == "mouse_move":
+        controller.move_mouse(
+            binding.get("dx", 0),
+            binding.get("dy", 0),
+            steps=binding.get("steps", 5),
+        )
+    elif input_type == "sequence":
+        for step in binding.get("steps", []):
+            _execute_binding(controller, step)
+            delay = step.get("delay_after_ms", 0)
+            if delay:
+                time.sleep(delay / 1000.0)
+
+
+# ---------------------------------------------------------------------------
 # Node
 # ---------------------------------------------------------------------------
 
@@ -43,11 +81,7 @@ def act_node(state: BotState) -> BotState:
 
     if binding is not None:
         controller = _get_controller()
-        input_type = binding.get("type", "keyboard")
-        if input_type == "keyboard":
-            controller.press_key(binding["key"], hold_ms=config.KEY_HOLD_MS)
-        elif input_type == "mouse":
-            controller.click_mouse(binding["button"], hold_ms=config.KEY_HOLD_MS)
+        _execute_binding(controller, binding)
 
     t1 = time.perf_counter()
 

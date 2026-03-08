@@ -84,15 +84,30 @@ def _get_llm() -> Any:
 # ---------------------------------------------------------------------------
 
 def _get_system_prompt() -> str:
-    """Build the system prompt with the current ACTION_LIST (evaluated lazily
-    so game configs loaded after import are reflected correctly)."""
-    return (
-        "You are a game-playing AI. "
-        "You will receive a screenshot of a game. "
-        "Your job is to decide the single best action to take RIGHT NOW. "
-        "Respond with EXACTLY one word from this list — no punctuation, no explanation:\n"
-        + ", ".join(config.ACTION_LIST)
+    """Build the system prompt with game context and the current ACTION_LIST.
+    Evaluated lazily so game configs loaded after import are reflected."""
+    action_str = ", ".join(config.ACTION_LIST)
+    game_ctx: str = getattr(config, "GAME_CONTEXT", "")
+
+    prompt = "You are an AI agent controlling a video game character via keyboard and mouse.\n"
+    if game_ctx:
+        prompt += f"Game context: {game_ctx}\n\n"
+
+    prompt += (
+        "Analyse the screenshot and choose the SINGLE best action to take RIGHT NOW.\n\n"
+        "Strategy rules:\n"
+        "- Enemies visible on screen → AIM_SHOOT or AIM then TAKE_COVER.\n"
+        "- Alert/danger (red UI elements, gunfire) → SPRINT_FORWARD to escape or TAKE_COVER.\n"
+        "- Open ground, no threats → SPRINT_FORWARD or MOVE_FORWARD to explore.\n"
+        "- Haven't looked around recently → LOOK_LEFT or LOOK_RIGHT to survey.\n"
+        "- Interact prompt visible → CONTEXT_ACTION.\n"
+        "- Low ammo indicator → RELOAD.\n"
+        "- NEVER repeat the same action more than twice consecutively — vary your play.\n"
+        "- Only choose IDLE if a cutscene, loading screen, or menu is showing.\n\n"
+        "Respond with EXACTLY ONE word from this list — no punctuation, no explanation:\n"
+        + action_str
     )
+    return prompt
 
 
 def _build_user_message(b64_jpeg: str, recent: list[str]) -> HumanMessage:
@@ -107,8 +122,9 @@ def _build_user_message(b64_jpeg: str, recent: list[str]) -> HumanMessage:
                 "type": "text",
                 "text": (
                     f"{context}"
-                    "What is the best single action to take now? "
-                    "Reply with one word only."
+                    "What is the BEST single action to take now based on what you see? "
+                    "Consider threats, environment, and recent actions before deciding. "
+                    "Reply with ONE word only."
                 ),
             },
             {
@@ -160,8 +176,9 @@ def analyze_node(state: BotState) -> BotState:
 
     t1 = time.perf_counter()
 
-    # Maintain a rolling window of last 3 actions
-    new_recent = (recent + [action])[-3:]
+    # Maintain a rolling window of recent actions (anti-repeat context)
+    window = getattr(config, "RECENT_ACTIONS_WINDOW", 8)
+    new_recent = (recent + [action])[-window:]
 
     updates: BotState = {
         "action": action,

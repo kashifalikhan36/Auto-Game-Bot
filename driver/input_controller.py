@@ -133,6 +133,7 @@ def _send_input_vk(vk_code: int, key_up: bool) -> None:
     ctypes.windll.user32.SendInput(1, ctypes.byref(inp), ctypes.sizeof(_INPUT))
 
 
+MOUSEEVENTF_MOVE       = 0x0001
 MOUSEEVENTF_LEFTDOWN   = 0x0002
 MOUSEEVENTF_LEFTUP     = 0x0004
 MOUSEEVENTF_RIGHTDOWN  = 0x0008
@@ -295,6 +296,31 @@ class InputController:
             _send_mouse_button(button, key_up=False)
             time.sleep(hold_ms / 1000.0)
             _send_mouse_button(button, key_up=True)
+
+    def move_mouse(self, dx: int, dy: int, steps: int = 1) -> None:
+        """
+        Relatively move the mouse by (dx, dy) pixels.
+        Split into `steps` micro-moves for smoother camera motion.
+        Uses SendInput (works with Parsec — Parsec hooks mouse at the OS level).
+        """
+        if steps < 1:
+            steps = 1
+        for i in range(steps):
+            sx = round(dx * (i + 1) / steps) - round(dx * i / steps)
+            sy = round(dy * (i + 1) / steps) - round(dy * i / steps)
+            inp = _MINPUT(
+                type=INPUT_MOUSE,
+                _input=_INPUT_UNION2(
+                    mi=_MOUSEINPUT(
+                        dx=sx, dy=sy, mouseData=0,
+                        dwFlags=MOUSEEVENTF_MOVE, time=0,
+                        dwExtraInfo=None,  # type: ignore[arg-type]
+                    )
+                ),
+            )
+            ctypes.windll.user32.SendInput(1, ctypes.byref(inp), ctypes.sizeof(_MINPUT))
+            if steps > 1:
+                time.sleep(0.008)  # ~120 fps between micro-moves
 
     def press_combo(self, keys: list[str], hold_ms: int = 50) -> None:
         """
