@@ -2,13 +2,22 @@
   "game_name": "Forza Horizon 5",
   "game_id": "forza_horizon_5",
   "description": "Full PC keyboard bindings for Forza Horizon 5 (WASD default layout). All named actions and decision rules for autonomous AI driving.",
-  "game_context": "Forza Horizon 5 (FH5) -- open-world racing game set in Mexico. You are an AI racing driver controlling a car with keyboard inputs (WASD layout).\n\nKEY BINDINGS:\n  W = Accelerate (hold for throttle)\n  S = Brake / Reverse (tap to brake, hold to reverse)\n  A = Steer Left\n  D = Steer Right\n  E = Shift Up (manual gearbox)\n  Q = Shift Down (manual gearbox)\n  Space = Handbrake (locks rear wheels -- for drift entry or tight U-turns)\n  Tab = Change Camera View\n  H = Horn\n  Enter = Activate / Accept\n\nIMPORTANT -- KEYBOARD PHYSICS:\n  Keyboard inputs are digital (fully on or fully off). Hold duration controls effect:\n  - Short tap A/D (100-200ms) = micro-correction, barely any yaw\n  - Medium hold A/D (300-500ms) = gentle curve tracking\n  - Long hold A/D (700ms+) = significant turn, only for tight corners\n  Too much steering input = understeer (front pushes wide) or oversteer (rear slides out).\n  Always use the minimum steering input needed. Smooth > aggressive.\n\nGAME MODES:\n  Road Racing / Street Scene -- follow the racing line on tarmac\n  Cross Country / Dirt Racing -- rough terrain, no road to stay on\n  Drag Race -- short straight sprint, shift at red-line RPM\n  Freeroam -- open world, watch for civilian traffic\n\nPR STUNTS (skill zones):\n  Speed Trap   -- blue lightning bolt -- hit max speed at camera\n  Danger Sign  -- skull icon -- jump ramp, never brake before it\n  Drift Zone   -- orange S-curves -- score drift points through the zone\n  Drag Race    -- christmas-tree light sequence\n\nRACING LINE:\n  Magenta / coloured line on road shows optimal path.\n  GREEN section = safe to go fast, keep throttle on\n  ORANGE section = lift throttle slightly, corner is coming\n  RED section = brake now, corner is tight\n  Classic line: wide entry → tight apex → wide exit\n\nREAL DRIVER MINDSET:\n  A real racing driver thinks 3-5 seconds AHEAD of the car, not at the current frame.\n  The default state is FULL_THROTTLE on clear roads. Only deviate with a specific visual reason.\n  Corners follow a 5-step process: SPOT → BRAKE POINT → TURN-IN → APEX → ACCELERATE OUT.\n  Smooth inputs always beat aggressive jerky ones. One decisive action per frame.\n  Reverse is a last resort used under 1% of the time -- only when completely stopped and blocked.",
-  "situation_list": ["RACING", "DRIFT", "STUNT", "OFFROAD", "STUCK", "MENU"],
+  "game_context": "Forza Horizon 5 — open-world racing. Controls: W=throttle, S=brake/reverse, A=steer left, D=steer right, Space=handbrake. The scene is pre-analysed by a vision model into structured JSON each frame. Your job: map the JSON scene to exactly ONE named action using the decision rules. Goal: complete races cleanly and fast. Default on clear straight road: FULL_THROTTLE.",
+  "situation_list": [
+    "RACING",
+    "DRIFT",
+    "STUNT",
+    "OFFROAD",
+    "STUCK",
+    "MENU"
+  ],
   "behaviors": {
     "RACING": [
       [
         {
-          "keys": ["w"],
+          "keys": [
+            "w"
+          ],
           "hold_ms": 1500
         }
       ]
@@ -16,7 +25,10 @@
     "DRIFT": [
       [
         {
-          "keys": ["space", "a"],
+          "keys": [
+            "space",
+            "a"
+          ],
           "hold_ms": 300
         }
       ]
@@ -24,7 +36,9 @@
     "STUNT": [
       [
         {
-          "keys": ["w"],
+          "keys": [
+            "w"
+          ],
           "hold_ms": 2000
         }
       ]
@@ -32,7 +46,9 @@
     "OFFROAD": [
       [
         {
-          "keys": ["w"],
+          "keys": [
+            "w"
+          ],
           "hold_ms": 1200
         }
       ]
@@ -40,7 +56,9 @@
     "STUCK": [
       [
         {
-          "keys": ["r"],
+          "keys": [
+            "r"
+          ],
           "hold_ms": 120
         }
       ]
@@ -50,91 +68,130 @@
   "named_actions": {
     "FULL_THROTTLE": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 1800
       }
     ],
     "THROTTLE_MEDIUM": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 900
       }
     ],
     "THROTTLE_LIGHT": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 400
       }
     ],
     "ACCEL_LEFT_GENTLE": [
       {
-        "keys": ["w", "a"],
+        "keys": [
+          "w",
+          "a"
+        ],
         "hold_ms": 220
       }
     ],
     "ACCEL_LEFT_MEDIUM": [
       {
-        "keys": ["w", "a"],
+        "keys": [
+          "w",
+          "a"
+        ],
         "hold_ms": 450
       }
     ],
     "ACCEL_LEFT_TIGHT": [
       {
-        "keys": ["w", "a"],
+        "keys": [
+          "w",
+          "a"
+        ],
         "hold_ms": 350
       }
     ],
     "COAST_LEFT": [
       {
-        "keys": ["a"],
+        "keys": [
+          "a"
+        ],
         "hold_ms": 500
       }
     ],
     "ACCEL_RIGHT_GENTLE": [
       {
-        "keys": ["w", "d"],
+        "keys": [
+          "w",
+          "d"
+        ],
         "hold_ms": 220
       }
     ],
     "ACCEL_RIGHT_MEDIUM": [
       {
-        "keys": ["w", "d"],
+        "keys": [
+          "w",
+          "d"
+        ],
         "hold_ms": 450
       }
     ],
     "ACCEL_RIGHT_TIGHT": [
       {
-        "keys": ["w", "d"],
+        "keys": [
+          "w",
+          "d"
+        ],
         "hold_ms": 350
       }
     ],
     "COAST_RIGHT": [
       {
-        "keys": ["d"],
+        "keys": [
+          "d"
+        ],
         "hold_ms": 500
       }
     ],
     "BRAKE_STRAIGHT": [
       {
-        "keys": ["s"],
+        "keys": [
+          "s"
+        ],
         "hold_ms": 500
       }
     ],
     "BRAKE_STEER_LEFT": [
       {
-        "keys": ["s", "a"],
+        "keys": [
+          "s",
+          "a"
+        ],
         "hold_ms": 600
       }
     ],
     "BRAKE_STEER_RIGHT": [
       {
-        "keys": ["s", "d"],
+        "keys": [
+          "s",
+          "d"
+        ],
         "hold_ms": 600
       }
     ],
     "EMERGENCY_BRAKE": [
       {
-        "keys": ["s", "space"],
+        "keys": [
+          "s",
+          "space"
+        ],
         "hold_ms": 500
       }
     ],
@@ -142,12 +199,17 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "a"],
+            "keys": [
+              "w",
+              "a"
+            ],
             "hold_ms": 700
           }
         ]
@@ -157,12 +219,17 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "d"],
+            "keys": [
+              "w",
+              "d"
+            ],
             "hold_ms": 700
           }
         ]
@@ -170,43 +237,63 @@
     ],
     "REVERSE": [
       {
-        "keys": ["s"],
+        "keys": [
+          "s"
+        ],
         "hold_ms": 1200
       }
     ],
     "REVERSE_LEFT": [
       {
-        "keys": ["s", "a"],
+        "keys": [
+          "s",
+          "a"
+        ],
         "hold_ms": 900
       }
     ],
     "REVERSE_RIGHT": [
       {
-        "keys": ["s", "d"],
+        "keys": [
+          "s",
+          "d"
+        ],
         "hold_ms": 900
       }
     ],
     "HANDBRAKE_LEFT": [
       {
-        "keys": ["space", "a"],
+        "keys": [
+          "space",
+          "a"
+        ],
         "hold_ms": 350
       }
     ],
     "HANDBRAKE_RIGHT": [
       {
-        "keys": ["space", "d"],
+        "keys": [
+          "space",
+          "d"
+        ],
         "hold_ms": 350
       }
     ],
     "DRIFT_MAINTAIN_LEFT": [
       {
-        "keys": ["w", "d"],
+        "keys": [
+          "w",
+          "d"
+        ],
         "hold_ms": 700
       }
     ],
     "DRIFT_MAINTAIN_RIGHT": [
       {
-        "keys": ["w", "a"],
+        "keys": [
+          "w",
+          "a"
+        ],
         "hold_ms": 700
       }
     ],
@@ -214,12 +301,18 @@
       {
         "sequence": [
           {
-            "keys": ["space", "a"],
+            "keys": [
+              "space",
+              "a"
+            ],
             "hold_ms": 300,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "d"],
+            "keys": [
+              "w",
+              "d"
+            ],
             "hold_ms": 900
           }
         ]
@@ -229,12 +322,18 @@
       {
         "sequence": [
           {
-            "keys": ["space", "d"],
+            "keys": [
+              "space",
+              "d"
+            ],
             "hold_ms": 300,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "a"],
+            "keys": [
+              "w",
+              "a"
+            ],
             "hold_ms": 900
           }
         ]
@@ -242,25 +341,35 @@
     ],
     "SPIN_RECOVER_LEFT": [
       {
-        "keys": ["w", "d"],
+        "keys": [
+          "w",
+          "d"
+        ],
         "hold_ms": 600
       }
     ],
     "SPIN_RECOVER_RIGHT": [
       {
-        "keys": ["w", "a"],
+        "keys": [
+          "w",
+          "a"
+        ],
         "hold_ms": 600
       }
     ],
     "SHIFT_UP": [
       {
-        "keys": ["e"],
+        "keys": [
+          "e"
+        ],
         "hold_ms": 80
       }
     ],
     "SHIFT_DOWN": [
       {
-        "keys": ["q"],
+        "keys": [
+          "q"
+        ],
         "hold_ms": 80
       }
     ],
@@ -268,12 +377,16 @@
       {
         "sequence": [
           {
-            "keys": ["e"],
+            "keys": [
+              "e"
+            ],
             "hold_ms": 80,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 1200
           }
         ]
@@ -281,25 +394,34 @@
     ],
     "DRAG_LAUNCH": [
       {
-        "keys": ["w", "shift"],
+        "keys": [
+          "w",
+          "shift"
+        ],
         "hold_ms": 500
       }
     ],
     "DRAG_FULL_THROTTLE": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 2500
       }
     ],
     "SPEED_TRAP_BLAST": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 3000
       }
     ],
     "JUMP_APPROACH": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 3000
       }
     ],
@@ -307,12 +429,18 @@
       {
         "sequence": [
           {
-            "keys": ["space", "a"],
+            "keys": [
+              "space",
+              "a"
+            ],
             "hold_ms": 320,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "d"],
+            "keys": [
+              "w",
+              "d"
+            ],
             "hold_ms": 1000
           }
         ]
@@ -322,12 +450,18 @@
       {
         "sequence": [
           {
-            "keys": ["space", "d"],
+            "keys": [
+              "space",
+              "d"
+            ],
             "hold_ms": 320,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "a"],
+            "keys": [
+              "w",
+              "a"
+            ],
             "hold_ms": 1000
           }
         ]
@@ -337,16 +471,22 @@
       {
         "sequence": [
           {
-            "keys": ["a"],
+            "keys": [
+              "a"
+            ],
             "hold_ms": 300,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 1500
           },
           {
-            "keys": ["d"],
+            "keys": [
+              "d"
+            ],
             "hold_ms": 250
           }
         ]
@@ -356,16 +496,22 @@
       {
         "sequence": [
           {
-            "keys": ["d"],
+            "keys": [
+              "d"
+            ],
             "hold_ms": 300,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 1500
           },
           {
-            "keys": ["a"],
+            "keys": [
+              "a"
+            ],
             "hold_ms": 250
           }
         ]
@@ -373,13 +519,17 @@
     ],
     "SWERVE_LEFT": [
       {
-        "keys": ["a"],
+        "keys": [
+          "a"
+        ],
         "hold_ms": 250
       }
     ],
     "SWERVE_RIGHT": [
       {
-        "keys": ["d"],
+        "keys": [
+          "d"
+        ],
         "hold_ms": 250
       }
     ],
@@ -387,12 +537,16 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 200,
             "delay_after_ms": 50
           },
           {
-            "keys": ["a"],
+            "keys": [
+              "a"
+            ],
             "hold_ms": 350
           }
         ]
@@ -402,12 +556,16 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 200,
             "delay_after_ms": 50
           },
           {
-            "keys": ["d"],
+            "keys": [
+              "d"
+            ],
             "hold_ms": 350
           }
         ]
@@ -415,25 +573,35 @@
     ],
     "OFFROAD_THROTTLE": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 1200
       }
     ],
     "OFFROAD_LEFT": [
       {
-        "keys": ["w", "a"],
+        "keys": [
+          "w",
+          "a"
+        ],
         "hold_ms": 600
       }
     ],
     "OFFROAD_RIGHT": [
       {
-        "keys": ["w", "d"],
+        "keys": [
+          "w",
+          "d"
+        ],
         "hold_ms": 600
       }
     ],
     "OFFROAD_CAREFUL": [
       {
-        "keys": ["w"],
+        "keys": [
+          "w"
+        ],
         "hold_ms": 600
       }
     ],
@@ -441,22 +609,30 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 500,
             "delay_after_ms": 60
           },
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 300,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 400
           }
         ]
@@ -466,22 +642,32 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 350,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "a"],
+            "keys": [
+              "w",
+              "a"
+            ],
             "hold_ms": 650,
             "delay_after_ms": 60
           },
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 250,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w", "a"],
+            "keys": [
+              "w",
+              "a"
+            ],
             "hold_ms": 500
           }
         ]
@@ -491,22 +677,32 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 350,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "d"],
+            "keys": [
+              "w",
+              "d"
+            ],
             "hold_ms": 650,
             "delay_after_ms": 60
           },
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 250,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w", "d"],
+            "keys": [
+              "w",
+              "d"
+            ],
             "hold_ms": 500
           }
         ]
@@ -514,43 +710,57 @@
     ],
     "LOOK_LEFT": [
       {
-        "keys": ["left"],
+        "keys": [
+          "left"
+        ],
         "hold_ms": 300
       }
     ],
     "LOOK_RIGHT": [
       {
-        "keys": ["right"],
+        "keys": [
+          "right"
+        ],
         "hold_ms": 300
       }
     ],
     "LOOK_BACK": [
       {
-        "keys": ["down"],
+        "keys": [
+          "down"
+        ],
         "hold_ms": 400
       }
     ],
     "LOOK_FORWARD": [
       {
-        "keys": ["up"],
+        "keys": [
+          "up"
+        ],
         "hold_ms": 300
       }
     ],
     "SWITCH_CAMERA": [
       {
-        "keys": ["tab"],
+        "keys": [
+          "tab"
+        ],
         "hold_ms": 100
       }
     ],
     "ACTIVATE": [
       {
-        "keys": ["enter"],
+        "keys": [
+          "enter"
+        ],
         "hold_ms": 100
       }
     ],
     "HORN": [
       {
-        "keys": ["h"],
+        "keys": [
+          "h"
+        ],
         "hold_ms": 200
       }
     ],
@@ -558,12 +768,16 @@
       {
         "sequence": [
           {
-            "keys": ["a"],
+            "keys": [
+              "a"
+            ],
             "hold_ms": 300,
             "delay_after_ms": 50
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 350
           }
         ]
@@ -573,12 +787,16 @@
       {
         "sequence": [
           {
-            "keys": ["d"],
+            "keys": [
+              "d"
+            ],
             "hold_ms": 300,
             "delay_after_ms": 50
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 350
           }
         ]
@@ -588,17 +806,24 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 500,
             "delay_after_ms": 100
           },
           {
-            "keys": ["w", "a"],
+            "keys": [
+              "w",
+              "a"
+            ],
             "hold_ms": 600,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 350
           }
         ]
@@ -608,17 +833,24 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 500,
             "delay_after_ms": 100
           },
           {
-            "keys": ["w", "d"],
+            "keys": [
+              "w",
+              "d"
+            ],
             "hold_ms": 600,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 350
           }
         ]
@@ -628,22 +860,31 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 700,
             "delay_after_ms": 120
           },
           {
-            "keys": ["a"],
+            "keys": [
+              "a"
+            ],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "a"],
+            "keys": [
+              "w",
+              "a"
+            ],
             "hold_ms": 550,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 350
           }
         ]
@@ -653,22 +894,31 @@
       {
         "sequence": [
           {
-            "keys": ["s"],
+            "keys": [
+              "s"
+            ],
             "hold_ms": 700,
             "delay_after_ms": 120
           },
           {
-            "keys": ["d"],
+            "keys": [
+              "d"
+            ],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": ["w", "d"],
+            "keys": [
+              "w",
+              "d"
+            ],
             "hold_ms": 550,
             "delay_after_ms": 60
           },
           {
-            "keys": ["w"],
+            "keys": [
+              "w"
+            ],
             "hold_ms": 350
           }
         ]
@@ -676,13 +926,17 @@
     ],
     "NUDGE_LEFT": [
       {
-        "keys": ["a"],
+        "keys": [
+          "a"
+        ],
         "hold_ms": 140
       }
     ],
     "NUDGE_RIGHT": [
       {
-        "keys": ["d"],
+        "keys": [
+          "d"
+        ],
         "hold_ms": 140
       }
     ],
@@ -757,299 +1011,69 @@
     "ROAD_RECOVER_RIGHT": "Deep off-road recovery right: hard brake (S 700ms) → steer right alone (D 450ms) → drive back onto road (W+D 550ms) → gentle pulse (W 350ms). After this, stay at THROTTLE_LIGHT until road is straight and clear."
   },
   "decision_rules": [
-    "=== REAL DRIVER DECISION FRAMEWORK ===",
-    "Think like a professional racing driver. Work through these rules TOP TO BOTTOM.",
-    "Stop at the FIRST rule that matches what you see. One action per frame.",
+    "Apply rules TOP to BOTTOM. Use the FIRST rule whose conditions match the scene JSON.",
     "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 1 -- MENU / LOADING / CUTSCENE  [ALWAYS check first]:",
-    "  If ANY of: loading bar, black transition screen, cutscene, XP/reward screen,",
-    "  menu open, race results, paused, or white-text overlay fills the screen",
-    "  => DO_NOTHING",
+    "R1  MENU:      menu_visible=true OR event=menu  ->  DO_NOTHING",
     "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 2 -- SPIN / FACING WRONG DIRECTION  [check before anything else]:",
-    "  ONLY applies when the car has visibly pivoted so the nose points 90+ degrees",
-    "  away from the intended road direction AND car speed is very low or zero.",
-    "  (If still moving forward -- even off road -- skip to RULE 4 instead.)",
+    "R2  STUCK:     car_state=stuck AND car_speed=stopped",
+    "               hazard_direction=left   ->  UNSTICK_REVERSE_RIGHT",
+    "               hazard_direction=right  ->  UNSTICK_REVERSE_LEFT",
+    "               else                   ->  UNSTICK_REVERSE",
     "",
-    "  Car nose swung LEFT (counterclockwise spin), road is to the RIGHT of the nose:",
-    "  => SPIN_RECOVER_LEFT   (W + D together -- throttle + right countersteer)",
-    "  Car nose swung RIGHT (clockwise spin), road is to the LEFT of the nose:",
-    "  => SPIN_RECOVER_RIGHT  (W + A together -- throttle + left countersteer)",
+    "R3  SPIN:      car_state=spinning AND car_speed=stopped",
+    "               ->  SPIN_RECOVER_LEFT or SPIN_RECOVER_RIGHT (opposite of spin direction)",
     "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 3 -- COMPLETELY STOPPED AGAINST A WALL / TREE / BARRIER  [reverse only here]:",
-    "  ONLY applies when: car is NOT moving (speed = 0), W gives no forward motion,",
-    "  and a wall, tree, or barrier is visibly blocking the front of the car.",
+    "R4  OFFROAD RECOVERY (road_race / street_scene / freeroam only):",
+    "               car_on_road=false AND event IN [road_race, street_scene, freeroam]",
+    "               tarmac close (partly visible)  ->  ROAD_NUDGE_LEFT / ROAD_NUDGE_RIGHT",
+    "               tarmac moderate distance       ->  ROAD_RETURN_LEFT / ROAD_RETURN_RIGHT",
+    "               tarmac far / deep off-road     ->  ROAD_RECOVER_LEFT / ROAD_RECOVER_RIGHT",
+    "               Steer TOWARD the road. After returning: THROTTLE_LIGHT for 2 frames.",
     "",
-    "  TECHNIQUE -- rock the car to break free:",
-    "    1. Reverse a LITTLE (S ~350ms) to create space",
-    "    2. Then immediately throttle + steer away from the obstacle (W+A or W+D)",
-    "    3. Repeat this back-forward-back-forward rocking until the car breaks free",
-    "    4. Once moving freely, switch to THROTTLE_LIGHT and steer back toward road",
+    "R5  COLLISION: hazard_type!=none AND hazard_direction=ahead AND car_speed!=stopped",
+    "               ->  BRAKE_HARD, or SWERVE_LEFT / SWERVE_RIGHT (away from hazard side)",
     "",
-    "  Space to escape LEFT -- pick LEFT rock action (S back → W+A forward-left):",
-    "  => UNSTICK_REVERSE_LEFT",
-    "  Space to escape RIGHT -- pick RIGHT rock action (S back → W+D forward-right):",
-    "  => UNSTICK_REVERSE_RIGHT",
-    "  No clear direction -- reverse straight then try forward:",
-    "  => UNSTICK_REVERSE",
+    "R6  DRIFT ZONE: event=drift_zone",
+    "               ->  HANDBRAKE_DRIFT_LEFT or HANDBRAKE_DRIFT_RIGHT (into corner)",
     "",
-    "  AFTER BREAKING FREE:",
-    "    Car starts moving? Immediately switch to THROTTLE_LIGHT.",
-    "    Steer gently back toward the road. Do NOT go FULL_THROTTLE until on tarmac.",
+    "R7  DRAG RACE: event=drag",
+    "               ->  first frame: DRAG_RACE_LAUNCH; then FULL_THROTTLE",
     "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 4 -- OFF ROAD IN A ROAD/STREET RACE  [grass/dirt under tyres]:",
-    "  Applies when: grass, dirt, gravel or sand is clearly visible UNDER the car,",
-    "  AND a paved tarmac road is still visible nearby (to the side or ahead).",
-    "  KEY DIFFERENCE FROM RULE 13: in RULE 4 the road is still VISIBLE beside or ahead of you.",
-    "  Goal: SLOW DOWN → REALIGN → RETURN TO TARMAC → BUILD SPEED AGAIN.",
+    "R8  SPEED TRAP: event IN [speed_trap, speed_zone]",
+    "               ->  SPEED_TRAP_BLAST",
     "",
-    "  How far off the road?",
+    "R9  HAIRPIN:   road_ahead=hairpin_left   ->  CORNER_BRAKE_EXIT_LEFT",
+    "               road_ahead=hairpin_right  ->  CORNER_BRAKE_EXIT_RIGHT",
     "",
-    "  BARELY OFF (road edge beside the car, 1-2 wheels on grass, car still moving):",
-    "    Road is to the LEFT -- steer gently left back onto tarmac:",
-    "    => ROAD_NUDGE_LEFT",
-    "    Road is to the RIGHT -- steer gently right back onto tarmac:",
-    "    => ROAD_NUDGE_RIGHT",
+    "R10 RED LINE:  racing_line=red AND road_ahead=curve_left   ->  BRAKE_HEAVY then CORNER_APEX_LEFT",
+    "               racing_line=red AND road_ahead=curve_right  ->  BRAKE_HEAVY then CORNER_APEX_RIGHT",
     "",
-    "  SIGNIFICANTLY OFF (more than half the car is off tarmac, car still moving):",
-    "    Road clearly to the LEFT of the car:",
-    "    => ROAD_RETURN_LEFT   (brake briefly → steer left → re-accelerate)",
-    "    Road clearly to the RIGHT of the car:",
-    "    => ROAD_RETURN_RIGHT  (brake briefly → steer right → re-accelerate)",
+    "R11 ORANGE:    racing_line=orange AND road_ahead=curve_left   ->  BRAKE_MEDIUM or CORNER_LEFT_MEDIUM",
+    "               racing_line=orange AND road_ahead=curve_right  ->  BRAKE_MEDIUM or CORNER_RIGHT_MEDIUM",
     "",
-    "  DEEPLY OFF / BOUNCED OFF BARRIER (car is far from tarmac or has stopped):",
-    "    Road is to the LEFT after recovering:",
-    "    => ROAD_RECOVER_LEFT  (hard brake → turn left → build speed on road)",
-    "    Road is to the RIGHT after recovering:",
-    "    => ROAD_RECOVER_RIGHT (hard brake → turn right → build speed on road)",
+    "R12 GREEN:     racing_line=green AND road_ahead=curve_left    ->  ACCEL_LEFT_GENTLE",
+    "               racing_line=green AND road_ahead=curve_right   ->  ACCEL_RIGHT_GENTLE",
     "",
-    "  AFTER RETURNING TO TARMAC:",
-    "    All four wheels back on asphalt? Follow this MANDATORY speed build sequence:",
+    "R13 CROSS-COUNTRY: event=cross_country",
+    "               road_ahead=straight    ->  OFFROAD_THROTTLE",
+    "               road_ahead=curve_left  ->  OFFROAD_LEFT",
+    "               road_ahead=curve_right ->  OFFROAD_RIGHT",
+    "               car_state=stuck        ->  UNSTICK_REVERSE",
     "",
-    "    STEP A -- Tyres just touched tarmac: use THROTTLE_LIGHT for 2-3 frames",
-    "              Keep steering straight. Let the car settle and align with road.",
-    "    STEP B -- Car is straight on road, road ahead is clear for a few seconds:",
-    "              Move up to THROTTLE_MEDIUM for 1-2 frames.",
-    "    STEP C -- Road is clearly straight and open with no obstacles or corners:",
-    "              Now use FULL_THROTTLE.",
-    "",
-    "    NEVER jump from a recovery action straight to FULL_THROTTLE.",
-    "    NEVER speed up while the road is still curving or has obstacles ahead.",
-    "    Do NOT keep using road-return actions once all tyres are on asphalt.",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 5 -- PR STUNT: SPEED TRAP  (blue lightning bolt icon visible ahead):",
-    "  Speed trap camera on a straight ahead, road is clear and straight:",
-    "  => SPEED_TRAP_BLAST   (hold full throttle all the way through)",
-    "  Speed trap but road curves LEFT into it:",
-    "  => ACCEL_LEFT_GENTLE  (track the curve at speed, don't sacrifice momentum)",
-    "  Speed trap but road curves RIGHT into it:",
-    "  => ACCEL_RIGHT_GENTLE",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 6 -- PR STUNT: DANGER SIGN / JUMP RAMP  (skull icon or ramp ahead):",
-    "  Ramp directly ahead -- line up straight and approach flat out:",
-    "  => JUMP_APPROACH",
-    "  Ramp ahead, car is slightly LEFT of centre line:",
-    "  => ACCEL_RIGHT_GENTLE  (steer to align, keep throttle on)",
-    "  Ramp ahead, car is slightly RIGHT of centre line:",
-    "  => ACCEL_LEFT_GENTLE",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 7 -- PR STUNT: DRIFT ZONE  (orange S-curve arrows or drift score visible):",
-    "  Entering drift zone, zone bends to the LEFT:",
-    "  => DRIFT_ZONE_LEFT",
-    "  Entering drift zone, zone bends to the RIGHT:",
-    "  => DRIFT_ZONE_RIGHT",
-    "  Mid-drift, car sliding LEFT (nose pointing left, tail out right):",
-    "  => DRIFT_MAINTAIN_LEFT   (countersteer right + throttle to hold angle)",
-    "  Mid-drift, car sliding RIGHT (nose pointing right, tail out left):",
-    "  => DRIFT_MAINTAIN_RIGHT  (countersteer left + throttle to hold angle)",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 8 -- DRAG RACE  (drag strip / christmas tree launch sequence visible):",
-    "  Countdown lights still showing (not green yet):",
-    "  => DO_NOTHING   (wait for green light, don't burn clutch)",
-    "  Green light just appeared / race just launched:",
-    "  => DRAG_LAUNCH  (clutch-kick launch for best 0-60)",
-    "  On the strip, straight ahead, no corners, race in progress:",
-    "  => DRAG_FULL_THROTTLE",
-    "  RPM gauge at red-line (needle far right), manual gearbox:",
-    "  => SHIFT_UP_ACCELERATE",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 9 -- IMMINENT COLLISION (wall / barrier / car less than 1 second away):",
-    "  Object DIRECTLY ahead, no time or space to steer -- unavoidable:",
-    "  => EMERGENCY_BRAKE   (S + Space -- maximum stopping force)",
-    "  Object ahead, clear escape space visible to the LEFT:",
-    "  => SWERVE_LEFT_FULL  (emergency steer left)",
-    "  Object ahead, clear escape space visible to the RIGHT:",
-    "  => SWERVE_RIGHT_FULL (emergency steer right)",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 10 -- OPPONENT CAR BLOCKING RACING LINE:",
-    "  Opponent car directly ahead, space clearly open on the LEFT:",
-    "  => OVERTAKE_LEFT   (W + A -- accelerate and move left past them)",
-    "  Opponent car directly ahead, space clearly open on the RIGHT:",
-    "  => OVERTAKE_RIGHT  (W + D -- accelerate and move right past them)",
-    "  Opponent ahead but no gap yet -- stay in their slipstream for the speed boost:",
-    "  => FULL_THROTTLE   (sit close, wait for a gap to appear)",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 11 -- CORNER / CURVE AHEAD  (road edge itself bends, not just racing line):",
-    "",
-    "  STEP 1 -- READ THE RACING LINE COLOUR (most reliable corner signal):",
-    "    RED strip ahead   = brake zone -- brake NOW before turning",
-    "    ORANGE strip      = lift zone  -- reduce throttle, corner soon",
-    "    GREEN strip       = acceleration zone -- stay on throttle through this section",
-    "",
-    "  STEP 2 -- ASSESS CORNER TYPE based on how tight the road bends:",
-    "    SWEEPING CURVE   : road barely curves, lots of tarmac visible ahead (GENTLE)",
-    "    STANDARD CORNER  : road turns ~45-90 degrees, clear exit (MEDIUM)",
-    "    TIGHT CORNER     : road turns >90 degrees, exit barely visible (TIGHT)",
-    "    HAIRPIN / U-TURN : road turns back on itself, sharp exit (HAIRPIN)",
-    "",
-    "  STEP 3 -- PICK THE RIGHT ACTION:",
-    "",
-    "  SWEEPING LEFT (GREEN line, road barely curves left):",
-    "  => ACCEL_LEFT_GENTLE   (hold W+A 220ms -- short steer tap, maintain speed)",
-    "",
-    "  STANDARD LEFT (ORANGE/RED line, clear left bend):",
-    "  => ACCEL_LEFT_MEDIUM   (brake slightly then W+A through the corner)",
-    "",
-    "  TIGHT LEFT already in corner (ORANGE line reaching right entry):",
-    "  => CORNER_BRAKE_EXIT_LEFT  (brake on entry, steer left, throttle on exit)",
-    "",
-    "  HAIRPIN LEFT (RED line, very little exit visible):",
-    "  => BRAKE_STEER_LEFT    (hard brake, tight left steer, then ACCEL_LEFT_TIGHT on exit)",
-    "",
-    "  SWEEPING RIGHT (GREEN line, barely curves right):",
-    "  => ACCEL_RIGHT_GENTLE  (hold W+D 220ms -- short steer tap, maintain speed)",
-    "",
-    "  STANDARD RIGHT (ORANGE/RED line, clear right bend):",
-    "  => ACCEL_RIGHT_MEDIUM",
-    "",
-    "  TIGHT RIGHT already in corner:",
-    "  => CORNER_BRAKE_EXIT_RIGHT",
-    "",
-    "  HAIRPIN RIGHT:",
-    "  => BRAKE_STEER_RIGHT   (then ACCEL_RIGHT_TIGHT on exit)",
-    "",
-    "  CORNER TECHNIQUE -- real driver rules:",
-    "  - BRAKE BEFORE the corner entry, NOT while steering through it",
-    "  - Turn in AFTER braking, not at the same time (except trail braking on smooth corners)",
-    "  - Hit the APEX (inside edge of the corner) then open throttle progressively to the exit",
-    "  - On exit: THROTTLE_LIGHT → THROTTLE_MEDIUM → FULL_THROTTLE as road straightens",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 12 -- GEAR CHANGE  (only if manual gearbox telemetry is visible on screen):",
-    "  RPM gauge needle in the RED zone (far right), gear can be raised:",
-    "  => SHIFT_UP",
-    "  Engine lugging (RPM very low after braking into a corner):",
-    "  => SHIFT_DOWN",
-    "  Exiting corner, need smooth power delivery while upshifting:",
-    "  => SHIFT_UP_ACCELERATE",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 13 -- CROSS COUNTRY / DIRT RACE EVENT ONLY:",
-    "  *** CRITICAL: Only use this rule when ALL of these are true: ***",
-    "    - The game HUD / event name explicitly says 'Cross Country', 'Dirt Racing',",
-    "      'Trailblazer', or similar off-road event type",
-    "    - There is NO paved tarmac road visible anywhere ahead of the car",
-    "    - The checkpoints/racing line is guiding you THROUGH off-road terrain",
-    "      (not alongside a road or back to a road)",
-    "",
-    "  If there is ANY tarmac or paved road visible ahead: use RULE 15 (FULL_THROTTLE)",
-    "  If grass is just alongside a road: use RULE 4 (off-road return), NOT this rule.",
-    "",
-    "  Confirmed cross-country, path clear ahead, terrain is passable:",
-    "  => OFFROAD_THROTTLE",
-    "  Rock / tree / fence on the RIGHT, clear space left:",
-    "  => OFFROAD_LEFT",
-    "  Rock / tree / fence on the LEFT, clear space right:",
-    "  => OFFROAD_RIGHT",
-    "  Very rough terrain (rocks, steep bank, river, deep ruts):",
-    "  => OFFROAD_CAREFUL",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 14 -- CIVILIAN TRAFFIC AHEAD  (freeroam only -- civilian car/truck in lane):",
-    "  Civilian vehicle in your lane, clear space to the LEFT:",
-    "  => SWERVE_LEFT",
-    "  Civilian vehicle in your lane, clear space to the RIGHT:",
-    "  => SWERVE_RIGHT",
-    "",
-    "────────────────────────────────────────────────────────────────────────────────",
-    "RULE 15 -- STRAIGHT ROAD / DEFAULT  [*** MOST COMMON ANSWER -- ~80% of frames ***]:",
-    "  None of Rules 1-14 matched. Road is clear straight tarmac ahead.",
-    "",
-    "  Clear straight road, no obstacles, no corners imminent:",
-    "  => FULL_THROTTLE   *** DEFAULT -- when in doubt, pick this ***",
-    "",
-    "  Car is drifting slightly to the RIGHT of road centre on a straight (right tyres",
-    "  approaching right edge line) -- gentle micro-correction:",
-    "  => NUDGE_LEFT      (140ms tap A -- tiny yaw correction, W stays effective)",
-    "",
-    "  Car is drifting slightly to the LEFT of road centre on a straight (left tyres",
-    "  approaching left edge line) -- gentle micro-correction:",
-    "  => NUDGE_RIGHT     (140ms tap D -- tiny yaw correction, W stays effective)",
-    "",
-    "  Straight road but a corner is visible at the far end (not yet close enough for",
-    "  RULE 11) -- prepare early by easing off:",
-    "  => THROTTLE_MEDIUM (lift slightly, stay alert, assess corner on next frame)",
-    "",
-    "  Just exited a corner, short straight connects to next bend:",
-    "  => THROTTLE_LIGHT  (build speed back up smoothly from corner exit)"
+    "R14 DEFAULT:   ->  FULL_THROTTLE  (straight road on tarmac, no hazard — ~80% of frames)"
   ],
   "constraints": [
-    "* NEVER use REWIND or REWIND_HOLD. Rewind is disabled. Recover manually with spin-correct or road-return actions.",
-    "* DEFAULT ACTION IS FULL_THROTTLE. If no rule clearly matches, pick FULL_THROTTLE. The car must always move FORWARD.",
-    "* NEVER use any reverse action (UNSTICK_REVERSE, REVERSE, REVERSE_LEFT, REVERSE_RIGHT, etc.) unless the car speedometer shows speed = 0 AND a wall physically blocks the front. This happens under 2% of frames.",
-    "* If the car is moving at any speed -- even 5 km/h -- do NOT reverse. Keep W held and correct direction with A or D.",
-    "* NEVER pick OFFROAD_THROTTLE, OFFROAD_LEFT, OFFROAD_RIGHT, or OFFROAD_CAREFUL during a ROAD RACE or STREET SCENE event. Those actions are ONLY for cross-country and dirt race events where the game explicitly sends you through rough terrain with no tarmac road. If you see tarmac ahead OR the event HUD says Road Race / Street Scene: pick FULL_THROTTLE (on road) or ROAD_RETURN_* (if off the road edge).",
-    "* On a STRAIGHT road: FULL_THROTTLE is correct for ~90% of frames. Use NUDGE_LEFT or NUDGE_RIGHT (140ms tap) for micro-corrections when drifting toward a road edge. Do NOT use ACCEL_*_GENTLE on straights -- that is for actual road curves only.",
-    "* NEVER steer just because the racing line (magenta strip) shifts slightly. The racing line shows the ideal apex, not a target to chase on a straight. Only steer when the ROAD EDGE itself visibly curves.",
-    "* NEVER alternate left-steer then right-steer on consecutive frames on a straight -- this causes oscillation and wastes lap time. After any steer correction, return to FULL_THROTTLE next frame unless the road continues to curve.",
-    "* ALWAYS brake BEFORE turning into a corner -- not during. Brake in a straight line first, then steer. This prevents understeer.",
-    "* NEVER brake with wheels fully turned (this causes understeer -- car pushes wide). Straighten very briefly before hard braking.",
-    "* On corner EXIT: build throttle progressively -- THROTTLE_LIGHT first, then THROTTLE_MEDIUM, then FULL_THROTTLE as the road straightens. Never snap to full throttle from a tight corner -- it causes wheelspin/oversteer.",
-    "* Use the RACING LINE COLOUR as your corner signal: GREEN = gas on, ORANGE = lift throttle, RED = brake now.",
-    "* If off road (grass/dirt) in a road race: slow down first, steer back to tarmac, then re-accelerate. Never floor it on grass -- it makes the situation worse.",
-    "* After ANY recovery action (UNSTICK_*, ROAD_RETURN_*, ROAD_RECOVER_*, ROAD_NUDGE_*): use THROTTLE_LIGHT for the next 2-3 frames. Do NOT jump to FULL_THROTTLE immediately after a recovery.",
-    "* On road after recovery: stay at THROTTLE_LIGHT until the road ahead is visibly straight and clear of obstacles/corners. Only then step up to THROTTLE_MEDIUM, then FULL_THROTTLE.",
-    "* After being stuck (RULE 3): once moving, keep speed LOW and steer gently back toward the road. Resist the urge to accelerate -- get back on tarmac FIRST, then speed up.",
-    "* After any road-return or off-road recovery action: once all four tyres are back on asphalt, switch to THROTTLE_LIGHT then build up. Do NOT continue using road-return actions on tarmac.",
-    "* NEVER use EMERGENCY_BRAKE unless a collision is truly unavoidable within the next second. It is faster to swerve than to brake in most scenarios.",
-    "* NEVER use DRIFT_COMBO or HANDBRAKE on a straight at high speed -- instant spin risk.",
-    "* NEVER pick JUMP_APPROACH unless a physical jump ramp is directly in front of the car.",
-    "* NEVER pick SPEED_TRAP_BLAST on a curved road -- straighten first or risk crashing at full speed.",
-    "* NEVER pick ACTIVATE unless an on-screen Enter/Accept button prompt is literally visible.",
-    "* NEVER pick DO_NOTHING while a race is active and the car is in motion.",
-    "* If the same action has been chosen 3 or more frames in a row with no visible forward progress, switch to a DIFFERENT FORWARD ACTION (e.g. THROTTLE_LIGHT or NUDGE_* to find a new line). Never loop the same recovery action.",
-    "* Smooth driving beats aggressive driving. One clean decisive action per frame. Avoid jerky corrections.",
-    "* In a corner, always prefer a brake-then-steer sequence (CORNER_BRAKE_EXIT_*) over pure braking alone for tighter corners."
+    "- NEVER use REWIND or REWIND_HOLD under any circumstance.",
+    "- DEFAULT is FULL_THROTTLE on any straight tarmac road with no hazard.",
+    "- NEVER use reverse/recovery actions unless car_speed=stopped.",
+    "- NEVER use OFFROAD_* actions during road_race or street_scene on tarmac.",
+    "- NEVER alternate NUDGE_LEFT and NUDGE_RIGHT on consecutive frames (causes oscillation).",
+    "- BRAKE before a corner apex — never during the apex.",
+    "- After any UNSTICK_* action: pick THROTTLE_LIGHT for the next 2 frames.",
+    "- If the same action appears 4+ times in recent_actions: pick a different action."
   ],
   "situation_checklist": [
-    "Study the screenshot carefully. Answer these questions in strict order. Stop at the FIRST yes.",
-    "  1.  Is there a loading screen, menu, cutscene, or results overlay?                  -> RULE 1  (DO_NOTHING)",
-    "  2.  Has the car spun so the nose is 90+ degrees from the road AND speed is near zero?   -> RULE 2  (SPIN_RECOVER_*)",
-    "  3.  Is speed = 0 AND a wall is physically blocking the front preventing any forward movement? -> RULE 3  (UNSTICK_REVERSE_*)",
-    "  4.  Is grass/dirt/sand visible UNDER the car in a road race (not cross-country)?    -> RULE 4  (ROAD_NUDGE/RETURN/RECOVER_*)",
-    "  5.  Is a SPEED TRAP blue lightning bolt visible on a straight ahead?                -> RULE 5  (SPEED_TRAP_BLAST)",
-    "  6.  Is a DANGER SIGN jump ramp directly in front of the car?                        -> RULE 6  (JUMP_APPROACH)",
-    "  7.  Are orange DRIFT ZONE arrows or a drift score counter on screen?                -> RULE 7  (DRIFT_ZONE_*/DRIFT_MAINTAIN_*)",
-    "  8.  Is this a drag strip with a christmas-tree launch light?                        -> RULE 8  (DRAG_*)",
-    "  9.  Is a wall/barrier/car less than 1 second away from hitting the car?             -> RULE 9  (EMERGENCY_BRAKE / SWERVE_*_FULL)",
-    "  10. Is an opponent car directly blocking the racing line right in front?             -> RULE 10 (OVERTAKE_*)",
-    "  11. Does the road edge itself visibly curve or bend ahead?                          -> RULE 11 (corner actions based on severity + racing line colour)",
-    "  12. Is manual gearbox telemetry visible showing a gear change is needed?            -> RULE 12 (SHIFT_UP / SHIFT_DOWN)",
-    "  13. Is this a cross-country or dirt event with no tarmac road?                      -> RULE 13 (OFFROAD_*)",
-    "  14. Is there a civilian car or slow truck directly ahead in freeroam?               -> RULE 14 (SWERVE_LEFT / SWERVE_RIGHT)",
-    "  15. None of the above matched -- clear road or corner managed:                      -> RULE 15 (FULL_THROTTLE is almost always correct here)",
-    "Output EXACTLY ONE action name from the named action list. No explanation, just the action name."
+    "Scene data is provided as JSON above. Apply the decision rules to the JSON fields and output ONE action name."
   ],
   "action_list": [
     "ACCELERATE",
@@ -1173,5 +1197,6 @@
     "STEER_LEFT": "Hold A to steer left",
     "STEER_RIGHT": "Hold D to steer right",
     "IDLE": "No input -- cutscene/menu"
-  }
+  },
+  "scene_analysis_prompt": "Analyse this Forza Horizon 5 screenshot and return ONLY a JSON object with these exact fields:\n{\n  \"event\": \"road_race|cross_country|street_scene|drag|drift_zone|speed_trap|speed_zone|freeroam|menu\",\n  \"car_on_road\": true or false,\n  \"car_speed\": \"stopped|slow|medium|fast\",\n  \"car_state\": \"normal|stuck|spinning\",\n  \"road_ahead\": \"straight|curve_left|curve_right|hairpin_left|hairpin_right|none\",\n  \"racing_line\": \"green|orange|red|none\",\n  \"hazard_type\": \"none|wall|tree|barrier|traffic\",\n  \"hazard_direction\": \"none|ahead|left|right\",\n  \"surface\": \"tarmac|offroad\",\n  \"menu_visible\": true or false,\n  \"overtake_possible\": true or false\n}\nRules:\n- event: read from HUD banner/text. Use \"freeroam\" if no event text is visible.\n- car_speed: stopped=0 km/h, slow<60, medium<120, fast>=120\n- car_state: stuck=pressed against obstacle with no movement; spinning=facing wrong direction\n- racing_line: coloured line painted on road surface (green=go fast, orange=lift off, red=brake hard). \"none\" if not visible.\n- surface: tarmac=paved road; offroad=dirt/grass/gravel/sand\n- hazard: object that could cause a collision within the next 2 seconds\nReturn ONLY the JSON object. No markdown, no explanation."
 }
