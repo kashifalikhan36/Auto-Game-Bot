@@ -19,7 +19,7 @@ import time
 
 import config
 from driver.input_controller import InputController
-from nodes.behaviors import execute_behavior
+from nodes.behaviors import get_engine
 from state import BotState
 
 # ---------------------------------------------------------------------------
@@ -52,7 +52,11 @@ def act_node(state: BotState) -> BotState:
     ctrl = _get_controller()
 
     behavior_cfg: dict = getattr(config, "BEHAVIOR_CONFIG", {})
-    execute_behavior(ctrl, situation, behavior_cfg)
+
+    # Non-blocking — starts/updates the persistent 3-worker engine.
+    # Workers loop continuously so inputs fire even while the AI is thinking.
+    engine = get_engine(ctrl)
+    engine.update(situation, behavior_cfg)
 
     t1 = time.perf_counter()
     frame_count = state.get("frame_count", 0) + 1

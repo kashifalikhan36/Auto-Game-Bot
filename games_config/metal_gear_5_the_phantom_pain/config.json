@@ -8,29 +8,24 @@
 
   "behaviors": {
     "EXPLORE": [
+      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
+      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
+      [{ "keys": ["shift", "w"], "hold_ms": 1500 }],
       [
-        { "keys": ["shift", "w"], "hold_ms": 1400 },
-        { "mouse_move": { "dx": 500, "dy": 0, "steps": 14 } }
+        { "keys": ["shift", "w"], "hold_ms": 1300 },
+        { "mouse_move": { "dx": 120, "dy": 0, "steps": 8 } }
       ],
       [
-        { "keys": ["shift", "w"], "hold_ms": 1400 },
-        { "mouse_move": { "dx": -500, "dy": 0, "steps": 14 } }
+        { "keys": ["shift", "w"], "hold_ms": 1300 },
+        { "mouse_move": { "dx": -120, "dy": 0, "steps": 8 } }
       ],
       [
-        { "keys": ["shift", "w"], "hold_ms": 1400 },
-        { "mouse_move": { "dx": 300, "dy": -80, "steps": 10 } }
+        { "keys": ["shift", "w"], "hold_ms": 1200 },
+        { "mouse_move": { "dx": 150, "dy": -40, "steps": 8 } }
       ],
       [
-        { "keys": ["shift", "w"], "hold_ms": 1400 },
-        { "mouse_move": { "dx": -300, "dy": -80, "steps": 10 } }
-      ],
-      [
-        { "keys": ["w"], "hold_ms": 1000 },
-        { "mouse_move": { "dx": 600, "dy": 0, "steps": 14 } }
-      ],
-      [
-        { "keys": ["w"], "hold_ms": 1000 },
-        { "mouse_move": { "dx": -600, "dy": 0, "steps": 14 } }
+        { "keys": ["shift", "w"], "hold_ms": 1200 },
+        { "mouse_move": { "dx": -150, "dy": -40, "steps": 8 } }
       ]
     ],
 
@@ -41,17 +36,7 @@
             { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
             { "mouse_click": "left", "hold_ms": 100 }
           ]
-        },
-        { "keys": ["d"], "hold_ms": 400 }
-      ],
-      [
-        {
-          "sequence": [
-            { "mouse_click": "right", "hold_ms": 150, "delay_after_ms": 60 },
-            { "mouse_click": "left", "hold_ms": 100 }
-          ]
-        },
-        { "keys": ["a"], "hold_ms": 400 }
+        }
       ],
       [
         {
@@ -70,7 +55,7 @@
             { "mouse_click": "left", "hold_ms": 100 }
           ]
         },
-        { "keys": ["shift", "d"], "hold_ms": 500 }
+        { "keys": ["d"], "hold_ms": 400 }
       ],
       [
         {
@@ -79,47 +64,40 @@
             { "mouse_click": "left", "hold_ms": 100 }
           ]
         },
-        { "keys": ["shift", "a"], "hold_ms": 500 }
+        { "keys": ["a"], "hold_ms": 400 }
       ]
     ],
 
     "EVADE": [
       [{ "keys": ["space"], "hold_ms": 120 }],
       [{ "keys": ["space"], "hold_ms": 120 }],
+      [{ "keys": ["space"], "hold_ms": 120 }],
       [
-        { "keys": ["space"], "hold_ms": 120 },
-        { "mouse_move": { "dx": 300, "dy": 0, "steps": 8 } }
+        { "keys": ["shift", "w"], "hold_ms": 700 },
+        { "mouse_move": { "dx": 180, "dy": 0, "steps": 8 } }
       ],
       [
-        { "keys": ["d"], "hold_ms": 500 },
-        { "mouse_move": { "dx": 250, "dy": 0, "steps": 8 } }
+        { "keys": ["shift", "w"], "hold_ms": 700 },
+        { "mouse_move": { "dx": -180, "dy": 0, "steps": 8 } }
       ],
-      [
-        { "keys": ["a"], "hold_ms": 500 },
-        { "mouse_move": { "dx": -250, "dy": 0, "steps": 8 } }
-      ],
-      [{ "keys": ["shift", "a"], "hold_ms": 600 }],
-      [{ "keys": ["shift", "d"], "hold_ms": 600 }]
+      [{ "keys": ["shift", "s"], "hold_ms": 500 }]
     ],
 
     "COVER": [
+      [{ "mouse_move": { "dx": 150, "dy": 0, "steps": 8 } }],
+      [{ "mouse_move": { "dx": -150, "dy": 0, "steps": 8 } }],
+      [{ "mouse_move": { "dx": 0, "dy": -100, "steps": 6 } }],
       [
-        { "keys": ["c"], "hold_ms": 120 },
-        { "mouse_move": { "dx": 500, "dy": 0, "steps": 12 } }
+        { "keys": ["c"], "hold_ms": 150 },
+        { "mouse_move": { "dx": 150, "dy": 0, "steps": 8 } }
       ],
       [
-        { "keys": ["c"], "hold_ms": 120 },
-        { "mouse_move": { "dx": -500, "dy": 0, "steps": 12 } }
-      ],
-      [
-        { "keys": ["c"], "hold_ms": 120 },
-        { "mouse_move": { "dx": 0, "dy": -200, "steps": 8 } }
-      ],
-      [{ "mouse_move": { "dx": 600, "dy": 0, "steps": 14 } }],
-      [{ "mouse_move": { "dx": -600, "dy": 0, "steps": 14 } }]
+        { "keys": ["c"], "hold_ms": 150 },
+        { "mouse_move": { "dx": -150, "dy": 0, "steps": 8 } }
+      ]
     ],
 
-    "INTERACT": [[{ "keys": ["e"], "hold_ms": 150 }]],
+    "INTERACT": [[{ "keys": ["e"], "hold_ms": 200 }]],
 
     "IDLE": []
   },
