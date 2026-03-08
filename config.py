@@ -175,18 +175,22 @@ VK_MAP: dict[str, dict | None] = {
 # Human-readable game context description (loaded from game config)
 GAME_CONTEXT: str = ""
 
+# Per-action descriptions: {"ACTION_NAME": "what this action does"}
+ACTION_DESCRIPTIONS: dict[str, str] = {}
+
 def load_game_config(config_path: str) -> None:
     """
     Load a games_config/<game_id>/config.json and override ACTION_LIST + VK_MAP
     at module level so all nodes pick up the new bindings.
     """
     import json
-    global ACTION_LIST, VK_MAP, GAME_CONTEXT
+    global ACTION_LIST, VK_MAP, GAME_CONTEXT, ACTION_DESCRIPTIONS
     with open(config_path, encoding="utf-8") as f:
         data = json.load(f)
     ACTION_LIST = data["action_list"]
     VK_MAP = data["key_map"]
     GAME_CONTEXT = data.get("game_context", "")
+    ACTION_DESCRIPTIONS = data.get("action_descriptions", {})
 # fmt: on
 
 # How long (ms) to hold a key down before releasing it

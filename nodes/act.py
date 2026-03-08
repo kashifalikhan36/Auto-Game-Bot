@@ -5,6 +5,7 @@ via the Interception kernel driver (or a safe fallback).
 
 from __future__ import annotations
 
+import threading
 import time
 
 import config
@@ -37,7 +38,10 @@ def _execute_binding(controller: InputController, binding: dict) -> None:
       combo      — { "type": "combo", "keys": list[str], "hold_ms"?: int }
       mouse_move — { "type": "mouse_move", "dx": int, "dy": int, "steps"?: int }
       sequence   — { "type": "sequence", "steps": list[binding] }
+      parallel   — { "type": "parallel", "actions": list[binding] }
     Each step in a sequence may include "delay_after_ms" for a post-step pause.
+    Parallel actions all start simultaneously in separate threads and are joined
+    before returning (blocks until the longest sub-action finishes).
     """
     input_type = binding.get("type", "keyboard")
     hold_ms = binding.get("hold_ms", config.KEY_HOLD_MS)
@@ -60,6 +64,15 @@ def _execute_binding(controller: InputController, binding: dict) -> None:
             delay = step.get("delay_after_ms", 0)
             if delay:
                 time.sleep(delay / 1000.0)
+    elif input_type == "parallel":
+        threads = [
+            threading.Thread(target=_execute_binding, args=(controller, sub), daemon=True)
+            for sub in binding.get("actions", [])
+        ]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
 
 
 # ---------------------------------------------------------------------------

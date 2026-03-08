@@ -1,79 +1,128 @@
 {
   "game_name": "Metal Gear Solid V: The Phantom Pain",
   "game_id": "metal_gear_5_the_phantom_pain",
-  "description": "Default PC keyboard and mouse bindings for MGSV:TPP. Edit keys here if you have remapped controls in-game.",
-  "game_context": "Metal Gear Solid V: The Phantom Pain is a stealth action game. You play as Snake infiltrating enemy outposts. Priorities: stay hidden, take down guards silently, rescue prisoners, explore objectives. When enemies are spotted on-screen aim and shoot. Sprint between cover points. Scan surroundings with LOOK actions before moving into open ground. Avoid repeating the same action — vary movement, looking, and combat.",
+  "description": "Default PC keyboard and mouse bindings for MGSV:TPP.",
+  "game_context": "Metal Gear Solid V: The Phantom Pain — stealth action. You are Snake infiltrating enemy outposts. Core loop: move through the environment, scan for guards, take them out or sneak past, reach objectives. Shoot only when an enemy is clearly visible on screen. Sprint between cover. Combine movement with camera — do not stand still just aiming. Vary your actions every frame.",
 
   "action_list": [
     "MOVE_FORWARD",
-    "MOVE_BACKWARD",
-    "MOVE_LEFT",
-    "MOVE_RIGHT",
     "SPRINT_FORWARD",
+    "SPRINT_AND_LOOK_RIGHT",
+    "SPRINT_AND_LOOK_LEFT",
+    "MOVE_AND_LOOK_RIGHT",
+    "MOVE_AND_LOOK_LEFT",
+    "STRAFE_LEFT",
+    "STRAFE_RIGHT",
     "LOOK_LEFT",
     "LOOK_RIGHT",
-    "LOOK_UP",
-    "LOOK_DOWN",
     "TAKE_COVER",
-    "CONTEXT_ACTION",
-    "AIM",
     "AIM_SHOOT",
+    "STRAFE_SHOOT_RIGHT",
+    "STRAFE_SHOOT_LEFT",
     "RELOAD",
     "QUICK_DIVE",
+    "CONTEXT_ACTION",
     "IDLE"
   ],
 
+  "action_descriptions": {
+    "MOVE_FORWARD":        "Walk forward toward objective or next cover — 1.5 seconds",
+    "SPRINT_FORWARD":      "Sprint straight ahead at full speed — 1.5 seconds",
+    "SPRINT_AND_LOOK_RIGHT": "Sprint forward WHILE sweeping camera right — move + scan simultaneously",
+    "SPRINT_AND_LOOK_LEFT":  "Sprint forward WHILE sweeping camera left — move + scan simultaneously",
+    "MOVE_AND_LOOK_RIGHT": "Walk forward WHILE panning camera right — stealthy advance with scan",
+    "MOVE_AND_LOOK_LEFT":  "Walk forward WHILE panning camera left — stealthy advance with scan",
+    "STRAFE_LEFT":         "Step left to reach cover or dodge",
+    "STRAFE_RIGHT":        "Step right to reach cover or dodge",
+    "LOOK_LEFT":           "Sweep camera left only — use when stationary to scan for guards",
+    "LOOK_RIGHT":          "Sweep camera right only — use when stationary to scan for guards",
+    "TAKE_COVER":          "Crouch/prone to hide from guards or reduce exposure",
+    "AIM_SHOOT":           "Snap-aim and fire at the enemy visible on screen RIGHT NOW",
+    "STRAFE_SHOOT_RIGHT":  "Dodge right WHILE shooting — strafe away from enemy fire and return fire",
+    "STRAFE_SHOOT_LEFT":   "Dodge left WHILE shooting — strafe away from enemy fire and return fire",
+    "RELOAD":              "Reload weapon — only when ammo counter is low or empty",
+    "QUICK_DIVE":          "Dive/roll to evade gunfire or fast slide",
+    "CONTEXT_ACTION":      "Interact — open door, grab item, interrogate or grab guard",
+    "IDLE":                "Do nothing — ONLY for loading screens, cutscenes, or pause menus"
+  },
+
   "key_map": {
-    "MOVE_FORWARD": { "type": "keyboard", "key": "w", "hold_ms": 300 },
-    "MOVE_BACKWARD": { "type": "keyboard", "key": "s", "hold_ms": 200 },
-    "MOVE_LEFT": { "type": "keyboard", "key": "a", "hold_ms": 200 },
-    "MOVE_RIGHT": { "type": "keyboard", "key": "d", "hold_ms": 200 },
-    "SPRINT_FORWARD": {
-      "type": "combo",
-      "keys": ["shift", "w"],
-      "hold_ms": 600
+    "MOVE_FORWARD": { "type": "keyboard", "key": "w", "hold_ms": 1500 },
+    "SPRINT_FORWARD": { "type": "combo", "keys": ["shift", "w"], "hold_ms": 1500 },
+
+    "SPRINT_AND_LOOK_RIGHT": {
+      "type": "parallel",
+      "actions": [
+        { "type": "combo",      "keys": ["shift", "w"], "hold_ms": 1000 },
+        { "type": "mouse_move", "dx": 500, "dy": 0, "steps": 12 }
+      ]
     },
-    "LOOK_LEFT": { "type": "mouse_move", "dx": -450, "dy": 0, "steps": 10 },
-    "LOOK_RIGHT": { "type": "mouse_move", "dx": 450, "dy": 0, "steps": 10 },
-    "LOOK_UP": { "type": "mouse_move", "dx": 0, "dy": -220, "steps": 6 },
-    "LOOK_DOWN": { "type": "mouse_move", "dx": 0, "dy": 220, "steps": 6 },
-    "TAKE_COVER": { "type": "keyboard", "key": "c", "hold_ms": 100 },
-    "CONTEXT_ACTION": { "type": "keyboard", "key": "e", "hold_ms": 100 },
-    "AIM": {
-      "type": "sequence",
-      "steps": [{ "type": "mouse", "button": "right", "hold_ms": 1200 }]
+    "SPRINT_AND_LOOK_LEFT": {
+      "type": "parallel",
+      "actions": [
+        { "type": "combo",      "keys": ["shift", "w"], "hold_ms": 1000 },
+        { "type": "mouse_move", "dx": -500, "dy": 0, "steps": 12 }
+      ]
     },
+    "MOVE_AND_LOOK_RIGHT": {
+      "type": "parallel",
+      "actions": [
+        { "type": "keyboard",   "key": "w", "hold_ms": 900 },
+        { "type": "mouse_move", "dx": 400, "dy": 0, "steps": 10 }
+      ]
+    },
+    "MOVE_AND_LOOK_LEFT": {
+      "type": "parallel",
+      "actions": [
+        { "type": "keyboard",   "key": "w", "hold_ms": 900 },
+        { "type": "mouse_move", "dx": -400, "dy": 0, "steps": 10 }
+      ]
+    },
+
+    "STRAFE_LEFT":  { "type": "keyboard", "key": "a", "hold_ms": 400 },
+    "STRAFE_RIGHT": { "type": "keyboard", "key": "d", "hold_ms": 400 },
+    "LOOK_LEFT":  { "type": "mouse_move", "dx": -600, "dy": 0, "steps": 12 },
+    "LOOK_RIGHT": { "type": "mouse_move", "dx":  600, "dy": 0, "steps": 12 },
+    "TAKE_COVER":     { "type": "keyboard", "key": "c", "hold_ms": 120 },
+    "CONTEXT_ACTION": { "type": "keyboard", "key": "e", "hold_ms": 120 },
+
     "AIM_SHOOT": {
       "type": "sequence",
       "steps": [
-        {
-          "type": "mouse",
-          "button": "right",
-          "hold_ms": 350,
-          "delay_after_ms": 80
-        },
-        { "type": "mouse", "button": "left", "hold_ms": 100 }
+        { "type": "mouse", "button": "right", "hold_ms": 180, "delay_after_ms": 60 },
+        { "type": "mouse", "button": "left",  "hold_ms": 100 }
       ]
     },
-    "RELOAD": { "type": "keyboard", "key": "r", "hold_ms": 100 },
-    "QUICK_DIVE": { "type": "keyboard", "key": "space", "hold_ms": 100 },
-    "IDLE": null,
 
-    "SPRINT_TOGGLE": { "type": "keyboard", "key": "shift" },
-    "WALK_TOGGLE": { "type": "keyboard", "key": "ctrl" },
-    "CHANGE_STANCE": { "type": "keyboard", "key": "c" },
-    "ZOOM_SWITCH": { "type": "keyboard", "key": "v" },
-    "BINOCULARS": { "type": "keyboard", "key": "f" },
-    "RADIO": { "type": "keyboard", "key": "q" },
-    "LIGHTS_TOGGLE": { "type": "keyboard", "key": "x" },
-    "PAUSE": { "type": "keyboard", "key": "esc" },
-    "IDROID": { "type": "keyboard", "key": "tab" },
-    "PLACE_MARKER": { "type": "mouse", "button": "middle" },
-    "SUPPRESSOR_TOGGLE": { "type": "keyboard", "key": "g" },
-    "ATTACK": { "type": "mouse", "button": "left" },
-    "QUICK_PRIMARY": { "type": "keyboard", "key": "1" },
-    "QUICK_SECONDARY": { "type": "keyboard", "key": "2" },
-    "QUICK_SUPPORT": { "type": "keyboard", "key": "3" },
-    "QUICK_ITEM": { "type": "keyboard", "key": "4" }
+    "STRAFE_SHOOT_RIGHT": {
+      "type": "parallel",
+      "actions": [
+        { "type": "keyboard", "key": "d", "hold_ms": 600 },
+        {
+          "type": "sequence",
+          "steps": [
+            { "type": "mouse", "button": "right", "hold_ms": 180, "delay_after_ms": 60 },
+            { "type": "mouse", "button": "left",  "hold_ms": 100 }
+          ]
+        }
+      ]
+    },
+    "STRAFE_SHOOT_LEFT": {
+      "type": "parallel",
+      "actions": [
+        { "type": "keyboard", "key": "a", "hold_ms": 600 },
+        {
+          "type": "sequence",
+          "steps": [
+            { "type": "mouse", "button": "right", "hold_ms": 180, "delay_after_ms": 60 },
+            { "type": "mouse", "button": "left",  "hold_ms": 100 }
+          ]
+        }
+      ]
+    },
+
+    "RELOAD":     { "type": "keyboard", "key": "r",     "hold_ms": 120 },
+    "QUICK_DIVE": { "type": "keyboard", "key": "space", "hold_ms": 120 },
+    "IDLE": null
   }
 }
