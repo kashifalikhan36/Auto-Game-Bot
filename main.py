@@ -196,6 +196,7 @@ def main() -> None:
     print(f"  Provider: {config.ACTIVE_PROVIDER.upper()}")
     print(f"  Model  : {config.ACTIVE_MODEL_NAME}")
     print(f"  Region : {config.CAPTURE_REGION}")
+    print(f"  Capture: {config.CAPTURE_BACKEND.upper()}")
     print(f"  Resize : {config.CAPTURE_RESIZE}px  JPEG Q={config.JPEG_QUALITY}")
     print(f"  Runtime: {_fmt_duration(run_seconds)}")
     print(f"  Debug  : show_frame={config.DEBUG_SHOW_FRAME}  timing={config.DEBUG_TIMING}")

@@ -105,6 +105,10 @@ ACTIVE_MODEL_NAME: str = {
 # ---------------------------------------------------------------------------
 # Screenshot capture
 # ---------------------------------------------------------------------------
+# Backend: "dxcam" (fastest, DirectX games) or "mss" (works with Parsec,
+# remote desktop, virtual displays — use this if the bot always outputs IDLE).
+CAPTURE_BACKEND: str = os.getenv("CAPTURE_BACKEND", "dxcam").lower().strip()
+
 # Game window region to capture: (left, top, width, height) in screen pixels.
 # Set to None to capture the entire primary monitor.
 CAPTURE_REGION: tuple[int, int, int, int] | None = (
@@ -190,6 +194,10 @@ MAX_FRAMES: int = int(os.getenv("MAX_FRAMES", 0))
 # ---------------------------------------------------------------------------
 # If True, shows a live OpenCV window with the resized screenshot
 DEBUG_SHOW_FRAME: bool = os.getenv("DEBUG_SHOW_FRAME", "false").lower() == "true"
+
+# If True, saves every captured frame as debug_frame.jpg in the repo root
+# (lets you check what the bot actually sees without needing a GUI)
+DEBUG_SAVE_FRAME: bool = os.getenv("DEBUG_SAVE_FRAME", "false").lower() == "true"
 
 # If True, prints per-frame timing breakdown to stdout
 DEBUG_TIMING: bool = os.getenv("DEBUG_TIMING", "false").lower() == "true"

@@ -1,5 +1,6 @@
-# Screenshot capture (DXGI-based, fastest on Windows)
-dxcam
+# Screenshot capture
+dxcam          # DXGI-based, fastest — use for local DirectX games
+mss            # GDI-based — use when running game via Parsec / remote desktop
 
 # LangChain + LangGraph
 langchain>=0.3.0
