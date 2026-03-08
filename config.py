@@ -8,6 +8,7 @@ Supported LLM providers (at least ONE set of credentials is required):
   openai    — OpenAI        (OPENAI_API_KEY)
   gemini    — Google Gemini (GEMINI_API_KEY)
   anthropic — Anthropic     (ANTHROPIC_API_KEY)
+  groq      — Groq          (GROQ_API_KEY)
 
 Set LLM_PROVIDER=<name> to force a provider, or leave it unset for
 auto-detection (first provider whose credentials are present wins).
@@ -45,6 +46,15 @@ ANTHROPIC_API_KEY: str = os.getenv("ANTHROPIC_API_KEY", "")
 ANTHROPIC_MODEL: str = os.getenv("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
 
 # ---------------------------------------------------------------------------
+# Groq  (mandatory for vision stage; optional as decision provider)
+# ---------------------------------------------------------------------------
+GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
+# Model used for scene vision analysis (must support images)
+GROQ_VISION_MODEL: str = os.getenv("GROQ_VISION_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct")
+# Model used when Groq is also the decision provider (can be text-only for speed)
+GROQ_MODEL: str = os.getenv("GROQ_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct")
+
+# ---------------------------------------------------------------------------
 # Provider resolution — exactly one provider is selected at startup
 # ---------------------------------------------------------------------------
 
@@ -52,7 +62,7 @@ def _resolve_provider() -> str:
     """Return the active LLM provider name, validating credentials exist."""
     explicit = os.getenv("LLM_PROVIDER", "").lower().strip()
     if explicit:
-        valid = ("azure", "openai", "gemini", "anthropic")
+        valid = ("azure", "openai", "gemini", "anthropic", "groq")
         if explicit not in valid:
             raise RuntimeError(
                 f"[config] Unknown LLM_PROVIDER '{explicit}'. "
@@ -64,6 +74,7 @@ def _resolve_provider() -> str:
             "openai":    [] if OPENAI_API_KEY    else ["OPENAI_API_KEY"],
             "gemini":    [] if GEMINI_API_KEY    else ["GEMINI_API_KEY"],
             "anthropic": [] if ANTHROPIC_API_KEY else ["ANTHROPIC_API_KEY"],
+            "groq":      [] if GROQ_API_KEY      else ["GROQ_API_KEY"],
         }
         if missing[explicit]:
             raise RuntimeError(
@@ -81,6 +92,8 @@ def _resolve_provider() -> str:
         return "gemini"
     if ANTHROPIC_API_KEY:
         return "anthropic"
+    if GROQ_API_KEY:
+        return "groq"
 
     raise RuntimeError(
         "\n[config] No LLM credentials found. Set at least ONE provider in your .env:\n"
@@ -88,7 +101,8 @@ def _resolve_provider() -> str:
         "  OpenAI       : OPENAI_API_KEY\n"
         "  Gemini       : GEMINI_API_KEY\n"
         "  Anthropic    : ANTHROPIC_API_KEY\n"
-        "Optionally pin a provider with: LLM_PROVIDER=azure|openai|gemini|anthropic"
+        "  Groq         : GROQ_API_KEY\n"
+        "Optionally pin a provider with: LLM_PROVIDER=azure|openai|gemini|anthropic|groq"
     )
 
 
@@ -100,6 +114,7 @@ ACTIVE_MODEL_NAME: str = {
     "openai":    OPENAI_MODEL,
     "gemini":    GEMINI_MODEL,
     "anthropic": ANTHROPIC_MODEL,
+    "groq":      GROQ_MODEL,
 }[ACTIVE_PROVIDER]
 
 # ---------------------------------------------------------------------------
@@ -200,13 +215,17 @@ CONSTRAINTS: list[str] = []
 # Checklist questions shown in the user turn to guide the LLM (per-game)
 SITUATION_CHECKLIST: list[str] = []
 
+# Prompt sent to Groq vision to produce the structured scene JSON (per-game)
+# Empty string = no two-stage pipeline (legacy single-stage mode)
+SCENE_ANALYSIS_PROMPT: str = ""
+
 def load_game_config(config_path: str) -> None:
     """
     Load a games_config/<game_id>/config.json and override ACTION_LIST + VK_MAP
     at module level so all nodes pick up the new bindings.
     """
     import json
-    global ACTION_LIST, VK_MAP, GAME_CONTEXT, ACTION_DESCRIPTIONS, SITUATION_LIST, BEHAVIOR_CONFIG, NAMED_ACTIONS, NAMED_ACTION_DESCRIPTIONS, DECISION_RULES, CONSTRAINTS, SITUATION_CHECKLIST
+    global ACTION_LIST, VK_MAP, GAME_CONTEXT, ACTION_DESCRIPTIONS, SITUATION_LIST, BEHAVIOR_CONFIG, NAMED_ACTIONS, NAMED_ACTION_DESCRIPTIONS, DECISION_RULES, CONSTRAINTS, SITUATION_CHECKLIST, SCENE_ANALYSIS_PROMPT
     with open(config_path, encoding="utf-8") as f:
         data = json.load(f)
     ACTION_LIST = data["action_list"]
@@ -221,6 +240,7 @@ def load_game_config(config_path: str) -> None:
     DECISION_RULES = data.get("decision_rules", [])
     CONSTRAINTS = data.get("constraints", [])
     SITUATION_CHECKLIST = data.get("situation_checklist", [])
+    SCENE_ANALYSIS_PROMPT = data.get("scene_analysis_prompt", "")
 # fmt: on
 
 # How long (ms) to hold a key down before releasing it

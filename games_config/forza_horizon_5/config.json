@@ -3,21 +3,12 @@
   "game_id": "forza_horizon_5",
   "description": "Full PC keyboard bindings for Forza Horizon 5 (WASD default layout). All named actions and decision rules for autonomous AI driving.",
   "game_context": "Forza Horizon 5 (FH5) -- open-world racing game set in Mexico. You are an AI racing driver controlling a car with keyboard inputs (WASD layout).\n\nKEY BINDINGS:\n  W = Accelerate (hold for throttle)\n  S = Brake / Reverse (tap to brake, hold to reverse)\n  A = Steer Left\n  D = Steer Right\n  E = Shift Up (manual gearbox)\n  Q = Shift Down (manual gearbox)\n  Space = Handbrake (locks rear wheels -- for drift entry or tight U-turns)\n  Tab = Change Camera View\n  H = Horn\n  Enter = Activate / Accept\n\nIMPORTANT -- KEYBOARD PHYSICS:\n  Keyboard inputs are digital (fully on or fully off). Hold duration controls effect:\n  - Short tap A/D (100-200ms) = micro-correction, barely any yaw\n  - Medium hold A/D (300-500ms) = gentle curve tracking\n  - Long hold A/D (700ms+) = significant turn, only for tight corners\n  Too much steering input = understeer (front pushes wide) or oversteer (rear slides out).\n  Always use the minimum steering input needed. Smooth > aggressive.\n\nGAME MODES:\n  Road Racing / Street Scene -- follow the racing line on tarmac\n  Cross Country / Dirt Racing -- rough terrain, no road to stay on\n  Drag Race -- short straight sprint, shift at red-line RPM\n  Freeroam -- open world, watch for civilian traffic\n\nPR STUNTS (skill zones):\n  Speed Trap   -- blue lightning bolt -- hit max speed at camera\n  Danger Sign  -- skull icon -- jump ramp, never brake before it\n  Drift Zone   -- orange S-curves -- score drift points through the zone\n  Drag Race    -- christmas-tree light sequence\n\nRACING LINE:\n  Magenta / coloured line on road shows optimal path.\n  GREEN section = safe to go fast, keep throttle on\n  ORANGE section = lift throttle slightly, corner is coming\n  RED section = brake now, corner is tight\n  Classic line: wide entry → tight apex → wide exit\n\nREAL DRIVER MINDSET:\n  A real racing driver thinks 3-5 seconds AHEAD of the car, not at the current frame.\n  The default state is FULL_THROTTLE on clear roads. Only deviate with a specific visual reason.\n  Corners follow a 5-step process: SPOT → BRAKE POINT → TURN-IN → APEX → ACCELERATE OUT.\n  Smooth inputs always beat aggressive jerky ones. One decisive action per frame.\n  Reverse is a last resort used under 1% of the time -- only when completely stopped and blocked.",
-  "situation_list": [
-    "RACING",
-    "DRIFT",
-    "STUNT",
-    "OFFROAD",
-    "STUCK",
-    "MENU"
-  ],
+  "situation_list": ["RACING", "DRIFT", "STUNT", "OFFROAD", "STUCK", "MENU"],
   "behaviors": {
     "RACING": [
       [
         {
-          "keys": [
-            "w"
-          ],
+          "keys": ["w"],
           "hold_ms": 1500
         }
       ]
@@ -25,10 +16,7 @@
     "DRIFT": [
       [
         {
-          "keys": [
-            "space",
-            "a"
-          ],
+          "keys": ["space", "a"],
           "hold_ms": 300
         }
       ]
@@ -36,9 +24,7 @@
     "STUNT": [
       [
         {
-          "keys": [
-            "w"
-          ],
+          "keys": ["w"],
           "hold_ms": 2000
         }
       ]
@@ -46,9 +32,7 @@
     "OFFROAD": [
       [
         {
-          "keys": [
-            "w"
-          ],
+          "keys": ["w"],
           "hold_ms": 1200
         }
       ]
@@ -56,9 +40,7 @@
     "STUCK": [
       [
         {
-          "keys": [
-            "r"
-          ],
+          "keys": ["r"],
           "hold_ms": 120
         }
       ]
@@ -68,130 +50,91 @@
   "named_actions": {
     "FULL_THROTTLE": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 1800
       }
     ],
     "THROTTLE_MEDIUM": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 900
       }
     ],
     "THROTTLE_LIGHT": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 400
       }
     ],
     "ACCEL_LEFT_GENTLE": [
       {
-        "keys": [
-          "w",
-          "a"
-        ],
+        "keys": ["w", "a"],
         "hold_ms": 220
       }
     ],
     "ACCEL_LEFT_MEDIUM": [
       {
-        "keys": [
-          "w",
-          "a"
-        ],
+        "keys": ["w", "a"],
         "hold_ms": 450
       }
     ],
     "ACCEL_LEFT_TIGHT": [
       {
-        "keys": [
-          "w",
-          "a"
-        ],
+        "keys": ["w", "a"],
         "hold_ms": 350
       }
     ],
     "COAST_LEFT": [
       {
-        "keys": [
-          "a"
-        ],
+        "keys": ["a"],
         "hold_ms": 500
       }
     ],
     "ACCEL_RIGHT_GENTLE": [
       {
-        "keys": [
-          "w",
-          "d"
-        ],
+        "keys": ["w", "d"],
         "hold_ms": 220
       }
     ],
     "ACCEL_RIGHT_MEDIUM": [
       {
-        "keys": [
-          "w",
-          "d"
-        ],
+        "keys": ["w", "d"],
         "hold_ms": 450
       }
     ],
     "ACCEL_RIGHT_TIGHT": [
       {
-        "keys": [
-          "w",
-          "d"
-        ],
+        "keys": ["w", "d"],
         "hold_ms": 350
       }
     ],
     "COAST_RIGHT": [
       {
-        "keys": [
-          "d"
-        ],
+        "keys": ["d"],
         "hold_ms": 500
       }
     ],
     "BRAKE_STRAIGHT": [
       {
-        "keys": [
-          "s"
-        ],
+        "keys": ["s"],
         "hold_ms": 500
       }
     ],
     "BRAKE_STEER_LEFT": [
       {
-        "keys": [
-          "s",
-          "a"
-        ],
+        "keys": ["s", "a"],
         "hold_ms": 600
       }
     ],
     "BRAKE_STEER_RIGHT": [
       {
-        "keys": [
-          "s",
-          "d"
-        ],
+        "keys": ["s", "d"],
         "hold_ms": 600
       }
     ],
     "EMERGENCY_BRAKE": [
       {
-        "keys": [
-          "s",
-          "space"
-        ],
+        "keys": ["s", "space"],
         "hold_ms": 500
       }
     ],
@@ -199,17 +142,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "a"
-            ],
+            "keys": ["w", "a"],
             "hold_ms": 700
           }
         ]
@@ -219,17 +157,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "d"
-            ],
+            "keys": ["w", "d"],
             "hold_ms": 700
           }
         ]
@@ -237,63 +170,43 @@
     ],
     "REVERSE": [
       {
-        "keys": [
-          "s"
-        ],
+        "keys": ["s"],
         "hold_ms": 1200
       }
     ],
     "REVERSE_LEFT": [
       {
-        "keys": [
-          "s",
-          "a"
-        ],
+        "keys": ["s", "a"],
         "hold_ms": 900
       }
     ],
     "REVERSE_RIGHT": [
       {
-        "keys": [
-          "s",
-          "d"
-        ],
+        "keys": ["s", "d"],
         "hold_ms": 900
       }
     ],
     "HANDBRAKE_LEFT": [
       {
-        "keys": [
-          "space",
-          "a"
-        ],
+        "keys": ["space", "a"],
         "hold_ms": 350
       }
     ],
     "HANDBRAKE_RIGHT": [
       {
-        "keys": [
-          "space",
-          "d"
-        ],
+        "keys": ["space", "d"],
         "hold_ms": 350
       }
     ],
     "DRIFT_MAINTAIN_LEFT": [
       {
-        "keys": [
-          "w",
-          "d"
-        ],
+        "keys": ["w", "d"],
         "hold_ms": 700
       }
     ],
     "DRIFT_MAINTAIN_RIGHT": [
       {
-        "keys": [
-          "w",
-          "a"
-        ],
+        "keys": ["w", "a"],
         "hold_ms": 700
       }
     ],
@@ -301,18 +214,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "space",
-              "a"
-            ],
+            "keys": ["space", "a"],
             "hold_ms": 300,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "d"
-            ],
+            "keys": ["w", "d"],
             "hold_ms": 900
           }
         ]
@@ -322,18 +229,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "space",
-              "d"
-            ],
+            "keys": ["space", "d"],
             "hold_ms": 300,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "a"
-            ],
+            "keys": ["w", "a"],
             "hold_ms": 900
           }
         ]
@@ -341,35 +242,25 @@
     ],
     "SPIN_RECOVER_LEFT": [
       {
-        "keys": [
-          "w",
-          "d"
-        ],
+        "keys": ["w", "d"],
         "hold_ms": 600
       }
     ],
     "SPIN_RECOVER_RIGHT": [
       {
-        "keys": [
-          "w",
-          "a"
-        ],
+        "keys": ["w", "a"],
         "hold_ms": 600
       }
     ],
     "SHIFT_UP": [
       {
-        "keys": [
-          "e"
-        ],
+        "keys": ["e"],
         "hold_ms": 80
       }
     ],
     "SHIFT_DOWN": [
       {
-        "keys": [
-          "q"
-        ],
+        "keys": ["q"],
         "hold_ms": 80
       }
     ],
@@ -377,16 +268,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "e"
-            ],
+            "keys": ["e"],
             "hold_ms": 80,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 1200
           }
         ]
@@ -394,34 +281,25 @@
     ],
     "DRAG_LAUNCH": [
       {
-        "keys": [
-          "w",
-          "shift"
-        ],
+        "keys": ["w", "shift"],
         "hold_ms": 500
       }
     ],
     "DRAG_FULL_THROTTLE": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 2500
       }
     ],
     "SPEED_TRAP_BLAST": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 3000
       }
     ],
     "JUMP_APPROACH": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 3000
       }
     ],
@@ -429,18 +307,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "space",
-              "a"
-            ],
+            "keys": ["space", "a"],
             "hold_ms": 320,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "d"
-            ],
+            "keys": ["w", "d"],
             "hold_ms": 1000
           }
         ]
@@ -450,18 +322,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "space",
-              "d"
-            ],
+            "keys": ["space", "d"],
             "hold_ms": 320,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "a"
-            ],
+            "keys": ["w", "a"],
             "hold_ms": 1000
           }
         ]
@@ -471,22 +337,16 @@
       {
         "sequence": [
           {
-            "keys": [
-              "a"
-            ],
+            "keys": ["a"],
             "hold_ms": 300,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 1500
           },
           {
-            "keys": [
-              "d"
-            ],
+            "keys": ["d"],
             "hold_ms": 250
           }
         ]
@@ -496,22 +356,16 @@
       {
         "sequence": [
           {
-            "keys": [
-              "d"
-            ],
+            "keys": ["d"],
             "hold_ms": 300,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 1500
           },
           {
-            "keys": [
-              "a"
-            ],
+            "keys": ["a"],
             "hold_ms": 250
           }
         ]
@@ -519,17 +373,13 @@
     ],
     "SWERVE_LEFT": [
       {
-        "keys": [
-          "a"
-        ],
+        "keys": ["a"],
         "hold_ms": 250
       }
     ],
     "SWERVE_RIGHT": [
       {
-        "keys": [
-          "d"
-        ],
+        "keys": ["d"],
         "hold_ms": 250
       }
     ],
@@ -537,16 +387,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 200,
             "delay_after_ms": 50
           },
           {
-            "keys": [
-              "a"
-            ],
+            "keys": ["a"],
             "hold_ms": 350
           }
         ]
@@ -556,16 +402,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 200,
             "delay_after_ms": 50
           },
           {
-            "keys": [
-              "d"
-            ],
+            "keys": ["d"],
             "hold_ms": 350
           }
         ]
@@ -573,35 +415,25 @@
     ],
     "OFFROAD_THROTTLE": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 1200
       }
     ],
     "OFFROAD_LEFT": [
       {
-        "keys": [
-          "w",
-          "a"
-        ],
+        "keys": ["w", "a"],
         "hold_ms": 600
       }
     ],
     "OFFROAD_RIGHT": [
       {
-        "keys": [
-          "w",
-          "d"
-        ],
+        "keys": ["w", "d"],
         "hold_ms": 600
       }
     ],
     "OFFROAD_CAREFUL": [
       {
-        "keys": [
-          "w"
-        ],
+        "keys": ["w"],
         "hold_ms": 600
       }
     ],
@@ -609,30 +441,22 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 500,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 300,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 400
           }
         ]
@@ -642,32 +466,22 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 350,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "a"
-            ],
+            "keys": ["w", "a"],
             "hold_ms": 650,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 250,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w",
-              "a"
-            ],
+            "keys": ["w", "a"],
             "hold_ms": 500
           }
         ]
@@ -677,32 +491,22 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 350,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "d"
-            ],
+            "keys": ["w", "d"],
             "hold_ms": 650,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 250,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w",
-              "d"
-            ],
+            "keys": ["w", "d"],
             "hold_ms": 500
           }
         ]
@@ -710,57 +514,43 @@
     ],
     "LOOK_LEFT": [
       {
-        "keys": [
-          "left"
-        ],
+        "keys": ["left"],
         "hold_ms": 300
       }
     ],
     "LOOK_RIGHT": [
       {
-        "keys": [
-          "right"
-        ],
+        "keys": ["right"],
         "hold_ms": 300
       }
     ],
     "LOOK_BACK": [
       {
-        "keys": [
-          "down"
-        ],
+        "keys": ["down"],
         "hold_ms": 400
       }
     ],
     "LOOK_FORWARD": [
       {
-        "keys": [
-          "up"
-        ],
+        "keys": ["up"],
         "hold_ms": 300
       }
     ],
     "SWITCH_CAMERA": [
       {
-        "keys": [
-          "tab"
-        ],
+        "keys": ["tab"],
         "hold_ms": 100
       }
     ],
     "ACTIVATE": [
       {
-        "keys": [
-          "enter"
-        ],
+        "keys": ["enter"],
         "hold_ms": 100
       }
     ],
     "HORN": [
       {
-        "keys": [
-          "h"
-        ],
+        "keys": ["h"],
         "hold_ms": 200
       }
     ],
@@ -768,16 +558,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "a"
-            ],
+            "keys": ["a"],
             "hold_ms": 300,
             "delay_after_ms": 50
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 350
           }
         ]
@@ -787,16 +573,12 @@
       {
         "sequence": [
           {
-            "keys": [
-              "d"
-            ],
+            "keys": ["d"],
             "hold_ms": 300,
             "delay_after_ms": 50
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 350
           }
         ]
@@ -806,24 +588,17 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 500,
             "delay_after_ms": 100
           },
           {
-            "keys": [
-              "w",
-              "a"
-            ],
+            "keys": ["w", "a"],
             "hold_ms": 600,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 350
           }
         ]
@@ -833,24 +608,17 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 500,
             "delay_after_ms": 100
           },
           {
-            "keys": [
-              "w",
-              "d"
-            ],
+            "keys": ["w", "d"],
             "hold_ms": 600,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 350
           }
         ]
@@ -860,31 +628,22 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 700,
             "delay_after_ms": 120
           },
           {
-            "keys": [
-              "a"
-            ],
+            "keys": ["a"],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "a"
-            ],
+            "keys": ["w", "a"],
             "hold_ms": 550,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 350
           }
         ]
@@ -894,31 +653,22 @@
       {
         "sequence": [
           {
-            "keys": [
-              "s"
-            ],
+            "keys": ["s"],
             "hold_ms": 700,
             "delay_after_ms": 120
           },
           {
-            "keys": [
-              "d"
-            ],
+            "keys": ["d"],
             "hold_ms": 450,
             "delay_after_ms": 80
           },
           {
-            "keys": [
-              "w",
-              "d"
-            ],
+            "keys": ["w", "d"],
             "hold_ms": 550,
             "delay_after_ms": 60
           },
           {
-            "keys": [
-              "w"
-            ],
+            "keys": ["w"],
             "hold_ms": 350
           }
         ]
@@ -926,17 +676,13 @@
     ],
     "NUDGE_LEFT": [
       {
-        "keys": [
-          "a"
-        ],
+        "keys": ["a"],
         "hold_ms": 140
       }
     ],
     "NUDGE_RIGHT": [
       {
-        "keys": [
-          "d"
-        ],
+        "keys": ["d"],
         "hold_ms": 140
       }
     ],
@@ -1036,7 +782,6 @@
     "RULE 3 -- COMPLETELY STOPPED AGAINST A WALL / TREE / BARRIER  [reverse only here]:",
     "  ONLY applies when: car is NOT moving (speed = 0), W gives no forward motion,",
     "  and a wall, tree, or barrier is visibly blocking the front of the car.",
-    "  This rule is rare -- under 2% of frames. Do not trigger unless truly stopped.",
     "",
     "  TECHNIQUE -- rock the car to break free:",
     "    1. Reverse a LITTLE (S ~350ms) to create space",
