@@ -57,20 +57,38 @@ ACTION_LIST: list[str] = [
     "IDLE",
 ]
 
-# Key name strings used by interception-python (extend / replace for your game).
-# Valid names: "a"–"z", "0"–"9", "space", "enter", "up", "down", "left",
-# "right", "shift", "ctrl", "alt", "tab", "esc", "f1"–"f12", etc.
-VK_MAP: dict[str, str | None] = {
-    "UP":       "up",
-    "DOWN":     "down",
-    "LEFT":     "left",
-    "RIGHT":    "right",
-    "JUMP":     "space",
-    "ATTACK":   "z",
-    "DEFEND":   "x",
-    "INTERACT": "enter",
-    "IDLE":     None,   # no keypress
+# Key map: action name -> {"type": "keyboard", "key": str}
+#                      or {"type": "mouse", "button": str}
+#                      or None (no input)
+# Populated from .env defaults or overridden by load_game_config().
+VK_MAP: dict[str, dict | None] = {
+    "UP":       {"type": "keyboard", "key": "up"},
+    "DOWN":     {"type": "keyboard", "key": "down"},
+    "LEFT":     {"type": "keyboard", "key": "left"},
+    "RIGHT":    {"type": "keyboard", "key": "right"},
+    "JUMP":     {"type": "keyboard", "key": "space"},
+    "ATTACK":   {"type": "keyboard", "key": "z"},
+    "DEFEND":   {"type": "keyboard", "key": "x"},
+    "INTERACT": {"type": "keyboard", "key": "enter"},
+    "IDLE":     None,
 }
+# fmt: on
+
+# ---------------------------------------------------------------------------
+# Game config loader
+# ---------------------------------------------------------------------------
+
+def load_game_config(config_path: str) -> None:
+    """
+    Load a games_config/<game_id>/config.json and override ACTION_LIST + VK_MAP
+    at module level so all nodes pick up the new bindings.
+    """
+    import json
+    global ACTION_LIST, VK_MAP
+    with open(config_path, encoding="utf-8") as f:
+        data = json.load(f)
+    ACTION_LIST = data["action_list"]
+    VK_MAP = data["key_map"]
 # fmt: on
 
 # How long (ms) to hold a key down before releasing it

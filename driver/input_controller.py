@@ -133,6 +133,58 @@ def _send_input_vk(vk_code: int, key_up: bool) -> None:
     ctypes.windll.user32.SendInput(1, ctypes.byref(inp), ctypes.sizeof(_INPUT))
 
 
+MOUSEEVENTF_LEFTDOWN   = 0x0002
+MOUSEEVENTF_LEFTUP     = 0x0004
+MOUSEEVENTF_RIGHTDOWN  = 0x0008
+MOUSEEVENTF_RIGHTUP    = 0x0010
+MOUSEEVENTF_MIDDLEDOWN = 0x0020
+MOUSEEVENTF_MIDDLEUP   = 0x0040
+INPUT_MOUSE = 0
+
+
+class _MOUSEINPUT(ctypes.Structure):
+    _fields_ = [
+        ("dx", ctypes.c_long),
+        ("dy", ctypes.c_long),
+        ("mouseData", ctypes.c_ulong),
+        ("dwFlags", ctypes.c_ulong),
+        ("time", ctypes.c_ulong),
+        ("dwExtraInfo", ctypes.POINTER(ctypes.c_ulong)),
+    ]
+
+
+class _INPUT_UNION2(ctypes.Union):
+    _fields_ = [("mi", _MOUSEINPUT)]
+
+
+class _MINPUT(ctypes.Structure):
+    _fields_ = [("type", ctypes.c_ulong), ("_input", _INPUT_UNION2)]
+
+
+_MOUSE_FLAG_MAP = {
+    ("left",   False): MOUSEEVENTF_LEFTDOWN,
+    ("left",   True):  MOUSEEVENTF_LEFTUP,
+    ("right",  False): MOUSEEVENTF_RIGHTDOWN,
+    ("right",  True):  MOUSEEVENTF_RIGHTUP,
+    ("middle", False): MOUSEEVENTF_MIDDLEDOWN,
+    ("middle", True):  MOUSEEVENTF_MIDDLEUP,
+}
+
+
+def _send_mouse_button(button: str, key_up: bool) -> None:
+    """Send a mouse button event via SendInput (user-mode fallback)."""
+    flag = _MOUSE_FLAG_MAP.get((button, key_up))
+    if flag is None:
+        raise ValueError(f"Unknown mouse button: {button!r}")
+    inp = _MINPUT(
+        type=INPUT_MOUSE,
+        _input=_INPUT_UNION2(
+            mi=_MOUSEINPUT(dx=0, dy=0, mouseData=0, dwFlags=flag, time=0, dwExtraInfo=None)  # type: ignore
+        ),
+    )
+    ctypes.windll.user32.SendInput(1, ctypes.byref(inp), ctypes.sizeof(_MINPUT))
+
+
 # ---------------------------------------------------------------------------
 # String key → VK code conversion (for SendInput fallback)
 # ---------------------------------------------------------------------------
@@ -222,6 +274,36 @@ class InputController:
             _send_input_vk(vk, key_up=False)
             time.sleep(hold_ms / 1000.0)
             _send_input_vk(vk, key_up=True)
+
+    def click_mouse(self, button: str, hold_ms: int = 50) -> None:
+        """
+        Press and release a mouse button.
+
+        Args:
+            button:  "left", "right", or "middle".
+            hold_ms: How long (ms) to hold the button before releasing.
+        """
+        button = button.lower()
+        if self._use_interception:
+            if button == "left":
+                interception.mouse_down(interception.MouseButton.LEFT)
+                time.sleep(hold_ms / 1000.0)
+                interception.mouse_up(interception.MouseButton.LEFT)
+            elif button == "right":
+                interception.mouse_down(interception.MouseButton.RIGHT)
+                time.sleep(hold_ms / 1000.0)
+                interception.mouse_up(interception.MouseButton.RIGHT)
+            elif button == "middle":
+                interception.mouse_down(interception.MouseButton.MIDDLE)
+                time.sleep(hold_ms / 1000.0)
+                interception.mouse_up(interception.MouseButton.MIDDLE)
+            else:
+                raise ValueError(f"Unknown mouse button: {button!r}")
+        else:
+            # SendInput fallback for mouse buttons
+            _send_mouse_button(button, key_up=False)
+            time.sleep(hold_ms / 1000.0)
+            _send_mouse_button(button, key_up=True)
 
     def press_combo(self, keys: list[str], hold_ms: int = 50) -> None:
         """

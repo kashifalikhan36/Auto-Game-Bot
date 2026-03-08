@@ -14,6 +14,8 @@ Keyboard shortcut to stop:
 
 from __future__ import annotations
 
+import json
+import os
 import signal
 import sys
 import time
@@ -27,13 +29,83 @@ from state import initial_state
 
 
 # ---------------------------------------------------------------------------
+# Game selection
+# ---------------------------------------------------------------------------
+
+def _discover_game_configs() -> list[dict]:
+    """Scan games_config/ and return a list of {name, id, path} dicts."""
+    root = os.path.join(os.path.dirname(__file__), "games_config")
+    games = []
+    if not os.path.isdir(root):
+        return games
+    for entry in sorted(os.listdir(root)):
+        cfg_path = os.path.join(root, entry, "config.json")
+        if os.path.isfile(cfg_path):
+            try:
+                with open(cfg_path, encoding="utf-8") as f:
+                    data = json.load(f)
+                games.append({
+                    "name": data.get("game_name", entry),
+                    "id":   data.get("game_id", entry),
+                    "path": cfg_path,
+                })
+            except Exception:
+                pass
+    return games
+
+
+def _select_game() -> str | None:
+    """
+    Prompt the user to pick a game from games_config/.
+    Returns the path to the chosen config.json, or None to use defaults.
+    """
+    games = _discover_game_configs()
+    if not games:
+        print("[game] No game configs found in games_config/ — using default key map.")
+        return None
+
+    print("\n" + "=" * 60)
+    print("  Select a game config")
+    print("=" * 60)
+    for i, g in enumerate(games, 1):
+        print(f"  [{i}] {g['name']}")
+    print(f"  [0] Use default key map (no game selected)")
+    print("=" * 60)
+
+    while True:
+        try:
+            raw = input("  Enter number: ").strip()
+        except EOFError:
+            print("\n[game] No input — using default key map.")
+            return None
+        if not raw:
+            continue
+        try:
+            choice = int(raw)
+        except ValueError:
+            print("  Invalid input — enter a number.")
+            continue
+        if choice == 0:
+            print("[game] Using default key map.")
+            return None
+        if 1 <= choice <= len(games):
+            selected = games[choice - 1]
+            print(f"[game] Loaded: {selected['name']}")
+            return selected["path"]
+        print(f"  Please enter a number between 0 and {len(games)}.")
+
+
+# ---------------------------------------------------------------------------
 # Graceful shutdown helpers
 # ---------------------------------------------------------------------------
 
 def _shutdown(signum=None, frame=None) -> None:  # noqa: ANN001
     print("\n[main] Shutdown requested — cleaning up …")
     cleanup_camera()
-    cv2.destroyAllWindows()
+    try:
+        cv2.destroyAllWindows()
+    except cv2.error:
+        pass
     sys.exit(0)
 
 
@@ -46,7 +118,13 @@ signal.signal(signal.SIGTERM, _shutdown)
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    print("=" * 60)
+    # Game selection — must happen before compile_graph() so nodes see the
+    # updated ACTION_LIST / VK_MAP.
+    game_cfg_path = _select_game()
+    if game_cfg_path:
+        config.load_game_config(game_cfg_path)
+
+    print("\n" + "=" * 60)
     print("  Auto Game Bot")
     print(f"  Model  : {config.AZURE_DEPLOYMENT_NAME}")
     print(f"  Region : {config.CAPTURE_REGION}")

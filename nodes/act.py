@@ -39,11 +39,15 @@ def act_node(state: BotState) -> BotState:
     t0 = time.perf_counter()
 
     action: str = state.get("action", "IDLE")
-    key: str | None = config.VK_MAP.get(action)
+    binding: dict | None = config.VK_MAP.get(action)
 
-    if key is not None:
+    if binding is not None:
         controller = _get_controller()
-        controller.press_key(key, hold_ms=config.KEY_HOLD_MS)
+        input_type = binding.get("type", "keyboard")
+        if input_type == "keyboard":
+            controller.press_key(binding["key"], hold_ms=config.KEY_HOLD_MS)
+        elif input_type == "mouse":
+            controller.click_mouse(binding["button"], hold_ms=config.KEY_HOLD_MS)
 
     t1 = time.perf_counter()
 
