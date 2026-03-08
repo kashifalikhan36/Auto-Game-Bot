@@ -285,20 +285,11 @@ class InputController:
         """
         button = button.lower()
         if self._use_interception:
-            if button == "left":
-                interception.mouse_down(interception.MouseButton.LEFT)
-                time.sleep(hold_ms / 1000.0)
-                interception.mouse_up(interception.MouseButton.LEFT)
-            elif button == "right":
-                interception.mouse_down(interception.MouseButton.RIGHT)
-                time.sleep(hold_ms / 1000.0)
-                interception.mouse_up(interception.MouseButton.RIGHT)
-            elif button == "middle":
-                interception.mouse_down(interception.MouseButton.MIDDLE)
-                time.sleep(hold_ms / 1000.0)
-                interception.mouse_up(interception.MouseButton.MIDDLE)
-            else:
+            if button not in ("left", "right", "middle"):
                 raise ValueError(f"Unknown mouse button: {button!r}")
+            interception.mouse_down(button)
+            time.sleep(hold_ms / 1000.0)
+            interception.mouse_up(button)
         else:
             # SendInput fallback for mouse buttons
             _send_mouse_button(button, key_up=False)

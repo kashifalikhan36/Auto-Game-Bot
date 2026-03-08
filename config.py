@@ -127,8 +127,13 @@ JPEG_QUALITY: int = int(os.getenv("JPEG_QUALITY", 80))
 # ---------------------------------------------------------------------------
 # LLM inference
 # ---------------------------------------------------------------------------
-# Maximum tokens the LLM can generate.  Single-word outputs → keep this tiny.
-MAX_TOKENS: int = int(os.getenv("MAX_TOKENS", 10))
+# Maximum tokens the LLM can generate.
+# IMPORTANT for reasoning models (GPT-5 Nano, o1, o3-mini, Gemini Thinking):
+# These models spend tokens on internal reasoning before writing the visible
+# answer. If MAX_TOKENS is too low (e.g. 10), all tokens are used for thinking
+# and the visible response is empty ("") which the bot treats as IDLE.
+# Set to 2000+ for reasoning models; 10-20 is fine for standard models.
+MAX_TOKENS: int = int(os.getenv("MAX_TOKENS", 10000))
 
 # LLM temperature (0 = deterministic).  Azure GPT-5 Nano ignores this (default only).
 TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", 0.0))
