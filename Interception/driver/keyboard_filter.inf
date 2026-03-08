@@ -1,0 +1,94 @@
+; ============================================================================
+; keyboard_filter.inf — Windows 11 compatible INF for Interception
+;                       Keyboard Upper-Filter Driver
+;
+; Usage (run as Administrator):
+;   pnputil /add-driver keyboard_filter.inf /install
+;  OR via the Install-Win11.ps1 script in the parent folder.
+;
+; This installs 'keyboard.sys' as a kernel-mode upper-class-filter driver
+; for ALL keyboard devices on the system.
+; The driver service name 'keyboard' is added to the UpperFilters multi-string
+; registry value of the Keyboard device class.
+; ============================================================================
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Keyboard
+ClassGuid   = {4D36E96B-E325-11CE-BFC1-08002BE10318}
+Provider    = %ProviderName%
+DriverVer   = 03/08/2026,2.0.0.0
+CatalogFile = keyboard_filter.cat
+PnpLockdown = 1
+
+; --------------------------------------------------------------------------
+; File layout
+; --------------------------------------------------------------------------
+[DestinationDirs]
+KbdFilter_CopyFiles = 12  ; %SystemRoot%\System32\Drivers
+
+[SourceDisksNames]
+1 = %DiskName%,,,"."
+
+[SourceDisksFiles]
+keyboard.sys = 1
+
+; --------------------------------------------------------------------------
+; DefaultInstall — invoked by rundll32 or the PowerShell installer.
+; (pnputil requires a hardware-ID [Models] section; for the no-device class
+;  filter approach we rely on DefaultInstall + sc.exe/reg in the PS script.)
+; --------------------------------------------------------------------------
+[DefaultInstall.NTamd64]
+CopyFiles = KbdFilter_CopyFiles
+AddReg    = KbdFilter_AddReg
+
+[DefaultInstall.NTamd64.Services]
+AddService = keyboard,,KbdFilter_Service
+
+; --------------------------------------------------------------------------
+; DefaultUninstall
+; --------------------------------------------------------------------------
+[DefaultUninstall.NTamd64]
+DelFiles = KbdFilter_CopyFiles
+DelReg   = KbdFilter_DelReg
+
+[DefaultUninstall.NTamd64.Services]
+; SPSVCINST_STOPSERVICE (0x200) — stop service before deleting
+DelService = keyboard,0x200
+
+; --------------------------------------------------------------------------
+; File copy list
+; --------------------------------------------------------------------------
+[KbdFilter_CopyFiles]
+keyboard.sys
+
+; --------------------------------------------------------------------------
+; Registry — add "keyboard" to UpperFilters of the Keyboard class.
+; 0x00010008 = REG_MULTI_SZ | FLG_ADDREG_APPEND  (appends, does not replace)
+; --------------------------------------------------------------------------
+[KbdFilter_AddReg]
+HKLM,"SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}",UpperFilters,0x00010008,"keyboard"
+
+[KbdFilter_DelReg]
+; 0x00018002 = REG_MULTI_SZ | FLG_ADDREG_DELVAL (remove value entirely) —
+; use a separate cleanup script to safely remove only "keyboard" from the list.
+HKLM,"SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}",UpperFilters,0x00018002
+
+; --------------------------------------------------------------------------
+; Service install
+; --------------------------------------------------------------------------
+[KbdFilter_Service]
+DisplayName    = %KbdFilterDesc%
+ServiceType    = 1          ; SERVICE_KERNEL_DRIVER
+StartType      = 0          ; SERVICE_BOOT_START — must load before keyboard enum
+ErrorControl   = 1          ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\keyboard.sys
+LoadOrderGroup = Keyboard Port
+
+; --------------------------------------------------------------------------
+; Strings
+; --------------------------------------------------------------------------
+[Strings]
+ProviderName  = "Interception"
+DiskName      = "Interception Driver Disk"
+KbdFilterDesc = "Interception Keyboard Upper-Filter Driver"

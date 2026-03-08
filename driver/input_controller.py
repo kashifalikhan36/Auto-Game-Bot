@@ -1,14 +1,29 @@
 """
 Low-level wrapper around the Interception kernel driver.
 
-The Interception driver must be installed BEFORE running this code:
-  1. Download from: https://github.com/oblitum/Interception/releases
-  2. Run install-interception.exe as Administrator
-  3. Reboot
-  4. pip install interception-python
+Installation (Windows 11 — use the new installer):
+  1. Open PowerShell as Administrator inside the repository root.
+  2. Run:  ./Interception/Install-Win11.ps1
+     This will:
+       a. Create and trust a self-signed test code-signing certificate.
+       b. Re-sign keyboard.sys / mouse.sys with SHA-256 Authenticode.
+       c. Enable Test Signing mode (bcdedit /set testsigning on).
+       d. Copy drivers to System32/Drivers/ and register kernel services.
+       e. Add UpperFilters registry entries for keyboard and mouse classes.
+  3. Disable Secure Boot in BIOS/UEFI (required for test-signed drivers).
+  4. Reboot.
+  5. pip install interception-python
 
-If the driver is NOT installed, the class falls back to ctypes SendInput
-so that development/testing can continue without the driver.
+To uninstall:  ./Interception/Uninstall-Win11.ps1
+
+If the driver is NOT installed, the class falls back to Win32 SendInput
+so development/testing continues without the driver.  Input via SendInput
+is detectable by user-mode anti-cheat; install the driver for kernel-level
+input injection.
+
+Driver status check at runtime
+─────────────────────────────
+Call InputController.driver_status() to get a dict describing what is active.
 """
 
 from __future__ import annotations
@@ -19,18 +34,55 @@ import warnings
 
 
 # ---------------------------------------------------------------------------
+# Check whether the Interception kernel services are actually running.
+# The Python bindings import alone is not sufficient — the kernel driver
+# (keyboard service + mouse service) must also be loaded.
+# ---------------------------------------------------------------------------
+import subprocess as _sp
+import sys as _sys
+
+
+def _service_running(name: str) -> bool:
+    """Return True if the named Windows kernel service is in RUNNING state."""
+    try:
+        result = _sp.run(
+            ["sc.exe", "query", name],
+            capture_output=True, text=True, timeout=3
+        )
+        return "RUNNING" in result.stdout
+    except Exception:
+        return False
+
+
+def _interception_driver_loaded() -> bool:
+    """True when BOTH keyboard and mouse Interception services are running."""
+    return _service_running("keyboard") and _service_running("mouse")
+
+
+# ---------------------------------------------------------------------------
 # Try importing the Interception driver bindings
 # ---------------------------------------------------------------------------
 try:
     import interception  # type: ignore
 
-    _INTERCEPTION_AVAILABLE = True
+    if _interception_driver_loaded():
+        _INTERCEPTION_AVAILABLE = True
+    else:
+        _INTERCEPTION_AVAILABLE = False
+        warnings.warn(
+            "interception-python is installed but the kernel driver services\n"
+            "('keyboard' and 'mouse') are NOT running.\n"
+            "Run: .\\Interception\\Install-Win11.ps1  (as Administrator) then reboot.\n"
+            "Falling back to SendInput.",
+            stacklevel=2,
+        )
 except ImportError:
     _INTERCEPTION_AVAILABLE = False
     warnings.warn(
-        "interception-python not found or Interception driver not installed.\n"
-        "Falling back to SendInput (ctypes). Input may be detectable by anti-cheat.\n"
-        "See driver/input_controller.py for installation instructions.",
+        "interception-python package not found.\n"
+        "Install with:  pip install interception-python\n"
+        "Then run:      .\\Interception\\Install-Win11.ps1  (as Administrator) and reboot.\n"
+        "Falling back to SendInput (detectable by user-mode anti-cheat).",
         stacklevel=2,
     )
 
@@ -109,13 +161,45 @@ class InputController:
             self._ctx = interception.interception()
             # Find the first available keyboard device
             self._device = interception.INTERCEPTION_KEYBOARD(0)
-            print("[InputController] Using Interception kernel driver.")
+            print("[InputController] Using Interception kernel driver (kernel-level, stealthy).")
         else:
-            print("[InputController] Using SendInput fallback.")
+            print("[InputController] Using SendInput fallback (user-mode).")
+            print("[InputController] To install the kernel driver run:")
+            print("[InputController]   ./Interception/Install-Win11.ps1  (as Administrator)")
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def driver_status() -> dict:
+        """
+        Return a dict describing the current driver status.
+
+        Keys:
+          - mode:            'interception' | 'sendinput'
+          - python_pkg:      bool — interception-python package importable?
+          - kbd_svc_running: bool — 'keyboard' kernel service running?
+          - mouse_svc_running: bool — 'mouse' kernel service running?
+          - install_cmd:     str — command to install if not available
+        """
+        try:
+            import interception  # type: ignore  # noqa: F401
+            pkg = True
+        except ImportError:
+            pkg = False
+
+        kbd_svc   = _service_running("keyboard")
+        mouse_svc = _service_running("mouse")
+        active    = pkg and kbd_svc and mouse_svc
+
+        return {
+            "mode":              "interception" if active else "sendinput",
+            "python_pkg":        pkg,
+            "kbd_svc_running":   kbd_svc,
+            "mouse_svc_running": mouse_svc,
+            "install_cmd":       r"./Interception/Install-Win11.ps1  (run as Administrator, then reboot)",
+        }
 
     def press_key(self, vk_code: int, hold_ms: int = 50) -> None:
         """

@@ -1,0 +1,86 @@
+; ============================================================================
+; mouse_filter.inf — Windows 11 compatible INF for Interception
+;                    Mouse Upper-Filter Driver
+;
+; Usage (run as Administrator):
+;   pnputil /add-driver mouse_filter.inf /install
+;  OR via the Install-Win11.ps1 script in the parent folder.
+;
+; This installs 'mouse.sys' as a kernel-mode upper-class-filter driver
+; for ALL mouse/pointer devices on the system.
+; The driver service name 'mouse' is added to the UpperFilters multi-string
+; registry value of the Mouse device class.
+; ============================================================================
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = Mouse
+ClassGuid   = {4D36E96F-E325-11CE-BFC1-08002BF6382B}
+Provider    = %ProviderName%
+DriverVer   = 03/08/2026,2.0.0.0
+CatalogFile = mouse_filter.cat
+PnpLockdown = 1
+
+; --------------------------------------------------------------------------
+; File layout
+; --------------------------------------------------------------------------
+[DestinationDirs]
+MouseFilter_CopyFiles = 12  ; %SystemRoot%\System32\Drivers
+
+[SourceDisksNames]
+1 = %DiskName%,,,"."
+
+[SourceDisksFiles]
+mouse.sys = 1
+
+; --------------------------------------------------------------------------
+; DefaultInstall / DefaultUninstall
+; --------------------------------------------------------------------------
+[DefaultInstall.NTamd64]
+CopyFiles = MouseFilter_CopyFiles
+AddReg    = MouseFilter_AddReg
+
+[DefaultInstall.NTamd64.Services]
+AddService = mouse,,MouseFilter_Service
+
+[DefaultUninstall.NTamd64]
+DelFiles = MouseFilter_CopyFiles
+DelReg   = MouseFilter_DelReg
+
+[DefaultUninstall.NTamd64.Services]
+DelService = mouse,0x200
+
+; --------------------------------------------------------------------------
+; File copy list
+; --------------------------------------------------------------------------
+[MouseFilter_CopyFiles]
+mouse.sys
+
+; --------------------------------------------------------------------------
+; Registry — add "mouse" to UpperFilters of the Mouse class.
+; 0x00010008 = REG_MULTI_SZ | FLG_ADDREG_APPEND
+; --------------------------------------------------------------------------
+[MouseFilter_AddReg]
+HKLM,"SYSTEM\CurrentControlSet\Control\Class\{4D36E96F-E325-11CE-BFC1-08002BF6382B}",UpperFilters,0x00010008,"mouse"
+
+[MouseFilter_DelReg]
+HKLM,"SYSTEM\CurrentControlSet\Control\Class\{4D36E96F-E325-11CE-BFC1-08002BF6382B}",UpperFilters,0x00018002
+
+; --------------------------------------------------------------------------
+; Service install
+; --------------------------------------------------------------------------
+[MouseFilter_Service]
+DisplayName    = %MouseFilterDesc%
+ServiceType    = 1          ; SERVICE_KERNEL_DRIVER
+StartType      = 0          ; SERVICE_BOOT_START
+ErrorControl   = 1          ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\mouse.sys
+LoadOrderGroup = Pointer Port
+
+; --------------------------------------------------------------------------
+; Strings
+; --------------------------------------------------------------------------
+[Strings]
+ProviderName    = "Interception"
+DiskName        = "Interception Driver Disk"
+MouseFilterDesc = "Interception Mouse Upper-Filter Driver"
