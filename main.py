@@ -96,6 +96,70 @@ def _select_game() -> str | None:
 
 
 # ---------------------------------------------------------------------------
+# Duration prompt
+# ---------------------------------------------------------------------------
+
+def _ask_duration() -> float:
+    """
+    Ask the user how long the bot should run.
+    Returns duration in seconds, or 0.0 for infinite.
+    Accepted formats: 30s / 5m / 1h / plain number (seconds) / Enter for infinite.
+    """
+    print()
+    try:
+        raw = input(
+            "  How long should the bot run?\n"
+            "  (e.g. 30s, 5m, 1h — or just press Enter for infinite): "
+        ).strip().lower()
+    except EOFError:
+        return 0.0
+
+    if not raw:
+        return 0.0
+    try:
+        if raw.endswith("h"):
+            return float(raw[:-1]) * 3600
+        if raw.endswith("m"):
+            return float(raw[:-1]) * 60
+        if raw.endswith("s"):
+            return float(raw[:-1])
+        return float(raw)      # plain number = seconds
+    except ValueError:
+        print("  Could not parse input — running indefinitely.")
+        return 0.0
+
+
+def _fmt_duration(seconds: float) -> str:
+    """Return a human-readable string for a duration in seconds."""
+    if seconds <= 0:
+        return "infinite"
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+    parts = []
+    if h:
+        parts.append(f"{h}h")
+    if m:
+        parts.append(f"{m}m")
+    if s or not parts:
+        parts.append(f"{s}s")
+    return " ".join(parts)
+
+
+def _countdown(seconds: int = 15) -> None:
+    """Live countdown so you can switch to your game before the bot starts."""
+    print()
+    for remaining in range(seconds, 0, -1):
+        print(
+            f"\r  Switch to your game! Starting in {remaining}s ...  ",
+            end="",
+            flush=True,
+        )
+        time.sleep(1)
+    print("\r  Starting now!                                        \n")
+
+
+# ---------------------------------------------------------------------------
 # Graceful shutdown helpers
 # ---------------------------------------------------------------------------
 
@@ -124,34 +188,37 @@ def main() -> None:
     if game_cfg_path:
         config.load_game_config(game_cfg_path)
 
+    # Duration prompt
+    run_seconds = _ask_duration()
+
     print("\n" + "=" * 60)
     print("  Auto Game Bot")
     print(f"  Provider: {config.ACTIVE_PROVIDER.upper()}")
     print(f"  Model  : {config.ACTIVE_MODEL_NAME}")
     print(f"  Region : {config.CAPTURE_REGION}")
     print(f"  Resize : {config.CAPTURE_RESIZE}px  JPEG Q={config.JPEG_QUALITY}")
-    print(f"  Frames : {'∞' if config.MAX_FRAMES == 0 else config.MAX_FRAMES}")
+    print(f"  Runtime: {_fmt_duration(run_seconds)}")
     print(f"  Debug  : show_frame={config.DEBUG_SHOW_FRAME}  timing={config.DEBUG_TIMING}")
     print("=" * 60)
-    print("Press Ctrl+C to stop.\n")
+    print("Press Ctrl+C at any time to stop.\n")
+
+    # 15-second countdown — gives you time to alt-tab into the game
+    _countdown(15)
 
     app = compile_graph()
     state = initial_state()
+    t_start = time.perf_counter()
 
-    if config.MAX_FRAMES == 0:
-        # Run forever — stream state updates frame-by-frame
-        print("[main] Starting infinite game loop …")
-        for chunk in app.stream(state, stream_mode="values"):
-            state = chunk  # keep latest state in sync
-    else:
-        # Run for a fixed number of frames then exit cleanly
-        print(f"[main] Running for {config.MAX_FRAMES} frames …")
-        t_start = time.perf_counter()
-        final = app.invoke(state)
-        elapsed = time.perf_counter() - t_start
-        frames = final.get("frame_count", 0)
-        fps = frames / elapsed if elapsed > 0 else 0
-        print(f"\n[main] Done. {frames} frames in {elapsed:.1f}s  ({fps:.1f} FPS)")
+    print("[main] Bot running …")
+    for chunk in app.stream(state, stream_mode="values"):
+        state = chunk
+        if run_seconds > 0 and (time.perf_counter() - t_start) >= run_seconds:
+            break
+
+    elapsed = time.perf_counter() - t_start
+    frames = state.get("frame_count", 0)
+    fps = frames / elapsed if elapsed > 0 else 0
+    print(f"\n[main] Done. {frames} frames in {elapsed:.1f}s  ({fps:.1f} FPS)")
 
     _shutdown()
 
