@@ -79,6 +79,43 @@ function Write-Warn([string]$msg) {
     Write-Host "  ⚠ $msg" -ForegroundColor Magenta
 }
 
+# P/Invoke: schedule a file move/replace at next boot (for locked kernel files)
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+public class NativeMoveFile {
+    [DllImport("kernel32.dll", SetLastError=true, CharSet=CharSet.Unicode)]
+    public static extern bool MoveFileExW(string lpExistingFileName, string lpNewFileName, uint dwFlags);
+    public const uint MOVEFILE_REPLACE_EXISTING   = 0x00000001;
+    public const uint MOVEFILE_DELAY_UNTIL_REBOOT = 0x00000004;
+}
+"@
+
+# Copies $Src to $Dst; if the destination is locked, schedules the replace at
+# the next reboot via MoveFileEx (PendingFileRenameOperations).
+# Returns $true if a reboot-replacement was scheduled, $false if copied now.
+function Install-DriverFile {
+    param([string]$Src, [string]$Dst)
+    try {
+        Copy-Item -Path $Src -Destination $Dst -Force
+        return $false
+    } catch {
+        if ($_.Exception -is [System.IO.IOException] -or
+            $_.Exception.InnerException -is [System.IO.IOException]) {
+            Write-Warn "File is locked - scheduling replacement at next reboot: $(Split-Path $Dst -Leaf)"
+            $flags = [NativeMoveFile]::MOVEFILE_REPLACE_EXISTING -bor [NativeMoveFile]::MOVEFILE_DELAY_UNTIL_REBOOT
+            $ok = [NativeMoveFile]::MoveFileExW($Src, $Dst, $flags)
+            if (-not $ok) {
+                $errCode = [System.Runtime.InteropServices.Marshal]::GetLastWin32Error()
+                $win32ex = [System.ComponentModel.Win32Exception]::new($errCode)
+                throw "MoveFileEx failed for '$Dst': $($win32ex.Message)"
+            }
+            return $true
+        }
+        throw
+    }
+}
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  STEP 0 - Prerequisites
 # ─────────────────────────────────────────────────────────────────────────────
@@ -178,8 +215,8 @@ foreach ($storeName in @('Root','TrustedPublisher')) {
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Re-signing keyboard.sys and mouse.sys with test certificate..."
 
-# Work on copies in a temp dir so the originals stay intact
-$tmpDir = Join-Path $env:TEMP "interception_install"
+# Work on copies in a persistent staging dir (survives reboot for pending file operations)
+$tmpDir = Join-Path $env:ProgramData "Interception"
 if (Test-Path $tmpDir) { Remove-Item $tmpDir -Recurse -Force }
 New-Item -ItemType Directory -Path $tmpDir | Out-Null
 
@@ -235,43 +272,87 @@ Write-OK "Test signing enabled. (A 'Test Mode' watermark will appear after reboo
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Installing drivers to $SYSTEM_DRV ..."
 
-Copy-Item $tmpKbd   (Join-Path $SYSTEM_DRV "keyboard.sys") -Force
-Copy-Item $tmpMouse (Join-Path $SYSTEM_DRV "mouse.sys")    -Force
-Write-OK "Driver files copied to $SYSTEM_DRV"
+# Stop any previously registered Interception services so their .sys files unlock
+foreach ($oldSvc in @('keyboard','mouse')) {
+    $s = Get-Service -Name $oldSvc -ErrorAction SilentlyContinue
+    if ($s) {
+        & sc.exe stop $oldSvc 2>&1 | Out-Null
+        Start-Sleep -Milliseconds 600
+    }
+}
 
-Remove-Item $tmpDir -Recurse -Force
+$pendingReplace = $false
+$pendingReplace = (Install-DriverFile $tmpKbd   (Join-Path $SYSTEM_DRV "keyboard.sys")) -or $pendingReplace
+$pendingReplace = (Install-DriverFile $tmpMouse (Join-Path $SYSTEM_DRV "mouse.sys"))    -or $pendingReplace
+
+if ($pendingReplace) {
+    Write-Warn "Driver files will be replaced on next reboot (locked by kernel)."
+    Write-Warn "Staging files kept in: $tmpDir"
+    # Do NOT remove tmpDir - the files must exist at reboot for PendingFileRenameOperations
+} else {
+    Write-OK "Driver files copied to $SYSTEM_DRV"
+    Remove-Item $tmpDir -Recurse -Force
+}
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  STEP 5 - Register kernel services via sc.exe
+#  STEP 5 - Register kernel services
 # ─────────────────────────────────────────────────────────────────────────────
 Write-Step "Registering kernel services..."
+
+# Writes a kernel service entry directly to the registry, bypassing SCM.
+# Used when the kernel still holds an open handle to a service that is
+# "marked for deletion" (error 1072) - SCM refuses to recreate it until reboot,
+# but the registry key can always be written.
+function Set-ServiceRegistry {
+    param(
+        [string]$Name,
+        [string]$ImagePath,
+        [string]$DisplayName,
+        [string]$Group
+    )
+    $key = "HKLM:\SYSTEM\CurrentControlSet\Services\$Name"
+    if (-not (Test-Path $key)) { New-Item -Path $key -Force | Out-Null }
+    Set-ItemProperty $key -Name "Type"         -Value 1            -Type DWord   # SERVICE_KERNEL_DRIVER
+    Set-ItemProperty $key -Name "Start"        -Value 0            -Type DWord   # SERVICE_BOOT_START
+    Set-ItemProperty $key -Name "ErrorControl" -Value 1            -Type DWord   # SERVICE_ERROR_NORMAL
+    Set-ItemProperty $key -Name "ImagePath"    -Value $ImagePath   -Type ExpandString
+    Set-ItemProperty $key -Name "DisplayName"  -Value $DisplayName -Type String
+    Set-ItemProperty $key -Name "Group"        -Value $Group       -Type String
+}
 
 foreach ($svc in @(
     @{ Name="keyboard"; Bin="\SystemRoot\System32\drivers\keyboard.sys"; Desc="Interception Keyboard Filter"; Group="Keyboard Port" },
     @{ Name="mouse";    Bin="\SystemRoot\System32\drivers\mouse.sys";    Desc="Interception Mouse Filter";    Group="Pointer Port"  }
 )) {
-    # Delete existing service if present
+    # Stop existing service (releases file lock where possible)
     $existing = Get-Service -Name $svc.Name -ErrorAction SilentlyContinue
     if ($existing) {
-        & sc.exe stop  $svc.Name 2>&1 | Out-Null
-        & sc.exe delete $svc.Name | Out-Null
-        Start-Sleep -Milliseconds 500
-        Write-Warn "Removed existing service: $($svc.Name)"
+        & sc.exe stop   $svc.Name 2>&1 | Out-Null
+        Start-Sleep -Milliseconds 800
+        & sc.exe delete $svc.Name 2>&1 | Out-Null
+        Write-Warn "Marked old service for deletion: $($svc.Name)"
     }
 
-    # create: type=kernel  start=boot  error=normal
+    # Try sc.exe create first (clean path, no old service handle)
     $result = & sc.exe create $svc.Name `
         type=  kernel `
         start= boot `
         error= normal `
         binpath= $svc.Bin `
         displayname= $svc.Desc `
-        group= $svc.Group
+        group= $svc.Group 2>&1
 
-    if ($LASTEXITCODE -ne 0) {
+    if ($LASTEXITCODE -eq 0) {
+        Write-OK "Service registered via SCM: $($svc.Name)"
+    } elseif ($LASTEXITCODE -eq 1072) {
+        # Kernel still holds an open handle to the old service entry.
+        # Write directly to the registry - will take effect after reboot.
+        Write-Warn "SCM handle still open (error 1072) - writing service config to registry directly."
+        Set-ServiceRegistry -Name $svc.Name -ImagePath $svc.Bin -DisplayName $svc.Desc -Group $svc.Group
+        Write-OK "Service config written to registry: $($svc.Name)  (takes effect at reboot)"
+    } else {
         throw "sc.exe create failed for '$($svc.Name)': $result"
     }
-    Write-OK "Service registered: $($svc.Name)"
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -285,10 +366,17 @@ function Add-UpperFilter {
     $regPath = "HKLM:\SYSTEM\CurrentControlSet\Control\Class\$ClassGuid"
 
     if (-not (Test-Path $regPath)) {
-        throw "Device class registry key not found: $regPath"
+        # Key missing - create it so the filter is picked up at boot
+        New-Item -Path $regPath -Force | Out-Null
+        Write-Warn "Device class key not found - created: $regPath"
     }
 
-    $current = (Get-ItemProperty -Path $regPath -Name UpperFilters -ErrorAction SilentlyContinue).UpperFilters
+    $current = $null
+    try {
+        $current = (Get-ItemProperty -Path $regPath -Name UpperFilters -ErrorAction Stop).UpperFilters
+    } catch {
+        $current = @()
+    }
     if ($null -eq $current) { $current = @() }
 
     if ($FilterName -in $current) {
